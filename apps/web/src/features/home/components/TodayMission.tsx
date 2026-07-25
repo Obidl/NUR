@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { BookOpen, Check, Circle, Mic2, Play } from 'lucide-react';
+import { BookOpen, Check, Circle, Mic2, Play, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/shared/components/Button';
 import type { PathLesson } from '@/features/curriculum/types/curriculum.types';
@@ -125,10 +125,15 @@ export function TodayMission({
 
   return (
     <div className="mx-auto w-full max-w-lg space-y-10">
-      <header>
-        <p className="text-xs text-nur-lamp">
-          {dates.hijri ? `${dates.hijri}` : ''}
-        </p>
+      <header className="relative pr-12">
+        <Link
+          to="/settings"
+          className="absolute right-0 top-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-nur-line bg-nur-elevated text-nur-muted"
+          aria-label="Sozlamalar"
+        >
+          <Settings size={18} strokeWidth={1.75} />
+        </Link>
+        <p className="text-xs text-nur-lamp">{dates.hijri ? `${dates.hijri}` : ''}</p>
         <p className="mt-0.5 text-sm text-nur-muted">{dates.gregorian}</p>
         <p className="mt-2 font-display text-sm tracking-[0.2em] text-nur-faint">NUR</p>
         <h1 className="mt-3 text-3xl font-medium text-nur-ink">
@@ -174,34 +179,57 @@ export function TodayMission({
           {lessons.map((lesson) => {
             const done = completedIds.has(lesson.id);
             const Icon = lessonIcon(lesson.targetType);
-            const slot = LESSON_SLOT_LABEL[lesson.targetType] ?? LESSON_KIND_LABEL[lesson.targetType];
+            const slot =
+              LESSON_SLOT_LABEL[lesson.targetType] ?? LESSON_KIND_LABEL[lesson.targetType];
             return (
               <li key={lesson.id}>
-                <div
+                <button
+                  type="button"
+                  disabled={done || saving || requireLogin}
+                  onClick={() => onComplete(lesson.id)}
                   className={cx(
-                    'flex items-center gap-3 rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/50 px-3 py-3',
+                    'flex w-full items-center gap-3 rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/50 px-3 py-3 text-left transition-opacity',
                     done && 'opacity-70',
+                    !done && !requireLogin && 'hover:bg-nur-sunken',
+                    (saving || requireLogin) && !done && 'opacity-80',
                   )}
+                  aria-label={
+                    done
+                      ? `${displayTitle(lesson.title)} yakunlangan`
+                      : `${displayTitle(lesson.title)} ni yakunlash`
+                  }
                 >
-                  <Icon className="shrink-0 text-nur-lamp" size={18} strokeWidth={1.75} aria-hidden />
+                  <Icon
+                    className="shrink-0 text-nur-lamp"
+                    size={18}
+                    strokeWidth={1.75}
+                    aria-hidden
+                  />
                   <div className="min-w-0 flex-1">
                     <p className="text-xs uppercase tracking-wide text-nur-faint">{slot}</p>
                     <p className="truncate text-sm font-medium text-nur-ink">
                       {displayTitle(lesson.title)}
                     </p>
                     <p className="truncate text-xs text-nur-faint">
-                      {lesson.targetLabel ? displayTitle(lesson.targetLabel) : LESSON_KIND_LABEL[lesson.targetType]}
+                      {lesson.targetLabel
+                        ? displayTitle(lesson.targetLabel)
+                        : LESSON_KIND_LABEL[lesson.targetType]}
                       {lesson.estimatedMinutes ? ` · ~${lesson.estimatedMinutes} daq` : ''}
                     </p>
                   </div>
                   <span className="text-nur-lamp" aria-hidden>
                     {done ? <Check size={20} /> : <Circle size={20} strokeWidth={1.5} />}
                   </span>
-                </div>
+                </button>
               </li>
             );
           })}
         </ul>
+        {requireLogin ? (
+          <p className="mt-3 text-center text-xs text-nur-faint">
+            Belgilash uchun <Link to="/login" className="text-nur-accent">kirish</Link> kerak.
+          </p>
+        ) : null}
       </section>
 
       {/* Morning */}

@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Home, Library, Mic2, ScrollText, Search } from 'lucide-react';
 import { cx } from '@/shared/lib/cx';
 import { useAuthStore } from '@/features/auth/store/authStore';
@@ -26,9 +26,14 @@ const mobileNav = [
 export function RootLayout() {
   const accessToken = useAuthStore((state) => state.accessToken);
   const user = useAuthStore((state) => state.user);
+  const { pathname } = useLocation();
+  const missionHome = pathname === '/';
 
   return (
-    <div className="flex min-h-dvh flex-col bg-nur-bg text-nur-ink">
+    <div
+      data-theme={missionHome ? 'dark' : undefined}
+      className="flex min-h-dvh flex-col bg-nur-bg text-nur-ink"
+    >
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[var(--radius-s)] focus:bg-nur-lamp focus:px-3 focus:py-2 focus:text-nur-lamp-ink"

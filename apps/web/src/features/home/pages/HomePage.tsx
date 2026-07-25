@@ -134,10 +134,7 @@ export function HomePage() {
   }
 
   return (
-    <section
-      data-theme="dark"
-      className="relative min-h-[calc(100dvh-3.5rem)] bg-nur-bg text-nur-ink md:min-h-[calc(100dvh-4rem)]"
-    >
+    <section className="relative min-h-[calc(100dvh-3.5rem)] bg-nur-bg text-nur-ink md:min-h-[calc(100dvh-4rem)]">
       <motion.div
         aria-hidden
         className="pointer-events-none absolute inset-0"
