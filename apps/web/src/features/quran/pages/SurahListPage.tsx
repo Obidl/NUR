@@ -4,7 +4,11 @@ import { Search } from 'lucide-react';
 import { fetchQuranProgress, fetchSurahs } from '@/features/quran/api/quranApi';
 import type { QuranProgress, SurahSummary } from '@/features/quran/types/quran.types';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { EmptyState } from '@/shared/components/EmptyState';
+import { PageShell } from '@/shared/components/PageShell';
+import { ErrorState, ListSkeleton } from '@/shared/components/Skeleton';
 import { getErrorMessage } from '@/shared/lib/errors';
+import { cx } from '@/shared/lib/cx';
 
 export function SurahListPage() {
   const accessToken = useAuthStore((s) => s.accessToken);
@@ -14,6 +18,7 @@ export function SurahListPage() {
   const [progress, setProgress] = useState<QuranProgress | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -35,7 +40,7 @@ export function SurahListPage() {
     return () => {
       cancelled = true;
     };
-  }, [deferredQuery]);
+  }, [deferredQuery, reloadKey]);
 
   useEffect(() => {
     if (!accessToken) {
@@ -65,21 +70,17 @@ export function SurahListPage() {
   }, [progress]);
 
   return (
-    <section className="mx-auto max-w-3xl px-4 py-8 md:px-6">
-      <header className="mb-8">
-        <h1 className="text-2xl font-medium text-nur-ink">Qur’on</h1>
-        <p className="mt-2 text-sm text-nur-muted">
-          Matn: quran-uthmani · Tarjima: Muhammad Sodik Muhammad Yusuf (uz.sodik)
-        </p>
-      </header>
-
+    <PageShell
+      title="Qur’on"
+      description="Matn: quran-uthmani · Tarjima: Muhammad Sodik Muhammad Yusuf (uz.sodik)"
+    >
       {continueHref ? (
         <Link
           to={continueHref}
-          className="mb-6 flex items-center justify-between gap-3 border-b border-nur-line pb-4 text-sm"
+          className="nur-surface mb-6 flex items-center justify-between gap-3 px-4 py-3.5 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-sm)]"
         >
-          <span className="text-nur-muted">Davom etish</span>
-          <span className="font-medium text-nur-accent">
+          <span className="text-sm text-nur-muted">Davom etish</span>
+          <span className="text-sm font-semibold text-nur-accent">
             Surah {progress?.surahNumber} · oyat {progress?.ayahNumber}
           </span>
         </Link>
@@ -88,53 +89,65 @@ export function SurahListPage() {
       <label className="relative mb-6 block">
         <Search
           size={16}
-          className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-nur-faint"
+          className="pointer-events-none absolute top-1/2 left-3.5 z-10 -translate-y-1/2 text-nur-faint"
+          aria-hidden
         />
         <input
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Surah nomi yoki raqami…"
-          className="w-full rounded-[var(--radius-m)] border border-nur-line bg-nur-elevated py-3 pr-3 pl-10 text-sm"
+          className="nur-input pl-10"
+          aria-label="Surah qidiruv"
         />
       </label>
 
-      {error ? <p className="mb-4 text-sm text-[var(--nur-danger)]">{error}</p> : null}
-      {loading ? <p className="text-sm text-nur-muted">Yuklanmoqda…</p> : null}
-
-      {!loading && surahs.length === 0 ? (
-        <p className="text-sm text-nur-muted">
-          Surah topilmadi. Avval API’da <code>npm run import:quran</code> ishga tushirilganini
-          tekshiring.
-        </p>
+      {error ? (
+        <div className="mb-6">
+          <ErrorState message={error} onRetry={() => setReloadKey((k) => k + 1)} />
+        </div>
       ) : null}
 
-      <ul className="divide-y divide-nur-line">
-        {surahs.map((surah) => (
-          <li key={surah.number}>
-            <Link
-              to={`/quran/${surah.number}`}
-              className="flex items-center gap-4 py-4 transition-colors hover:bg-nur-sunken/50"
-            >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-nur-line text-sm text-nur-muted">
-                {surah.number}
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-baseline justify-between gap-3">
-                  <p className="font-medium text-nur-ink">{surah.nameLatin}</p>
-                  <p className="font-quran text-lg text-nur-ink" dir="rtl" lang="ar">
-                    {surah.nameArabic}
+      {loading ? <ListSkeleton rows={8} /> : null}
+
+      {!loading && !error && surahs.length === 0 ? (
+        <EmptyState
+          title="Surah topilmadi"
+          description="Qidiruvni o‘zgartiring yoki API’da Qur’on import qilinganini tekshiring."
+        />
+      ) : null}
+
+      {!loading && surahs.length > 0 ? (
+        <ul className="nur-list">
+          {surahs.map((surah) => (
+            <li key={surah.number}>
+              <Link to={`/quran/${surah.number}`} className="nur-list-row">
+                <span
+                  className={cx(
+                    'flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/50 text-sm font-medium text-nur-muted',
+                  )}
+                >
+                  {surah.number}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <p className="truncate text-sm font-semibold tracking-[-0.01em] text-nur-ink">
+                      {surah.nameLatin}
+                    </p>
+                    <p className="font-quran shrink-0 text-lg text-nur-ink" dir="rtl" lang="ar">
+                      {surah.nameArabic}
+                    </p>
+                  </div>
+                  <p className="mt-1 text-xs text-nur-muted">
+                    {surah.ayahCount} oyat ·{' '}
+                    {surah.revelationType === 'meccan' ? 'Makkiy' : 'Madaniy'}
                   </p>
                 </div>
-                <p className="mt-1 text-xs text-nur-muted">
-                  {surah.ayahCount} oyat ·{' '}
-                  {surah.revelationType === 'meccan' ? 'Makkiy' : 'Madaniy'}
-                </p>
-              </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </section>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </PageShell>
   );
 }

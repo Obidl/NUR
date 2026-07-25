@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Mic2 } from 'lucide-react';
 import { fetchPodcastProgress, fetchPodcastSeries } from '@/features/podcasts/api/podcastApi';
 import type {
   PodcastProgressItem,
   PodcastSeriesCard,
 } from '@/features/podcasts/types/podcast.types';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { EmptyState } from '@/shared/components/EmptyState';
+import { Input } from '@/shared/components/Field';
+import { PageShell } from '@/shared/components/PageShell';
+import { ErrorState, ListSkeleton } from '@/shared/components/Skeleton';
 import { getErrorMessage } from '@/shared/lib/errors';
 
 export function PodcastSeriesListPage() {
@@ -15,6 +20,7 @@ export function PodcastSeriesListPage() {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -34,7 +40,7 @@ export function PodcastSeriesListPage() {
     return () => {
       cancelled = true;
     };
-  }, [query]);
+  }, [query, reloadKey]);
 
   useEffect(() => {
     if (!accessToken) {
@@ -55,31 +61,27 @@ export function PodcastSeriesListPage() {
   }, [accessToken]);
 
   return (
-    <section className="mx-auto max-w-3xl px-4 py-8 md:px-6">
-      <header className="mb-8">
-        <h1 className="text-2xl font-medium">Podcastlar</h1>
-        <p className="mt-2 text-sm text-nur-muted">
-          Faqat tasdiqlangan, manbali seriyalar. Fake kontent bo‘lmaydi.
-        </p>
-      </header>
-
+    <PageShell
+      title="Podcastlar"
+      description="Faqat tasdiqlangan, manbali seriyalar. Fake kontent bo‘lmaydi."
+    >
       {continueItems.length > 0 ? (
         <div className="mb-8">
-          <h2 className="mb-3 text-sm font-medium text-nur-muted">Davom ettirish</h2>
-          <ul className="divide-y divide-nur-line">
+          <h2 className="nur-section-title mb-3">Davom ettirish</h2>
+          <ul className="nur-list">
             {continueItems.map((item) => (
               <li key={item.episodeId}>
                 <Link
                   to={`/podcasts/${item.seriesSlug}?episode=${item.episodeId}`}
-                  className="flex items-center justify-between gap-3 py-3"
+                  className="nur-list-row justify-between"
                 >
                   <span className="min-w-0">
-                    <span className="block truncate font-medium">{item.title}</span>
-                    <span className="block truncate text-xs text-nur-muted">
+                    <span className="block truncate text-sm font-semibold">{item.title}</span>
+                    <span className="mt-0.5 block truncate text-xs text-nur-muted">
                       {item.hostOrScholar}
                     </span>
                   </span>
-                  <span className="text-xs text-nur-accent">
+                  <span className="shrink-0 text-xs font-medium text-nur-accent">
                     {Math.floor(item.positionSeconds / 60)} daqiqa
                   </span>
                 </Link>
@@ -89,44 +91,50 @@ export function PodcastSeriesListPage() {
         </div>
       ) : null}
 
-      <input
+      <Input
         type="search"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder="Qidirish…"
-        className="mb-6 w-full rounded-[var(--radius-m)] border border-nur-line bg-nur-elevated px-3 py-3 text-sm"
+        className="mb-6"
+        aria-label="Podcast qidiruv"
       />
 
-      {error ? <p className="mb-4 text-sm text-[var(--nur-danger)]">{error}</p> : null}
-      {loading ? <p className="text-sm text-nur-muted">Yuklanmoqda…</p> : null}
-
-      {!loading && items.length === 0 ? (
-        <p className="text-sm text-nur-muted">
-          Hozircha nashr qilingan podcast yo‘q. Admin orqali haqiqiy, litsenziyalangan kontent
-          qo‘shiladi.
-        </p>
+      {error ? (
+        <div className="mb-6">
+          <ErrorState message={error} onRetry={() => setReloadKey((k) => k + 1)} />
+        </div>
       ) : null}
 
-      <ul className="divide-y divide-nur-line">
-        {items.map((series) => (
-          <li key={series.id}>
-            <Link
-              to={`/podcasts/${series.slug}`}
-              className="flex gap-4 py-4 transition-colors hover:bg-nur-sunken/40"
-            >
-              <img
-                src={series.coverUrl}
-                alt=""
-                className="h-16 w-16 shrink-0 rounded-[var(--radius-s)] object-cover"
-              />
-              <div className="min-w-0">
-                <p className="font-medium">{series.title}</p>
-                <p className="mt-1 text-sm text-nur-muted">{series.hostOrScholar}</p>
-              </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </section>
+      {loading ? <ListSkeleton rows={5} /> : null}
+
+      {!loading && !error && items.length === 0 ? (
+        <EmptyState
+          icon={<Mic2 className="h-5 w-5" strokeWidth={1.75} />}
+          title="Hali podcast yo‘q"
+          description="Nashr qilingan seriya bo‘sh. Admin orqali litsenziyalangan audio qo‘shiladi."
+        />
+      ) : null}
+
+      {!loading && items.length > 0 ? (
+        <ul className="nur-list">
+          {items.map((series) => (
+            <li key={series.id}>
+              <Link to={`/podcasts/${series.slug}`} className="nur-list-row">
+                <img
+                  src={series.coverUrl}
+                  alt=""
+                  className="h-14 w-14 shrink-0 rounded-[var(--radius-m)] object-cover shadow-[var(--shadow-xs)]"
+                />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold tracking-[-0.01em]">{series.title}</p>
+                  <p className="mt-1 truncate text-sm text-nur-muted">{series.hostOrScholar}</p>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </PageShell>
   );
 }

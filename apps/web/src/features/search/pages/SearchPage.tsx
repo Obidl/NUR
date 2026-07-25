@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { Search } from 'lucide-react';
 import { globalSearch } from '@/features/search/api/searchApi';
 import type { SearchHit } from '@/features/search/types/search.types';
+import { EmptyState } from '@/shared/components/EmptyState';
+import { PageShell } from '@/shared/components/PageShell';
+import { ErrorState, ListSkeleton } from '@/shared/components/Skeleton';
 import { getErrorMessage } from '@/shared/lib/errors';
+import { cx } from '@/shared/lib/cx';
 
 const TYPE_LABEL: Record<SearchHit['type'], string> = {
   quran: 'Qur’on',
@@ -69,14 +74,11 @@ export function SearchPage() {
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-4 py-8 pb-24 md:px-6 md:pb-8">
-      <header className="mb-6">
-        <h1 className="text-2xl font-medium">Qidiruv</h1>
-        <p className="mt-2 text-sm text-nur-muted">
-          Faqat nashr qilingan kontent. Bo‘sh natija — uydirma yo‘q.
-        </p>
-      </header>
-
+    <PageShell
+      title="Qidiruv"
+      description="Faqat nashr qilingan kontent. Bo‘sh natija — uydirma yo‘q."
+      className="pb-24 md:pb-8"
+    >
       <form
         className="mb-4"
         onSubmit={(event) => {
@@ -84,20 +86,25 @@ export function SearchPage() {
           submit(query, types);
         }}
       >
-        <label className="block text-sm">
+        <label className="relative block">
           <span className="sr-only">Qidiruv so‘zi</span>
+          <Search
+            size={16}
+            className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-nur-faint"
+            aria-hidden
+          />
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Masalan: Fotiha…"
-            className="w-full rounded-[var(--radius-m)] border border-nur-line bg-nur-elevated px-3 py-3 text-sm"
+            className="nur-input pl-10"
             autoFocus
           />
         </label>
       </form>
 
-      <div className="mb-6 flex flex-wrap gap-2" role="group" aria-label="Tur filteri">
+      <div className="mb-8 flex flex-wrap gap-2" role="group" aria-label="Tur filteri">
         {FILTERS.map((filter) => (
           <button
             key={filter.id || 'all'}
@@ -106,41 +113,61 @@ export function SearchPage() {
               setTypes(filter.id);
               submit(query, filter.id);
             }}
-            className={
+            className={cx(
+              'rounded-[var(--radius-m)] px-3 py-2 text-xs font-medium transition-colors duration-200',
               types === filter.id
-                ? 'rounded-[var(--radius-s)] bg-nur-sunken px-3 py-1.5 text-xs text-nur-ink'
-                : 'rounded-[var(--radius-s)] px-3 py-1.5 text-xs text-nur-muted'
-            }
+                ? 'bg-nur-sunken text-nur-ink shadow-[var(--shadow-xs)]'
+                : 'text-nur-muted hover:bg-nur-sunken/60 hover:text-nur-ink',
+            )}
           >
             {filter.label}
           </button>
         ))}
       </div>
 
-      {error ? <p className="mb-4 text-sm text-[var(--nur-danger)]">{error}</p> : null}
-      {loading ? <p className="text-sm text-nur-muted">Qidirilmoqda…</p> : null}
+      {error ? (
+        <div className="mb-6">
+          <ErrorState
+            message={error}
+            onRetry={() => submit(query, types)}
+          />
+        </div>
+      ) : null}
+
+      {loading ? <ListSkeleton rows={5} /> : null}
 
       {!loading && !query.trim() ? (
-        <p className="text-sm text-nur-muted">Qidirish uchun so‘z yozing.</p>
+        <EmptyState
+          icon={<Search className="h-5 w-5" strokeWidth={1.75} />}
+          title="Nimani qidiramiz?"
+          description="Surah, podcast, kitob yoki tadqiqot nomini yozing."
+        />
       ) : null}
 
-      {!loading && query.trim() && hits.length === 0 ? (
-        <p className="text-sm text-nur-muted">Natija topilmadi.</p>
+      {!loading && query.trim() && hits.length === 0 && !error ? (
+        <EmptyState
+          title="Natija topilmadi"
+          description="Boshqa so‘z yoki filtr bilan urinib ko‘ring. Uydirma kontent qo‘shilmaydi."
+        />
       ) : null}
 
-      <ul className="divide-y divide-nur-line">
-        {hits.map((hit) => (
-          <li key={`${hit.type}-${hit.href}-${hit.title}`}>
-            <Link to={hit.href} className="block py-4 hover:text-nur-accent">
-              <p className="text-xs uppercase tracking-wide text-nur-faint">
-                {TYPE_LABEL[hit.type]}
-              </p>
-              <p className="mt-1 font-medium">{hit.title}</p>
-              <p className="mt-1 text-sm text-nur-muted">{hit.snippet}</p>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </section>
+      {!loading && hits.length > 0 ? (
+        <ul className="nur-list">
+          {hits.map((hit) => (
+            <li key={`${hit.type}-${hit.href}-${hit.title}`}>
+              <Link to={hit.href} className="nur-list-row !items-start">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-nur-faint">
+                    {TYPE_LABEL[hit.type]}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold tracking-[-0.01em]">{hit.title}</p>
+                  <p className="mt-1 text-sm text-nur-muted">{hit.snippet}</p>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </PageShell>
   );
 }

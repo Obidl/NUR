@@ -1,14 +1,17 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/Button';
+import { Field, Input } from '@/shared/components/Field';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { getErrorMessage } from '@/shared/lib/errors';
+import { useToast } from '@/shared/components/Toast';
 
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const login = useAuthStore((state) => state.login);
   const isLoading = useAuthStore((state) => state.isLoading);
+  const { toast } = useToast();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,6 +31,7 @@ export function LoginPage() {
 
     try {
       await login({ email, password });
+      toast('Xush kelibsiz', 'success');
       navigate(from, { replace: true });
     } catch (err) {
       setError(getErrorMessage(err, 'Kirish amalga oshmadi'));
@@ -35,27 +39,27 @@ export function LoginPage() {
   }
 
   return (
-    <div className="rounded-[var(--radius-l)] border border-nur-line bg-nur-elevated p-6 shadow-sm">
-      <p className="font-display text-2xl tracking-[0.18em]">NUR</p>
-      <h1 className="mt-4 text-xl font-medium">Kirish</h1>
-      <p className="mt-2 text-sm text-nur-muted">Hisobingizga kiring va davom eting.</p>
+    <div className="nur-surface px-6 py-8 shadow-[var(--shadow-sm)] md:px-8 md:py-10">
+      <p className="font-display text-2xl font-semibold tracking-[0.18em]">NUR</p>
+      <h1 className="mt-5 text-xl font-semibold tracking-[-0.02em]">Kirish</h1>
+      <p className="mt-2 text-sm leading-relaxed text-nur-muted">
+        Hisobingizga kiring va bugungi yo‘lni davom ettiring.
+      </p>
 
-      <form className="mt-6 space-y-4" onSubmit={onSubmit}>
-        <label className="block text-sm">
-          <span className="mb-1 block text-nur-muted">Email</span>
-          <input
+      <form className="mt-8 space-y-5" onSubmit={onSubmit}>
+        <Field label="Email">
+          <Input
             type="email"
             name="email"
             autoComplete="email"
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-bg px-3 py-2"
+            invalid={Boolean(error)}
           />
-        </label>
-        <label className="block text-sm">
-          <span className="mb-1 block text-nur-muted">Parol</span>
-          <input
+        </Field>
+        <Field label="Parol">
+          <Input
             type="password"
             name="password"
             autoComplete="current-password"
@@ -63,26 +67,30 @@ export function LoginPage() {
             minLength={8}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-bg px-3 py-2"
+            invalid={Boolean(error)}
           />
-        </label>
+        </Field>
 
-        {error ? <p className="text-sm text-[var(--nur-danger)]">{error}</p> : null}
+        {error ? (
+          <p className="text-sm text-[var(--nur-danger)]" role="alert">
+            {error}
+          </p>
+        ) : null}
 
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? 'Kutilmoqda…' : 'Kirish'}
         </Button>
       </form>
 
-      <p className="mt-4 text-sm text-nur-muted">
-        <Link to="/forgot-password" className="text-nur-accent">
+      <p className="mt-6 text-sm text-nur-muted">
+        <Link to="/forgot-password" className="font-medium text-nur-accent hover:underline">
           Parolni unutdingizmi?
         </Link>
       </p>
 
-      <p className="mt-2 text-sm text-nur-muted">
+      <p className="mt-3 text-sm text-nur-muted">
         Hisobingiz yo‘qmi?{' '}
-        <Link to="/register" className="text-nur-accent">
+        <Link to="/register" className="font-medium text-nur-accent hover:underline">
           Ro‘yxatdan o‘tish
         </Link>
       </p>

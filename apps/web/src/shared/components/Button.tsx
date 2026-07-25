@@ -2,16 +2,20 @@ import { Link } from 'react-router-dom';
 import { cx } from '@/shared/lib/cx';
 import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 
-type Variant = 'primary' | 'secondary' | 'ghost';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 const variantClass: Record<Variant, string> = {
-  primary: 'bg-nur-lamp text-nur-lamp-ink hover:opacity-95',
-  secondary: 'bg-nur-elevated text-nur-ink border border-nur-line hover:bg-nur-sunken',
-  ghost: 'bg-transparent text-nur-ink hover:bg-nur-sunken',
+  primary:
+    'bg-nur-lamp text-nur-lamp-ink shadow-[var(--shadow-sm)] hover:brightness-[0.97] hover:shadow-[var(--shadow-md)] active:scale-[0.98]',
+  secondary:
+    'bg-nur-elevated text-nur-ink border border-nur-line shadow-[var(--shadow-xs)] hover:bg-nur-sunken hover:border-[var(--nur-line-strong)] active:scale-[0.98]',
+  ghost: 'bg-transparent text-nur-ink hover:bg-nur-sunken active:scale-[0.98]',
+  danger:
+    'bg-[var(--nur-danger)] text-white shadow-[var(--shadow-sm)] hover:brightness-95 active:scale-[0.98]',
 };
 
 const baseClass =
-  'inline-flex min-h-11 items-center justify-center rounded-[var(--radius-m)] px-5 text-sm font-medium transition-opacity disabled:cursor-not-allowed disabled:opacity-50';
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--radius-m)] px-5 text-sm font-semibold tracking-[-0.01em] transition-[transform,box-shadow,background-color,border-color,filter,opacity] duration-200 ease-[var(--ease-out)] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:active:scale-100';
 
 type ButtonProps = PropsWithChildren<{
   variant?: Variant;
@@ -20,6 +24,7 @@ type ButtonProps = PropsWithChildren<{
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
   disabled?: boolean;
   onClick?: ButtonHTMLAttributes<HTMLButtonElement>['onClick'];
+  'aria-label'?: string;
 }>;
 
 export function Button({
@@ -30,19 +35,32 @@ export function Button({
   type = 'button',
   disabled,
   onClick,
+  'aria-label': ariaLabel,
 }: ButtonProps) {
   const classes = cx(baseClass, variantClass[variant], className);
 
   if (to) {
     return (
-      <Link to={to} className={classes} aria-disabled={disabled || undefined}>
+      <Link
+        to={to}
+        className={classes}
+        aria-disabled={disabled || undefined}
+        aria-label={ariaLabel}
+        tabIndex={disabled ? -1 : undefined}
+      >
         {children}
       </Link>
     );
   }
 
   return (
-    <button type={type} className={classes} disabled={disabled} onClick={onClick}>
+    <button
+      type={type}
+      className={classes}
+      disabled={disabled}
+      onClick={onClick}
+      aria-label={ariaLabel}
+    >
       {children}
     </button>
   );

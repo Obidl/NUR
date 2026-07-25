@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/shared/components/Button';
+import { Field, Input } from '@/shared/components/Field';
 import { requestPasswordReset } from '@/features/auth/api/authApi';
 import { getErrorMessage } from '@/shared/lib/errors';
 
@@ -31,28 +32,33 @@ export function ForgotPasswordPage() {
   }
 
   return (
-    <div className="rounded-[var(--radius-l)] border border-nur-line bg-nur-elevated p-6 shadow-sm">
-      <p className="font-display text-2xl tracking-[0.18em]">NUR</p>
-      <h1 className="mt-4 text-xl font-medium">Parolni tiklash</h1>
-      <p className="mt-2 text-sm text-nur-muted">Emailingizni kiriting.</p>
+    <div className="nur-surface px-6 py-8 shadow-[var(--shadow-sm)] md:px-8 md:py-10">
+      <p className="font-display text-2xl font-semibold tracking-[0.18em]">NUR</p>
+      <h1 className="mt-5 text-xl font-semibold tracking-[-0.02em]">Parolni tiklash</h1>
+      <p className="mt-2 text-sm leading-relaxed text-nur-muted">Emailingizni kiriting.</p>
 
-      <form className="mt-6 space-y-4" onSubmit={(e) => void onSubmit(e)}>
-        <label className="block text-sm">
-          <span className="mb-1 block text-nur-muted">Email</span>
-          <input
+      <form className="mt-8 space-y-5" onSubmit={(e) => void onSubmit(e)}>
+        <Field label="Email">
+          <Input
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-bg px-3 py-2"
           />
-        </label>
-        {error ? <p className="text-sm text-[var(--nur-danger)]">{error}</p> : null}
+        </Field>
+        {error ? (
+          <p className="text-sm text-[var(--nur-danger)]" role="alert">
+            {error}
+          </p>
+        ) : null}
         {message ? <p className="text-sm text-nur-muted">{message}</p> : null}
         {devToken ? (
           <p className="break-all text-xs text-nur-faint">
             Dev token:{' '}
-            <Link className="text-nur-accent" to={`/reset-password?token=${encodeURIComponent(devToken)}`}>
+            <Link
+              className="font-medium text-nur-accent hover:underline"
+              to={`/reset-password?token=${encodeURIComponent(devToken)}`}
+            >
               tiklash sahifasi
             </Link>
           </p>
@@ -62,8 +68,8 @@ export function ForgotPasswordPage() {
         </Button>
       </form>
 
-      <p className="mt-4 text-sm text-nur-muted">
-        <Link to="/login" className="text-nur-accent">
+      <p className="mt-6 text-sm text-nur-muted">
+        <Link to="/login" className="font-medium text-nur-accent hover:underline">
           Kirishga qaytish
         </Link>
       </p>

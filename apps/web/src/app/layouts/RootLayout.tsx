@@ -36,23 +36,23 @@ export function RootLayout() {
     >
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[var(--radius-s)] focus:bg-nur-lamp focus:px-3 focus:py-2 focus:text-nur-lamp-ink"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[var(--radius-m)] focus:bg-nur-lamp focus:px-3 focus:py-2 focus:text-nur-lamp-ink"
       >
         Asosiy kontentga o‘tish
       </a>
 
-      <header className="sticky top-0 z-30 border-b border-nur-line/80 bg-nur-elevated/85 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-nur-line/70 bg-nur-elevated/75 shadow-[var(--shadow-xs)] backdrop-blur-xl supports-[backdrop-filter]:bg-nur-elevated/65">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 md:px-6">
           <NavLink
             to="/"
-            className="font-display text-xl tracking-[0.18em] text-nur-ink"
+            className="font-display text-xl font-semibold tracking-[0.18em] text-nur-ink transition-opacity duration-200 hover:opacity-80"
             aria-label="NUR bosh sahifa"
           >
             NUR
           </NavLink>
 
           <nav
-            className="hidden flex-wrap items-center gap-1 text-sm md:flex"
+            className="hidden items-center gap-0.5 text-sm md:flex"
             aria-label="Asosiy navigatsiya"
           >
             {desktopNav.map((item) => (
@@ -62,8 +62,10 @@ export function RootLayout() {
                 end={'end' in item ? item.end : false}
                 className={({ isActive }) =>
                   cx(
-                    'rounded-[var(--radius-s)] px-3 py-2 text-nur-muted transition-colors',
-                    isActive && 'bg-nur-sunken text-nur-ink',
+                    'rounded-[var(--radius-m)] px-3 py-2 text-nur-muted transition-[color,background-color] duration-200',
+                    isActive
+                      ? 'bg-nur-sunken font-medium text-nur-ink shadow-[var(--shadow-xs)]'
+                      : 'hover:bg-nur-sunken/60 hover:text-nur-ink',
                   )
                 }
               >
@@ -75,8 +77,10 @@ export function RootLayout() {
                 to="/settings"
                 className={({ isActive }) =>
                   cx(
-                    'rounded-[var(--radius-s)] px-3 py-2 text-nur-muted transition-colors',
-                    isActive && 'bg-nur-sunken text-nur-ink',
+                    'ml-1 rounded-[var(--radius-m)] px-3 py-2 text-nur-muted transition-[color,background-color] duration-200',
+                    isActive
+                      ? 'bg-nur-sunken font-medium text-nur-ink'
+                      : 'hover:bg-nur-sunken/60 hover:text-nur-ink',
                   )
                 }
               >
@@ -85,26 +89,32 @@ export function RootLayout() {
             ) : (
               <NavLink
                 to="/login"
-                className="rounded-[var(--radius-s)] px-3 py-2 text-nur-accent"
+                className="ml-1 rounded-[var(--radius-m)] bg-nur-lamp px-3.5 py-2 font-semibold text-nur-lamp-ink shadow-[var(--shadow-sm)] transition-[filter,transform] duration-200 hover:brightness-[0.97] active:scale-[0.98]"
               >
                 Kirish
               </NavLink>
             )}
           </nav>
 
-          <div className="flex items-center gap-2 md:hidden">
-            <NavLink to="/curriculum" className="text-sm text-nur-muted">
+          <div className="flex items-center gap-1 md:hidden">
+            <NavLink
+              to="/curriculum"
+              className="rounded-[var(--radius-m)] px-2.5 py-2 text-sm text-nur-muted transition-colors hover:text-nur-ink"
+            >
               Yo‘llar
             </NavLink>
-            <NavLink to="/research" className="text-sm text-nur-muted">
-              Tadqiqot
-            </NavLink>
             {accessToken ? (
-              <NavLink to="/settings" className="text-sm text-nur-muted">
+              <NavLink
+                to="/settings"
+                className="rounded-[var(--radius-m)] px-2.5 py-2 text-sm text-nur-muted transition-colors hover:text-nur-ink"
+              >
                 Profil
               </NavLink>
             ) : (
-              <NavLink to="/login" className="text-sm text-nur-accent">
+              <NavLink
+                to="/login"
+                className="rounded-[var(--radius-m)] bg-nur-lamp px-3 py-2 text-sm font-semibold text-nur-lamp-ink"
+              >
                 Kirish
               </NavLink>
             )}
@@ -112,17 +122,20 @@ export function RootLayout() {
         </div>
       </header>
 
-      <main id="main-content" className="flex-1 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">
+      <main
+        id="main-content"
+        className="flex-1 pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:pb-0"
+      >
         <Outlet />
       </main>
 
       <PodcastPlayerBar />
 
       <nav
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-nur-line bg-nur-elevated/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-nur-line/80 bg-nur-elevated/90 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(12,18,28,0.06)] backdrop-blur-xl md:hidden"
         aria-label="Mobil navigatsiya"
       >
-        <ul className="mx-auto grid max-w-lg grid-cols-5">
+        <ul className="mx-auto grid max-w-lg grid-cols-5 px-1">
           {mobileNav.map((item) => {
             const Icon = item.icon;
             return (
@@ -132,13 +145,24 @@ export function RootLayout() {
                   end={'end' in item ? item.end : false}
                   className={({ isActive }) =>
                     cx(
-                      'flex flex-col items-center gap-1 px-1 py-2 text-[10px] text-nur-muted',
-                      isActive && 'text-nur-ink',
+                      'flex flex-col items-center gap-1 rounded-[var(--radius-m)] px-1 py-2.5 text-[10px] font-medium transition-colors duration-200',
+                      isActive ? 'text-nur-lamp' : 'text-nur-muted',
                     )
                   }
                 >
-                  <Icon className="h-5 w-5" aria-hidden strokeWidth={1.75} />
-                  {item.label}
+                  {({ isActive }) => (
+                    <>
+                      <span
+                        className={cx(
+                          'flex h-8 w-8 items-center justify-center rounded-[var(--radius-m)] transition-colors duration-200',
+                          isActive && 'bg-nur-lamp-soft',
+                        )}
+                      >
+                        <Icon className="h-5 w-5" aria-hidden strokeWidth={isActive ? 2 : 1.75} />
+                      </span>
+                      {item.label}
+                    </>
+                  )}
                 </NavLink>
               </li>
             );

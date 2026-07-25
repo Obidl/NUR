@@ -1,5 +1,6 @@
 import { useEffect, type PropsWithChildren } from 'react';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { ToastProvider } from '@/shared/components/Toast';
 
 export function AppProviders({ children }: PropsWithChildren) {
   const hydrate = useAuthStore((state) => state.hydrate);
@@ -22,5 +23,5 @@ export function AppProviders({ children }: PropsWithChildren) {
     root.dataset.theme = theme;
   }, [user?.preferences.theme]);
 
-  return children;
+  return <ToastProvider>{children}</ToastProvider>;
 }

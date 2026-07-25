@@ -5,7 +5,7 @@ const links = [
   {
     to: '/admin/podcasts',
     title: 'Podcastlar',
-    description: 'Seriya statusi, nashr va soft delete.',
+    description: 'Seriya + epizod, audio URL, nashr.',
   },
   {
     to: '/admin/books',
@@ -28,28 +28,32 @@ export function AdminHomePage() {
   const role = useAuthStore((s) => s.user?.role);
 
   return (
-    <section className="space-y-8">
+    <section className="nur-fade-in space-y-8">
       <header>
-        <h1 className="text-xl font-medium">Admin</h1>
-        <p className="mt-1 text-sm text-nur-muted">
+        <h1 className="nur-page-title">Admin</h1>
+        <p className="nur-page-lede">
           Kontent nashri va huquqlar. Fake kontent qo‘shilmaydi.
         </p>
       </header>
 
-      <ul className="divide-y divide-nur-line border-y border-nur-line">
+      <ul className="nur-list">
         {links.map((item) => (
           <li key={item.to}>
-            <Link to={item.to} className="block py-4 hover:text-nur-accent">
-              <p className="font-medium">{item.title}</p>
-              <p className="mt-1 text-sm text-nur-muted">{item.description}</p>
+            <Link to={item.to} className="nur-list-row !items-start">
+              <div>
+                <p className="font-semibold tracking-[-0.01em]">{item.title}</p>
+                <p className="mt-1 text-sm text-nur-muted">{item.description}</p>
+              </div>
             </Link>
           </li>
         ))}
         {role === 'admin' ? (
           <li>
-            <Link to="/admin/users" className="block py-4 hover:text-nur-accent">
-              <p className="font-medium">Foydalanuvchilar</p>
-              <p className="mt-1 text-sm text-nur-muted">Rollar va faollik (faqat admin).</p>
+            <Link to="/admin/users" className="nur-list-row !items-start">
+              <div>
+                <p className="font-semibold tracking-[-0.01em]">Foydalanuvchilar</p>
+                <p className="mt-1 text-sm text-nur-muted">Rollar va faollik (faqat admin).</p>
+              </div>
             </Link>
           </li>
         ) : null}
