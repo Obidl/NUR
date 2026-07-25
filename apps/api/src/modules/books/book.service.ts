@@ -446,6 +446,32 @@ export async function adminDeleteBook(userId: string, id: string) {
   return { success: true };
 }
 
+export async function adminListChapters(bookId: string) {
+  if (!Types.ObjectId.isValid(bookId)) {
+    throw new AppError('VALIDATION_ERROR', 'Invalid bookId', 422);
+  }
+  const book = await BookModel.findOne({ _id: bookId, deletedAt: null }).lean();
+  if (!book) throw new AppError('NOT_FOUND', 'Book not found', 404);
+
+  const rows = await BookChapterModel.find({
+    bookId,
+    deletedAt: null,
+  })
+    .sort({ order: 1, createdAt: 1 })
+    .lean();
+
+  return rows.map((row) => ({
+    id: row._id.toString(),
+    title: row.title,
+    slug: row.slug,
+    order: row.order,
+    body: row.body,
+    bodyFormat: row.bodyFormat,
+    status: row.status,
+    publishedAt: row.publishedAt,
+  }));
+}
+
 export async function adminCreateChapter(userId: string, input: CreateChapterBody) {
   if (!Types.ObjectId.isValid(input.bookId)) {
     throw new AppError('VALIDATION_ERROR', 'Invalid bookId', 422);

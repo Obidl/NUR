@@ -136,6 +136,51 @@ export async function adminDeleteBook(id: string) {
   await http.delete(endpoints.admin.books.item(id));
 }
 
+export type AdminChapterRow = {
+  id: string;
+  title: string;
+  slug: string;
+  order: number;
+  body: string;
+  bodyFormat: 'html' | 'markdown';
+  status: ContentStatus;
+  publishedAt: string | null;
+};
+
+export async function adminListBookChapters(bookId: string) {
+  const { data } = await http.get<{ data: AdminChapterRow[] }>(
+    endpoints.admin.books.bookChapters(bookId),
+  );
+  return data.data;
+}
+
+export async function adminCreateBookChapter(input: {
+  bookId: string;
+  title: string;
+  order: number;
+  body: string;
+  bodyFormat?: 'html' | 'markdown';
+}) {
+  const { data } = await http.post<{
+    data: { id: string; title: string; slug: string; status: ContentStatus; bookId: string };
+  }>(endpoints.admin.books.chapters, input);
+  return data.data;
+}
+
+export async function adminUpdateBookChapter(
+  id: string,
+  input: { title?: string; order?: number; body?: string; bodyFormat?: 'html' | 'markdown' },
+) {
+  const { data } = await http.patch<{
+    data: { id: string; title: string; slug: string; status: ContentStatus };
+  }>(endpoints.admin.books.chapter(id), input);
+  return data.data;
+}
+
+export async function adminPublishBookChapter(id: string) {
+  await http.post(endpoints.admin.books.publishChapter(id));
+}
+
 export async function adminSetResearchStatus(id: string, status: EditorialStatus) {
   await http.post(endpoints.admin.research.status(id), { status });
 }

@@ -207,6 +207,16 @@ export async function adminDeleteBook(req: Request, res: Response, next: NextFun
   }
 }
 
+export async function adminListChapters(req: Request, res: Response, next: NextFunction) {
+  try {
+    const params = (req.validatedParams ?? req.params) as { id: string };
+    const data = await bookService.adminListChapters(String(params.id));
+    res.status(200).json({ data });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function adminSetBookStatus(req: Request, res: Response, next: NextFunction) {
   try {
     const params = (req.validatedParams ?? req.params) as { id: string };

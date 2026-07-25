@@ -582,7 +582,8 @@ Base: `/api/v1/admin`
 | PATCH | `/admin/books/:id` | editor, admin |
 | POST | `/admin/books/:id/publish` | editor*, admin |
 | DELETE | `/admin/books/:id` | editor, admin |
-| POST | `/admin/books/:bookId/chapters` | editor, admin |
+| GET | `/admin/books/:id/chapters` | editor, admin |
+| POST | `/admin/books/chapters` | editor, admin |
 | PATCH | `/admin/books/chapters/:id` | editor, admin |
 | POST | `/admin/books/chapters/:id/publish` | editor*, admin |
 

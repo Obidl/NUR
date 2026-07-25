@@ -84,6 +84,10 @@ export const endpoints = {
       item: (id: string) => `/api/v1/admin/books/${id}`,
       publish: (id: string) => `/api/v1/admin/books/${id}/publish`,
       status: (id: string) => `/api/v1/admin/books/${id}/status`,
+      bookChapters: (id: string) => `/api/v1/admin/books/${id}/chapters`,
+      chapters: '/api/v1/admin/books/chapters',
+      chapter: (id: string) => `/api/v1/admin/books/chapters/${id}`,
+      publishChapter: (id: string) => `/api/v1/admin/books/chapters/${id}/publish`,
     },
     users: {
       list: '/api/v1/admin/users',

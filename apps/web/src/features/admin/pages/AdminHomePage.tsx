@@ -10,7 +10,7 @@ const links = [
   {
     to: '/admin/books',
     title: 'Kitoblar',
-    description: 'Draft → tekshiruv → nashr oqimi.',
+    description: 'Kitob + bob matni, draft → nashr.',
   },
   {
     to: '/admin/research',

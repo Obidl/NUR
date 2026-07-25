@@ -104,6 +104,13 @@ adminBooksRouter.post(
   bookController.adminCreateBook,
 );
 
+adminBooksRouter.get(
+  '/:id/chapters',
+  ...editorGuard,
+  validateParams(z.object({ id: z.string().min(1) })),
+  bookController.adminListChapters,
+);
+
 adminBooksRouter.post(
   '/chapters',
   ...editorGuard,

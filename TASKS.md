@@ -208,6 +208,7 @@ Only if product pulls curriculum into scope — see `CURRICULUM.md`.
 | T-147 | Placeholder audio notice + admin episode audioUrl editor | P0 | ✅ |
 | T-148 | Home = video-1 Today’s Mission (Ertalab/Yo‘lda/Kechqurun) | P0 | ✅ |
 | T-149 | Admin: create/list/publish podcast episodes + audio URL | P0 | ✅ |
+| T-150 | Admin: create/list/publish book chapters + body edit | P0 | ✅ |
 
 ---
 
