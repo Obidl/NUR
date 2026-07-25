@@ -213,6 +213,7 @@ Only if product pulls curriculum into scope — see `CURRICULUM.md`.
 | T-152 | Detail pages + player bar premium polish | P1 | ✅ |
 | T-153 | Videos: YouTube embed CMS + siyrat-first seed/Home Yo‘lda | P0 | ✅ |
 | T-154 | Global search includes videos | P1 | ✅ |
+| T-155 | Siyrat yog‘dusi Islom.uz playlist (51) as priority video series | P0 | ✅ |
 
 ---
 

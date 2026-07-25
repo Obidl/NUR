@@ -10,6 +10,9 @@
  * Refuses when NODE_ENV=production.
  */
 import 'dotenv/config';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { loadEnv } from '../src/config/env.js';
@@ -24,6 +27,34 @@ import { ResearchArticleModel } from '../src/modules/research/research.model.js'
 import { LearningPathModel } from '../src/modules/curriculum/curriculum.model.js';
 import { SurahModel } from '../src/modules/quran/surah.model.js';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+type VideoEpisodeSeed = {
+  slug: string;
+  title: string;
+  description: string;
+  youtubeVideoId: string;
+  episodeNumber: number;
+};
+
+type VideoSeriesSeed = {
+  slug: string;
+  title: string;
+  host: string;
+  description: string;
+  channelUrl: string;
+  language: string;
+  episodes: VideoEpisodeSeed[];
+};
+
+const siyratYogdusiPack = JSON.parse(
+  readFileSync(join(__dirname, 'data/siyrat-yogdusi-videos.json'), 'utf8'),
+) as {
+  playlistUrl: string;
+  channelUrl: string;
+  ownerEntryVideoId: string;
+  episodes: VideoEpisodeSeed[];
+};
 const DEMO_EMAIL = 'demo.editor@nur.local';
 const DEMO_PASSWORD = 'password123';
 const COVER = 'https://placehold.co/600x800/121820/c58b2d?text=NUR';
@@ -114,7 +145,17 @@ const PODCAST_SERIES = [
   },
 ] as const;
 
-const VIDEO_SERIES = [
+const VIDEO_SERIES: VideoSeriesSeed[] = [
+  {
+    slug: 'siyrat-yogdusi-video',
+    title: 'Siyrat yog‘dusi (Islom.uz)',
+    host: 'Islom.uz — Qamariddin Bekmuhammad, Yorqin Xalil',
+    description:
+      'Owner-priority: Rasululloh ﷺ siyrati (bolalik / payg‘ambarlikdan oldin → Makka → Madina). YouTube embed only — playlist PLys356tU5j5QwryNqakQTBiq1dVj7tR5m. Entry: https://youtu.be/D02mw3_tt4c',
+    channelUrl: siyratYogdusiPack.channelUrl,
+    language: 'uz',
+    episodes: siyratYogdusiPack.episodes,
+  },
   {
     slug: 'nouman-ali-khan-prophet-lessons',
     title: 'Nouman Ali Khan — Prophet ﷺ lessons',
@@ -236,7 +277,7 @@ const VIDEO_SERIES = [
       },
     ],
   },
-] as const;
+];
 
 const BOOKS = [
   {
@@ -379,6 +420,10 @@ async function main() {
   const videoEpisodeIdsBySeries: Record<string, string[]> = {};
 
   for (const seriesDef of VIDEO_SERIES) {
+    const isPrimary = seriesDef.slug === 'siyrat-yogdusi-video';
+    const coverUrl = isPrimary
+      ? `https://i.ytimg.com/vi/${siyratYogdusiPack.ownerEntryVideoId}/hqdefault.jpg`
+      : COVER;
     const series = await VideoSeriesModel.findOneAndUpdate(
       { slug: seriesDef.slug },
       {
@@ -386,14 +431,14 @@ async function main() {
         slug: seriesDef.slug,
         description: seriesDef.description,
         hostOrScholar: seriesDef.host,
-        coverUrl: COVER,
+        coverUrl,
         language: seriesDef.language,
-        topics: ['siyrat'],
+        topics: isPrimary ? ['siyrat', 'siyrat-yogdusi', 'priority'] : ['siyrat'],
         channelUrl: seriesDef.channelUrl,
         status: 'published',
         rights: videoRights,
         createdBy: editorId,
-        publishedAt: now,
+        publishedAt: isPrimary ? new Date(now.getTime() + 60_000) : now,
         deletedAt: null,
       },
       { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
@@ -533,10 +578,22 @@ async function main() {
   const suhbat = episodeIdsBySeries['siyrat-suhbatlari']!;
   const shifoAudio = episodeIdsBySeries['shifo-sharhi']!;
   const enListen = episodeIdsBySeries['seerah-english-listening']!;
+  const yogdusiVideos = videoEpisodeIdsBySeries['siyrat-yogdusi-video'] ?? [];
   const nakVideos = videoEpisodeIdsBySeries['nouman-ali-khan-prophet-lessons'] ?? [];
   const hasanxonVideos = videoEpisodeIdsBySeries['hasanxon-yahyo-siyrat'] ?? [];
   const husaynxonVideos = videoEpisodeIdsBySeries['husaynxon-yahyo-siyrat'] ?? [];
-  const allVideos = [...hasanxonVideos, ...nakVideos, ...husaynxonVideos];
+  /** Owner entry: 46-son payg‘ambarlikdan oldingi hayot (bolalik…) — then continue playlist. */
+  const ownerEntryIdx = Math.max(
+    0,
+    siyratYogdusiPack.episodes.findIndex(
+      (e) => e.youtubeVideoId === siyratYogdusiPack.ownerEntryVideoId,
+    ),
+  );
+  const primaryVideos =
+    yogdusiVideos.length > 0
+      ? [...yogdusiVideos.slice(ownerEntryIdx), ...yogdusiVideos.slice(0, ownerEntryIdx)]
+      : [];
+  const allVideos = [...primaryVideos, ...hasanxonVideos, ...nakVideos, ...husaynxonVideos];
   const rahiq = bookMeta['ar-rahiqul-maxtum']!;
   const shamoil = bookMeta['shamoili-muhammadiya']!;
   const shifoBook = bookMeta['ash-shifo']!;
@@ -550,10 +607,16 @@ async function main() {
     return enListen[(dayIndex - 13) % enListen.length]!;
   }
 
-  /** Siyrat-first: prefer Hasanxon → Bayyinah → hasanhusayn; alternate with podcast. */
+  /** Owner-priority: Siyrat yog‘dusi video on Yo‘lda (odd days); start at D02mw3_tt4c. */
   function videoForDay(dayIndex: number): string | null {
-    if (allVideos.length === 0) return null;
-    if (dayIndex % 2 === 1) return allVideos[dayIndex % allVideos.length]!;
+    if (primaryVideos.length === 0) {
+      if (allVideos.length === 0) return null;
+      if (dayIndex % 2 === 1) return allVideos[dayIndex % allVideos.length]!;
+      return null;
+    }
+    if (dayIndex % 2 === 1) {
+      return primaryVideos[Math.floor(dayIndex / 2) % primaryVideos.length]!;
+    }
     return null;
   }
 

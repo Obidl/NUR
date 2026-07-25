@@ -42,6 +42,17 @@ Admin: `/admin/videos` — yangi epizodga watch URL yoki 11 belgili ID.
 
 ### Seeded embeds (verified oEmbed)
 
+#### Priority — Siyrat yog‘dusi (Islom.uz)
+
+Owner entry: [payg‘ambarlikdan oldingi hayot / 46-son](https://youtu.be/D02mw3_tt4c)  
+Playlist: [PLys356tU5j5QwryNqakQTBiq1dVj7tR5m](https://www.youtube.com/playlist?list=PLys356tU5j5QwryNqakQTBiq1dVj7tR5m) · Channel: [@islomuz](https://www.youtube.com/@islomuz)
+
+| Seriya | Epizodlar | Note |
+| --- | --- | --- |
+| Siyrat yog‘dusi (Islom.uz) | 51 ta (son 1… playlist tartibida) | 15-kun Yo‘lda shu seriyadan boshlanadi (46-sondan) |
+
+#### Other
+
 | Seriya | Epizod | YouTube ID |
 | --- | --- | --- |
 | NAK — Prophet ﷺ | Lessons from Uhud to Hajj Ep 1 | `YhWp46tsolk` |
