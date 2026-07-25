@@ -5,13 +5,19 @@ import {
   adminListPodcastSeries,
   adminPublishPodcastSeries,
   adminSetPodcastSeriesStatus,
+  adminUpdatePodcastEpisode,
   type AdminContentCard,
   type EditorialStatus,
 } from '@/features/admin/api/adminApi';
 import { ContentWorkflowActions } from '@/features/admin/components/ContentWorkflowActions';
 import { StatusBadge } from '@/features/admin/components/StatusBadge';
+import { fetchPodcastEpisode, fetchPodcastSeriesDetail } from '@/features/podcasts/api/podcastApi';
+import type { PodcastEpisodeSummary } from '@/features/podcasts/types/podcast.types';
 import { Button } from '@/shared/components/Button';
 import { getErrorMessage } from '@/shared/lib/errors';
+import { isPlaceholderMediaUrl } from '@/shared/lib/media';
+
+type EpisodeRow = PodcastEpisodeSummary & { audioUrl: string };
 
 export function AdminPodcastsPage() {
   const [items, setItems] = useState<AdminContentCard[]>([]);
@@ -22,6 +28,9 @@ export function AdminPodcastsPage() {
   const [coverUrl, setCoverUrl] = useState('https://');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
+  const [episodes, setEpisodes] = useState<EpisodeRow[]>([]);
+  const [audioDrafts, setAudioDrafts] = useState<Record<string, string>>({});
 
   async function reload(status?: string) {
     const result = await adminListPodcastSeries({
@@ -35,6 +44,45 @@ export function AdminPodcastsPage() {
       setError(getErrorMessage(err, 'Ro‘yxat yuklanmadi')),
     );
   }, [statusFilter]);
+
+  async function loadEpisodes(slug: string) {
+    setBusy(true);
+    setError(null);
+    try {
+      const detail = await fetchPodcastSeriesDetail(slug);
+      const rows: EpisodeRow[] = [];
+      const drafts: Record<string, string> = {};
+      for (const ep of detail.episodes) {
+        const full = await fetchPodcastEpisode(ep.id);
+        rows.push({ ...ep, audioUrl: full.audioUrl });
+        drafts[ep.id] = full.audioUrl;
+      }
+      setEpisodes(rows);
+      setAudioDrafts(drafts);
+      setExpandedSlug(slug);
+    } catch (err) {
+      setError(getErrorMessage(err, 'Epizodlar yuklanmadi'));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveAudio(episodeId: string) {
+    const audioUrl = audioDrafts[episodeId]?.trim();
+    if (!audioUrl) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await adminUpdatePodcastEpisode(episodeId, { audioUrl });
+      setEpisodes((prev) =>
+        prev.map((ep) => (ep.id === episodeId ? { ...ep, audioUrl } : ep)),
+      );
+    } catch (err) {
+      setError(getErrorMessage(err, 'Audio URL saqlanmadi'));
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function onCreate(event: FormEvent) {
     event.preventDefault();
@@ -76,7 +124,9 @@ export function AdminPodcastsPage() {
     <section className="space-y-8">
       <header>
         <h1 className="text-xl font-medium">Podcast CMS</h1>
-        <p className="mt-1 text-sm text-nur-muted">Status oqimi va soft delete.</p>
+        <p className="mt-1 text-sm text-nur-muted">
+          Status oqimi, soft delete, va epizod audio URL (litsenziyalangan manba).
+        </p>
       </header>
 
       {error ? <p className="text-sm text-[var(--nur-danger)]">{error}</p> : null}
@@ -143,6 +193,60 @@ export function AdminPodcastsPage() {
                 </div>
                 <StatusBadge status={item.status} />
               </div>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={busy}
+                  onClick={() => {
+                    if (expandedSlug === item.slug) {
+                      setExpandedSlug(null);
+                      setEpisodes([]);
+                      return;
+                    }
+                    void loadEpisodes(item.slug);
+                  }}
+                >
+                  {expandedSlug === item.slug ? 'Epizodlarni yopish' : 'Audio URL’lar'}
+                </Button>
+              </div>
+              {expandedSlug === item.slug ? (
+                <ul className="space-y-4 rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/40 p-3">
+                  {episodes.map((ep) => (
+                    <li key={ep.id} className="space-y-2">
+                      <p className="text-sm font-medium">
+                        {ep.episodeNumber ? `${ep.episodeNumber}. ` : ''}
+                        {ep.title}
+                        {isPlaceholderMediaUrl(ep.audioUrl) ? (
+                          <span className="ml-2 text-[10px] uppercase tracking-wide text-nur-faint">
+                            placeholder
+                          </span>
+                        ) : null}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <input
+                          value={audioDrafts[ep.id] ?? ''}
+                          onChange={(e) =>
+                            setAudioDrafts((prev) => ({ ...prev, [ep.id]: e.target.value }))
+                          }
+                          placeholder="https://… (litsenziyalangan audio)"
+                          className="min-w-[16rem] flex-1 rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+                        />
+                        <Button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => void saveAudio(ep.id)}
+                        >
+                          Saqlash
+                        </Button>
+                      </div>
+                    </li>
+                  ))}
+                  {episodes.length === 0 ? (
+                    <p className="text-xs text-nur-faint">Epizod yo‘q yoki yuklanmoqda…</p>
+                  ) : null}
+                </ul>
+              ) : null}
               <ContentWorkflowActions
                 status={item.status}
                 busy={busy}

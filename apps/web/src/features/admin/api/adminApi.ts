@@ -55,6 +55,17 @@ export async function adminDeletePodcastSeries(id: string) {
   await http.delete(endpoints.admin.podcasts.itemSeries(id));
 }
 
+export async function adminUpdatePodcastEpisode(
+  id: string,
+  input: { audioUrl?: string; title?: string; description?: string },
+) {
+  const { data } = await http.patch<{ data: { id: string; audioUrl?: string } }>(
+    endpoints.admin.podcasts.episode(id),
+    input,
+  );
+  return data.data;
+}
+
 export async function adminListBooks(params?: { status?: string }) {
   const { data } = await http.get<{ data: AdminContentCard[]; meta: { total: number } }>(
     endpoints.admin.books.list,

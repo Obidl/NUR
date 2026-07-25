@@ -1,49 +1,46 @@
 # NUR — Owner content checklist (Step 4)
 
 **Status:** Approved by Product Owner (Husanboy) — 2026-07-25  
-**Source:** Challenge video catalog (ChatGPT plan + UI reference)  
+**Source:** Challenge video catalog  
 **Depends on:** `IDEAL_PROJECT.md`, `CONTENT_RULES.md`
 
 ---
 
-## 1. Approved catalog
+## 1. Approved catalog (seeded)
 
-### Podcastlar (UZ)
-- [x] Siyrat yog‘dusi — Islom.uz  
-- [x] Siyrat suhbatlari — Hasanxon Yahyo Abdulmajid  
-- [x] Ash-Shifo sharhi — Husaynxon Yahyo Abdulmajid  
-
-### Podcastlar (EN listening)
-- [x] Yasir Qadhi — Seerah / Omar Suleiman — The Firsts / Qalam / Ahson Syed (curated series)
-
-### Kitoblar
-- [x] Ar-Rahiqul Maxtum  
-- [x] Shamoili Muhammadiya  
-- [x] Ash-Shifo  
-- [x] 40 Hadis (Navaviy)  
-
-### Qur’on
-- [x] Kunlik short surah ranges (import dataset only)
-
-### Reference
-- [x] sunnah.com, quran.com, islamhouse.com  
-
-### Path
-- [x] `siyrat-15-kun` — 15 kun Ertalab / Yo‘lda / Kechqurun  
+Podcast / kitob / 15 kun path — `siyrat-15-kun`.
 
 ---
 
-## 2. Honest limits (still open)
+## 2. Audio URL almashtirish (hozirgi next)
+
+1. Login: `demo.editor@nur.local` / `password123` (yoki o‘z editor)  
+2. `/admin/podcasts`  
+3. Seriya → **Audio URL’lar**  
+4. Har epizodga litsenziyalangan `https://…` qo‘ying → **Saqlash**
+
+| Seriya | Epizod | Audio URL |
+| --- | --- | --- |
+| Siyrat yog‘dusi | qism-1 … | |
+| Siyrat suhbatlari | qism-1 … | |
+| Ash-Shifo sharhi | qism-1 … | |
+| Seerah EN listening | qism-1 … | |
+
+> YouTube/Spotify’ni qayta host qilmang — faqat ruxsat berilgan to‘g‘ridan-to‘g‘ri audio yoki o‘zingiz yuklagan fayl.
+
+---
+
+## 3. Kitob matni
+
+Admin books CMS or seed orqali bob `body` ni litsenziyalangan matn bilan almashtiring. Stub — invent emas.
+
+---
+
+## 4. Limits
 
 | Item | Status |
 | --- | --- |
-| Licensed podcast audio URLs | Placeholder MP3 — **replace in admin** |
-| Full book / hadith chapter text | Stub only — **import licensed text** |
-| Rehosting Islom.uz / YouTube / Spotify | **Forbidden** until permission + URL |
-
----
-
-## 3. Next for owner
-
-Admin yoki DB’da har epizod `audioUrl` ni haqiqiy litsenziyalangan link bilan almashtiring.  
-Kitob boblarini litsenziyalangan matn bilan yangilang.
+| Catalog titles | ✅ |
+| Placeholder audio notice in player | ✅ |
+| Admin audio URL editor | ✅ |
+| Real licensed files | ☐ Owner pastes URLs |

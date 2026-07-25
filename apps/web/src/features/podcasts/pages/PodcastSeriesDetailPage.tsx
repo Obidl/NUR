@@ -178,6 +178,11 @@ export function PodcastSeriesDetailPage() {
       </div>
 
       <p className="mt-6 text-sm leading-7 text-nur-muted">{series.description}</p>
+      {series.description.toLowerCase().includes('placeholder') ? (
+        <p role="status" className="mt-3 text-xs text-nur-faint">
+          Asl audio manbalari hali ulanmagan bo‘lishi mumkin — playerda eslatma chiqadi.
+        </p>
+      ) : null}
       {error ? <p className="mt-4 text-sm text-[var(--nur-danger)]">{error}</p> : null}
 
       <h2 className="mt-10 mb-3 text-sm font-medium text-nur-muted">

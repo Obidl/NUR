@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Pause, Play, X } from 'lucide-react';
 import { usePodcastPlayerStore } from '@/features/podcasts/store/podcastPlayerStore';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { isPlaceholderMediaUrl } from '@/shared/lib/media';
 
 function formatTime(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60);
@@ -25,6 +26,8 @@ export function PodcastPlayerBar() {
   const setPlaybackRate = usePodcastPlayerStore((s) => s.setPlaybackRate);
   const persistProgress = usePodcastPlayerStore((s) => s.persistProgress);
   const stop = usePodcastPlayerStore((s) => s.stop);
+
+  const placeholder = isPlaceholderMediaUrl(audioUrl);
 
   useEffect(() => {
     const el = audioRef.current;
@@ -84,6 +87,11 @@ export function PodcastPlayerBar() {
         }}
       />
       <div className="mx-auto flex max-w-5xl flex-col gap-2">
+        {placeholder ? (
+          <p role="status" className="text-xs text-nur-faint">
+            Vaqtinchalik demo audio — asl manba URL admin orqali qo‘yiladi.
+          </p>
+        ) : null}
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="truncate text-sm font-medium">{title}</p>
