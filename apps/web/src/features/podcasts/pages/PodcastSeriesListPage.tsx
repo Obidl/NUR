@@ -7,6 +7,7 @@ import type {
   PodcastSeriesCard,
 } from '@/features/podcasts/types/podcast.types';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { CoverImage } from '@/shared/components/CoverImage';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { Input } from '@/shared/components/Field';
 import { PageShell } from '@/shared/components/PageShell';
@@ -121,9 +122,8 @@ export function PodcastSeriesListPage() {
           {items.map((series) => (
             <li key={series.id}>
               <Link to={`/podcasts/${series.slug}`} className="nur-list-row">
-                <img
+                <CoverImage
                   src={series.coverUrl}
-                  alt=""
                   className="h-14 w-14 shrink-0 rounded-[var(--radius-m)] object-cover shadow-[var(--shadow-xs)]"
                 />
                 <div className="min-w-0">

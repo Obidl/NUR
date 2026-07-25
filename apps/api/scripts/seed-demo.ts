@@ -58,6 +58,13 @@ const siyratYogdusiPack = JSON.parse(
 const DEMO_EMAIL = 'demo.editor@nur.local';
 const DEMO_PASSWORD = 'password123';
 const COVER = 'https://placehold.co/600x800/121820/c58b2d?text=NUR';
+/** Prefer YouTube thumbs — placehold.co often blocked in browsers. */
+const PODCAST_COVERS: Record<string, string> = {
+  'siyrat-yogdusi': 'https://i.ytimg.com/vi/D02mw3_tt4c/hqdefault.jpg',
+  'siyrat-suhbatlari': 'https://i.ytimg.com/vi/uRh5fnlPUc4/hqdefault.jpg',
+  'shifo-sharhi': 'https://i.ytimg.com/vi/LCA4W68c1bE/hqdefault.jpg',
+  'seerah-english-listening': 'https://i.ytimg.com/vi/YhWp46tsolk/hqdefault.jpg',
+};
 /** Temporary playback only — replace with licensed URLs (CONTENT_RULES G-04). */
 const PLACEHOLDER_AUDIO =
   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
@@ -370,6 +377,7 @@ async function main() {
   const episodeIdsBySeries: Record<string, string[]> = {};
 
   for (const seriesDef of PODCAST_SERIES) {
+    const seriesCover = PODCAST_COVERS[seriesDef.slug] ?? COVER;
     const series = await PodcastSeriesModel.findOneAndUpdate(
       { slug: seriesDef.slug },
       {
@@ -377,7 +385,7 @@ async function main() {
         slug: seriesDef.slug,
         description: seriesDef.description,
         hostOrScholar: seriesDef.host,
-        coverUrl: COVER,
+        coverUrl: seriesCover,
         language: seriesDef.topics.includes('en') ? 'en' : 'uz',
         topics: [...seriesDef.topics],
         status: 'published',
@@ -401,7 +409,7 @@ async function main() {
           slug: `qism-${i}`,
           description: `${seriesDef.title} / ${theme}. Placeholder audio — replace with licensed URL.`,
           audioUrl: PLACEHOLDER_AUDIO,
-          coverUrl: COVER,
+          coverUrl: seriesCover,
           durationSeconds: 1200 + i * 60,
           episodeNumber: i,
           status: 'published',
@@ -421,9 +429,9 @@ async function main() {
 
   for (const seriesDef of VIDEO_SERIES) {
     const isPrimary = seriesDef.slug === 'siyrat-yogdusi-video';
-    const coverUrl = isPrimary
-      ? `https://i.ytimg.com/vi/${siyratYogdusiPack.ownerEntryVideoId}/hqdefault.jpg`
-      : COVER;
+    const firstVideoId =
+      seriesDef.episodes[0]?.youtubeVideoId ?? siyratYogdusiPack.ownerEntryVideoId;
+    const coverUrl = `https://i.ytimg.com/vi/${firstVideoId}/hqdefault.jpg`;
     const series = await VideoSeriesModel.findOneAndUpdate(
       { slug: seriesDef.slug },
       {

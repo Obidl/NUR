@@ -4,6 +4,7 @@ import { BookOpen } from 'lucide-react';
 import { fetchBookProgress, fetchBooks } from '@/features/books/api/bookApi';
 import type { BookCard, BookProgressItem } from '@/features/books/types/book.types';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { CoverImage } from '@/shared/components/CoverImage';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { Input } from '@/shared/components/Field';
 import { PageShell } from '@/shared/components/PageShell';
@@ -115,11 +116,8 @@ export function BookCatalogPage() {
           {items.map((book) => (
             <li key={book.id}>
               <Link to={`/books/${book.slug}`} className="nur-list-row">
-                <img
+                <CoverImage
                   src={book.coverUrl}
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
                   className="h-[4.5rem] w-12 shrink-0 rounded-[var(--radius-m)] object-cover shadow-[var(--shadow-xs)]"
                 />
                 <div className="min-w-0">

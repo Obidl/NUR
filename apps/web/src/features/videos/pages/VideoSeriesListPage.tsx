@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Video } from 'lucide-react';
 import { fetchVideoSeries } from '@/features/videos/api/videoApi';
 import type { VideoSeriesCard } from '@/features/videos/types/video.types';
+import { CoverImage } from '@/shared/components/CoverImage';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { Input } from '@/shared/components/Field';
 import { PageShell } from '@/shared/components/PageShell';
@@ -78,9 +79,8 @@ export function VideoSeriesListPage() {
           {items.map((series) => (
             <li key={series.id}>
               <Link to={`/videos/${series.slug}`} className="nur-list-row">
-                <img
+                <CoverImage
                   src={series.coverUrl}
-                  alt=""
                   className="h-14 w-24 shrink-0 rounded-[var(--radius-m)] object-cover shadow-[var(--shadow-xs)]"
                 />
                 <div className="min-w-0">

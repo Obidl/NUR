@@ -7,6 +7,7 @@ import type {
   VideoSeriesCard,
 } from '@/features/videos/types/video.types';
 import { Button } from '@/shared/components/Button';
+import { CoverImage } from '@/shared/components/CoverImage';
 import { DetailBackLink } from '@/shared/components/DetailBackLink';
 import { DetailLoading } from '@/shared/components/DetailLoading';
 import { ErrorState } from '@/shared/components/Skeleton';
@@ -134,9 +135,8 @@ export function VideoSeriesDetailPage() {
                     active && 'bg-nur-sunken/70',
                   )}
                 >
-                  <img
+                  <CoverImage
                     src={episode.coverUrl ?? series.coverUrl}
-                    alt=""
                     className="h-12 w-20 shrink-0 rounded-[var(--radius-m)] object-cover"
                   />
                   <div className="min-w-0">
