@@ -49,6 +49,8 @@ function buildTargetRef(form: typeof initialForm): Record<string, unknown> {
       };
     case 'podcast_episode':
       return { episodeId: form.episodeId.trim() };
+    case 'video_episode':
+      return { episodeId: form.episodeId.trim() };
     case 'book_chapter':
       return { bookId: form.bookId.trim(), chapterId: form.chapterId.trim() };
     case 'research_article':
@@ -225,6 +227,7 @@ export function AdminCurriculumPage() {
           <option value="research_article">Tadqiqot maqolasi</option>
           <option value="quran_range">Qur’on oralig‘i</option>
           <option value="podcast_episode">Podcast epizod</option>
+          <option value="video_episode">Video epizod</option>
           <option value="book_chapter">Kitob bob</option>
         </select>
 
@@ -259,11 +262,11 @@ export function AdminCurriculumPage() {
             />
           </div>
         ) : null}
-        {form.targetType === 'podcast_episode' ? (
+        {form.targetType === 'podcast_episode' || form.targetType === 'video_episode' ? (
           <input
             required
             className="w-full rounded-[var(--radius-s)] border border-nur-line bg-transparent px-3 py-2 text-sm"
-            placeholder="episodeId"
+            placeholder={form.targetType === 'video_episode' ? 'video episodeId' : 'episodeId'}
             value={form.episodeId}
             onChange={(e) => setForm((f) => ({ ...f, episodeId: e.target.value }))}
           />

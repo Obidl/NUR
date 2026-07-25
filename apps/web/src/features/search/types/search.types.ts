@@ -1,5 +1,5 @@
 export type SearchHit = {
-  type: 'quran' | 'podcasts' | 'books' | 'research';
+  type: 'quran' | 'podcasts' | 'videos' | 'books' | 'research';
   title: string;
   slug?: string;
   number?: number;

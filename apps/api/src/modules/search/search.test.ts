@@ -8,6 +8,7 @@ import { SurahModel } from '../quran/surah.model.js';
 import { PodcastSeriesModel } from '../podcasts/podcastSeries.model.js';
 import { BookModel } from '../books/book.model.js';
 import { ResearchArticleModel } from '../research/research.model.js';
+import { VideoSeriesModel } from '../videos/videoSeries.model.js';
 
 /** EXAMPLE — NOT FOR PRODUCTION fixtures */
 
@@ -35,6 +36,7 @@ describe('global search API', () => {
     await Promise.all([
       SurahModel.deleteMany({}),
       PodcastSeriesModel.deleteMany({}),
+      VideoSeriesModel.deleteMany({}),
       BookModel.deleteMany({}),
       ResearchArticleModel.deleteMany({}),
     ]);
@@ -58,6 +60,21 @@ describe('global search API', () => {
       topics: ['quran'],
       status: 'published',
       rights: { licenseStatus: 'owned' },
+      createdBy: new mongoose.Types.ObjectId(),
+      publishedAt: new Date(),
+    });
+
+    await VideoSeriesModel.create({
+      title: 'Fotiha video seriyasi',
+      slug: 'fotiha-video',
+      description: 'Example video series about Fotiha.',
+      hostOrScholar: 'EXAMPLE Host',
+      coverUrl: 'https://example.com/v.jpg',
+      language: 'uz',
+      topics: ['siyrat', 'quran'],
+      channelUrl: 'https://www.youtube.com/@example',
+      status: 'published',
+      rights: { licenseStatus: 'permission_granted', licenseNotes: 'EXAMPLE embed' },
       createdBy: new mongoose.Types.ObjectId(),
       publishedAt: new Date(),
     });
@@ -120,7 +137,9 @@ describe('global search API', () => {
     const res = await request(app).get('/api/v1/search').query({ q: 'Fotiha' });
     expect(res.status).toBe(200);
     const types = res.body.data.map((h: { type: string }) => h.type);
-    expect(types).toEqual(expect.arrayContaining(['quran', 'podcasts', 'books', 'research']));
+    expect(types).toEqual(
+      expect.arrayContaining(['quran', 'podcasts', 'videos', 'books', 'research']),
+    );
     expect(res.body.data.some((h: { title: string }) => h.title === 'Draft only')).toBe(false);
   });
 

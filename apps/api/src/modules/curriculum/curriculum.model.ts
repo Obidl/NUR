@@ -5,6 +5,7 @@ import { CONTENT_STATUSES } from '../../shared/utils/content.js';
 export const LESSON_TARGET_TYPES = [
   'quran_range',
   'podcast_episode',
+  'video_episode',
   'book_chapter',
   'research_article',
 ] as const;

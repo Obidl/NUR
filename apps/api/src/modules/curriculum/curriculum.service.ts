@@ -6,6 +6,8 @@ import { AyahModel } from '../quran/ayah.model.js';
 import { SurahModel } from '../quran/surah.model.js';
 import { PodcastEpisodeModel } from '../podcasts/podcastEpisode.model.js';
 import { PodcastSeriesModel } from '../podcasts/podcastSeries.model.js';
+import { VideoEpisodeModel } from '../videos/videoEpisode.model.js';
+import { VideoSeriesModel } from '../videos/videoSeries.model.js';
 import { BookModel } from '../books/book.model.js';
 import { BookChapterModel } from '../books/bookChapter.model.js';
 import { ResearchArticleModel } from '../research/research.model.js';
@@ -139,7 +141,25 @@ async function resolveLessonTargetLabel(lesson: LessonRow) {
       return {
         title: episode.title,
         slug: episode.slug,
-        href: series ? `/podcasts/${series.slug}` : '/podcasts',
+        href: series ? `/podcasts/${series.slug}?episode=${episode._id.toString()}` : '/podcasts',
+      };
+    }
+    case 'video_episode': {
+      const episode = await VideoEpisodeModel.findOne({
+        _id: String(ref.episodeId),
+        ...publicContentFilter(),
+      }).lean();
+      if (!episode) return { title: null, slug: null, href: null };
+      const series = await VideoSeriesModel.findOne({
+        _id: episode.seriesId,
+        ...publicContentFilter(),
+      }).lean();
+      return {
+        title: episode.title,
+        slug: episode.slug,
+        href: series
+          ? `/videos/${series.slug}?episode=${episode._id.toString()}`
+          : '/videos',
       };
     }
     case 'book_chapter': {
@@ -221,6 +241,23 @@ async function assertLessonTargetPublishable(lesson: LessonInput, indexLabel: st
         throw new AppError(
           'VALIDATION_ERROR',
           `${indexLabel}: podcast episode is missing or unpublished`,
+          422,
+        );
+      }
+      return;
+    }
+    case 'video_episode': {
+      if (!Types.ObjectId.isValid(String(ref.episodeId))) {
+        throw new AppError('VALIDATION_ERROR', `${indexLabel}: invalid episodeId`, 422);
+      }
+      const episode = await VideoEpisodeModel.findOne({
+        _id: ref.episodeId,
+        ...publicContentFilter(),
+      }).lean();
+      if (!episode) {
+        throw new AppError(
+          'VALIDATION_ERROR',
+          `${indexLabel}: video episode is missing or unpublished`,
           422,
         );
       }

@@ -1,12 +1,13 @@
 import { publicContentFilter } from '../../shared/utils/content.js';
 import { SurahModel } from '../quran/surah.model.js';
 import { PodcastSeriesModel } from '../podcasts/podcastSeries.model.js';
+import { VideoSeriesModel } from '../videos/videoSeries.model.js';
 import { BookModel } from '../books/book.model.js';
 import { ResearchArticleModel } from '../research/research.model.js';
 import type { SearchQuery } from './search.validation.js';
 
 export type SearchHit = {
-  type: 'quran' | 'podcasts' | 'books' | 'research';
+  type: 'quran' | 'podcasts' | 'videos' | 'books' | 'research';
   title: string;
   slug?: string;
   number?: number;
@@ -96,6 +97,25 @@ async function searchBooks(q: string, limit: number): Promise<SearchHit[]> {
   }));
 }
 
+async function searchVideos(q: string, limit: number): Promise<SearchHit[]> {
+  const regex = new RegExp(escapeRegex(q), 'i');
+  const rows = await VideoSeriesModel.find({
+    ...publicContentFilter(),
+    $or: [{ title: regex }, { description: regex }, { hostOrScholar: regex }, { topics: regex }],
+  })
+    .sort({ publishedAt: -1 })
+    .limit(limit)
+    .lean();
+
+  return rows.map((row) => ({
+    type: 'videos' as const,
+    title: row.title,
+    slug: row.slug,
+    snippet: snippetFrom(`${row.hostOrScholar} — ${row.description}`),
+    href: `/videos/${row.slug}`,
+  }));
+}
+
 async function searchResearch(q: string, limit: number): Promise<SearchHit[]> {
   const regex = new RegExp(escapeRegex(q), 'i');
   const rows = await ResearchArticleModel.find({
@@ -123,6 +143,7 @@ export async function globalSearch(input: SearchQuery) {
   const tasks: Array<Promise<SearchHit[]>> = [];
   if (types.includes('quran')) tasks.push(searchQuran(q, limit));
   if (types.includes('podcasts')) tasks.push(searchPodcasts(q, limit));
+  if (types.includes('videos')) tasks.push(searchVideos(q, limit));
   if (types.includes('books')) tasks.push(searchBooks(q, limit));
   if (types.includes('research')) tasks.push(searchResearch(q, limit));
 

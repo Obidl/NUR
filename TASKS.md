@@ -211,6 +211,8 @@ Only if product pulls curriculum into scope — see `CURRICULUM.md`.
 | T-150 | Admin: create/list/publish book chapters + body edit | P0 | ✅ |
 | T-151 | Premium UI craft pass (tokens, shell, empty/skeleton/toast) | P1 | ✅ |
 | T-152 | Detail pages + player bar premium polish | P1 | ✅ |
+| T-153 | Videos: YouTube embed CMS + siyrat-first seed/Home Yo‘lda | P0 | ✅ |
+| T-154 | Global search includes videos | P1 | ✅ |
 
 ---
 

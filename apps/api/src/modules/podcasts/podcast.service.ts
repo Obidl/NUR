@@ -90,11 +90,35 @@ export async function listPublishedSeries(input: {
 
   const skip = (input.page - 1) * input.limit;
   const [rows, total] = await Promise.all([
-    PodcastSeriesModel.find(filter)
-      .sort({ publishedAt: -1, createdAt: -1 })
-      .skip(skip)
-      .limit(input.limit)
-      .lean(),
+    PodcastSeriesModel.aggregate([
+      { $match: filter },
+      {
+        $addFields: {
+          siyratBoost: {
+            $cond: [
+              {
+                $gt: [
+                  {
+                    $size: {
+                      $setIntersection: [
+                        { $ifNull: ['$topics', []] },
+                        ['siyrat', 'siyra'],
+                      ],
+                    },
+                  },
+                  0,
+                ],
+              },
+              0,
+              1,
+            ],
+          },
+        },
+      },
+      { $sort: { siyratBoost: 1, publishedAt: -1, createdAt: -1 } },
+      { $skip: skip },
+      { $limit: input.limit },
+    ]),
     PodcastSeriesModel.countDocuments(filter),
   ]);
 

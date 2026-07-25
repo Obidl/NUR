@@ -22,6 +22,8 @@ import { ResearchListPage } from '@/features/research/pages/ResearchListPage';
 import { ResearchDetailPage } from '@/features/research/pages/ResearchDetailPage';
 import { CurriculumListPage } from '@/features/curriculum/pages/CurriculumListPage';
 import { CurriculumDetailPage } from '@/features/curriculum/pages/CurriculumDetailPage';
+import { VideoSeriesListPage } from '@/features/videos/pages/VideoSeriesListPage';
+import { VideoSeriesDetailPage } from '@/features/videos/pages/VideoSeriesDetailPage';
 import { RoleRoute } from '@/features/auth/components/RoleRoute';
 import { LibraryPage } from '@/features/library/pages/LibraryPage';
 import { SearchPage } from '@/features/search/pages/SearchPage';
@@ -32,6 +34,11 @@ const AdminHomePage = lazy(() =>
 const AdminPodcastsPage = lazy(() =>
   import('@/features/admin/pages/AdminPodcastsPage').then((m) => ({
     default: m.AdminPodcastsPage,
+  })),
+);
+const AdminVideosPage = lazy(() =>
+  import('@/features/admin/pages/AdminVideosPage').then((m) => ({
+    default: m.AdminVideosPage,
   })),
 );
 const AdminBooksPage = lazy(() =>
@@ -75,6 +82,8 @@ export const router = createBrowserRouter([
       { path: 'quran/:surahNumber', element: <SurahReaderPage /> },
       { path: 'podcasts', element: <PodcastSeriesListPage /> },
       { path: 'podcasts/:slug', element: <PodcastSeriesDetailPage /> },
+      { path: 'videos', element: <VideoSeriesListPage /> },
+      { path: 'videos/:slug', element: <VideoSeriesDetailPage /> },
       { path: 'books', element: <BookCatalogPage /> },
       { path: 'books/:slug', element: <BookDetailPage /> },
       { path: 'books/:slug/:chapterSlug', element: <BookChapterReaderPage /> },
@@ -159,6 +168,14 @@ export const router = createBrowserRouter([
         element: (
           <AdminSuspense>
             <AdminPodcastsPage />
+          </AdminSuspense>
+        ),
+      },
+      {
+        path: 'videos',
+        element: (
+          <AdminSuspense>
+            <AdminVideosPage />
           </AdminSuspense>
         ),
       },

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const SEARCH_TYPES = ['quran', 'podcasts', 'books', 'research'] as const;
+const SEARCH_TYPES = ['quran', 'podcasts', 'videos', 'books', 'research'] as const;
 type SearchType = (typeof SEARCH_TYPES)[number];
 
 export const searchQuerySchema = z
@@ -20,7 +20,7 @@ export const searchQuerySchema = z
       ctx.addIssue({
         code: 'custom',
         path: ['types'],
-        message: 'types must be CSV of quran,podcasts,books,research',
+        message: 'types must be CSV of quran,podcasts,videos,books,research',
       });
     }
   })

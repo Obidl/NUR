@@ -16,6 +16,8 @@ import { loadEnv } from '../src/config/env.js';
 import { UserModel } from '../src/modules/auth/user.model.js';
 import { PodcastSeriesModel } from '../src/modules/podcasts/podcastSeries.model.js';
 import { PodcastEpisodeModel } from '../src/modules/podcasts/podcastEpisode.model.js';
+import { VideoSeriesModel } from '../src/modules/videos/videoSeries.model.js';
+import { VideoEpisodeModel } from '../src/modules/videos/videoEpisode.model.js';
 import { BookModel } from '../src/modules/books/book.model.js';
 import { BookChapterModel } from '../src/modules/books/bookChapter.model.js';
 import { ResearchArticleModel } from '../src/modules/research/research.model.js';
@@ -32,7 +34,13 @@ const PLACEHOLDER_AUDIO =
 const rights = {
   licenseStatus: 'permission_granted' as const,
   licenseNotes:
-    'Owner Husanboy approved catalog 2026-07-25 (challenge video list). Placeholder audio/stubs until licensed media/text URLs are supplied. Not a rehost of Islom.uz/YouTube/Spotify.',
+    'Owner Husanboy approved catalog. Placeholder audio/book stubs until licensed media/text. YouTube = embed only (not rehosted).',
+};
+
+const videoRights = {
+  licenseStatus: 'permission_granted' as const,
+  licenseNotes:
+    'YouTube embed / watch-on-platform; not rehosted. Editorial curated links.',
 };
 
 const DAY_THEMES = [
@@ -78,7 +86,7 @@ const PODCAST_SERIES = [
     host: 'Islom.uz',
     description:
       'Siyrat ketma-ketligi (owner-approved). Asl audio URL keyin qo‘yiladi; hozircha playback placeholder.',
-    topics: ['siyra', 'uz'],
+    topics: ['siyrat', 'uz'],
   },
   {
     slug: 'siyrat-suhbatlari',
@@ -86,7 +94,7 @@ const PODCAST_SERIES = [
     host: 'Hasanxon Yahyo Abdulmajid',
     description:
       'Siyrat suhbatlari (owner-approved). Asl audio URL keyin qo‘yiladi; hozircha playback placeholder.',
-    topics: ['siyra', 'uz'],
+    topics: ['siyrat', 'uz'],
   },
   {
     slug: 'shifo-sharhi',
@@ -94,7 +102,7 @@ const PODCAST_SERIES = [
     host: 'Husaynxon Yahyo Abdulmajid',
     description:
       'Ash-Shifo sharhi (owner-approved). Asl audio URL keyin qo‘yiladi; hozircha playback placeholder.',
-    topics: ['siyra', 'uz', 'shifo'],
+    topics: ['siyrat', 'uz', 'shifo'],
   },
   {
     slug: 'seerah-english-listening',
@@ -102,7 +110,131 @@ const PODCAST_SERIES = [
     host: 'Curated (Yasir Qadhi / Omar Suleiman / Qalam / Ahson Syed)',
     description:
       'Inglizcha listening ro‘yxati (owner-approved). Asl Spotify/YouTube URL keyin; hozircha placeholder.',
-    topics: ['siyra', 'en', 'listening'],
+    topics: ['siyrat', 'en', 'listening'],
+  },
+] as const;
+
+const VIDEO_SERIES = [
+  {
+    slug: 'nouman-ali-khan-prophet-lessons',
+    title: 'Nouman Ali Khan — Prophet ﷺ lessons',
+    host: 'Nouman Ali Khan (Bayyinah)',
+    description:
+      'Official @bayyinah Prophet ﷺ / seerah lessons via YouTube embed (not rehosted). Extend in admin.',
+    channelUrl: 'https://www.youtube.com/@bayyinah',
+    language: 'en',
+    episodes: [
+      {
+        slug: 'lessons-from-uhud-to-hajj-ep1',
+        title: 'Lessons from Uhud to Hajj | Ep 1 | Prophet’s ﷺ Road to Hajj',
+        description:
+          'Verified @bayyinah embed — https://www.youtube.com/watch?v=YhWp46tsolk',
+        youtubeVideoId: 'YhWp46tsolk',
+        episodeNumber: 1,
+      },
+      {
+        slug: 'hudaibiyyah-negotiations-ep2',
+        title: 'Struggles of Hudaibiyyah Negotiations | Ep 2 | Prophet’s ﷺ Road to Hajj',
+        description:
+          'Verified @bayyinah embed — https://www.youtube.com/watch?v=gEClJEMOCCA',
+        youtubeVideoId: 'gEClJEMOCCA',
+        episodeNumber: 2,
+      },
+      {
+        slug: 'when-they-insult-our-prophet',
+        title: '#Muhammad — When They Insult Our Prophet (PBUH)',
+        description:
+          'Verified @bayyinah embed — https://www.youtube.com/watch?v=I6zuKbBlmRo',
+        youtubeVideoId: 'I6zuKbBlmRo',
+        episodeNumber: 3,
+      },
+      {
+        slug: 'sending-salawat-on-the-prophet',
+        title: 'Sending Salawat on the Prophet ﷺ',
+        description:
+          'Verified @bayyinah embed — https://www.youtube.com/watch?v=yTN4Jxc6Kh4',
+        youtubeVideoId: 'yTN4Jxc6Kh4',
+        episodeNumber: 4,
+      },
+    ],
+  },
+  {
+    slug: 'hasanxon-yahyo-siyrat',
+    title: 'Hasanxon Yahyo — Siyrat',
+    host: 'Hasanxon Yahyo Abdulmajid',
+    description:
+      'Siyrat / Rasululloh ﷺ suhbatlari (@Hasanxondomla). YouTube embed only — not rehosted.',
+    channelUrl: 'https://www.youtube.com/@Hasanxondomla',
+    language: 'uz',
+    episodes: [
+      {
+        slug: 'shamoil-muhammadiya-1',
+        title: 'Rosululloh xilqatlari | Shamoilul-Muhammadiya 1-dars',
+        description:
+          'Verified @Hasanxondomla embed — https://www.youtube.com/watch?v=uRh5fnlPUc4',
+        youtubeVideoId: 'uRh5fnlPUc4',
+        episodeNumber: 1,
+      },
+      {
+        slug: 'paygambarimiz-magfirat-duosi',
+        title: 'Payg‘ambarimiz ﷺ ning Allohdan bizlarni mag‘firat so‘rab duo qilishlari',
+        description:
+          'Verified @Hasanxondomla embed — https://www.youtube.com/watch?v=P_RiMD-s26g',
+        youtubeVideoId: 'P_RiMD-s26g',
+        episodeNumber: 2,
+      },
+      {
+        slug: 'eng-katta-muallim-mavlid',
+        title: 'Eng katta muallim | MAVLID-1444',
+        description:
+          'Verified @Hasanxondomla embed — https://www.youtube.com/watch?v=FTBwpeQdwgk',
+        youtubeVideoId: 'FTBwpeQdwgk',
+        episodeNumber: 3,
+      },
+      {
+        slug: 'yo-rosululloh',
+        title: 'Yo Rosululloh ﷺ | Rosulullohni sog‘inganda tinglang',
+        description:
+          'Verified @Hasanxondomla embed — https://www.youtube.com/watch?v=biNPRapJil4',
+        youtubeVideoId: 'biNPRapJil4',
+        episodeNumber: 4,
+      },
+    ],
+  },
+  {
+    slug: 'husaynxon-yahyo-siyrat',
+    title: 'Hasanxon & Husaynxon Yahyo — hasanhusayn',
+    host: 'Hasanxon, Husaynxon Yahyo Abdulmajid',
+    description:
+      'Rasmiy YouTube @hasanhusayn (Telegram bilan bir ekosistem). Embed only — not rehosted.',
+    channelUrl: 'https://www.youtube.com/@hasanhusayn',
+    language: 'uz',
+    episodes: [
+      {
+        slug: 'rasululloh-duolari',
+        title: 'Rasulullohning ﷺ duolarini olarmidingiz',
+        description:
+          'Verified @hasanhusayn embed — https://www.youtube.com/watch?v=LCA4W68c1bE',
+        youtubeVideoId: 'LCA4W68c1bE',
+        episodeNumber: 1,
+      },
+      {
+        slug: 'niyat-va-qasd',
+        title: 'Niyat va qasd | Husaynxon Yahyo Abdulmajid',
+        description:
+          'Verified @hasanhusayn embed — https://www.youtube.com/watch?v=6ADm1CM48Zc',
+        youtubeVideoId: '6ADm1CM48Zc',
+        episodeNumber: 2,
+      },
+      {
+        slug: 'bandani-allohdan-nima-tosadi',
+        title: 'Bandani Allohdan nima to‘sadi? | Husaynxon Yahyo Abdulmajid',
+        description:
+          'Verified @hasanhusayn embed — https://www.youtube.com/watch?v=AkEFqRP_WjQ',
+        youtubeVideoId: 'AkEFqRP_WjQ',
+        episodeNumber: 3,
+      },
+    ],
   },
 ] as const;
 
@@ -134,6 +266,30 @@ const BOOKS = [
     authors: ['Imom Navaviy'],
     description:
       'Navaviy 40 hadis (owner-approved). Hadis matni invent qilinmaydi — litsenziyalangan manbadan import.',
+    chapters: 2,
+  },
+  {
+    slug: 'zad-al-maad',
+    title: 'Zad al-Ma’ad',
+    authors: ['Ibn Qayyim al-Jawziyya'],
+    description:
+      'Klassik siyrat/fiqh us-siyrat manbasi (katalog). Matn stub — litsenziyalangan nashr kelgach to‘ldiriladi.',
+    chapters: 2,
+  },
+  {
+    slug: 'siyrat-ibn-hishom',
+    title: 'Siyrat Ibn Hishom (kirish)',
+    authors: ['Ibn Hishom'],
+    description:
+      'Klassik siyrat asosi (katalog stub). To‘liq matn invent qilinmaydi.',
+    chapters: 2,
+  },
+  {
+    slug: 'fiqh-us-siyrat-buti',
+    title: 'Fiqh us-Siyrat',
+    authors: ['Muhammad Said Ramadan al-Buti'],
+    description:
+      'Zamonaviy siyrat fiqhi (katalog stub). Litsenziyalangan matn kelgach import.',
     chapters: 2,
   },
 ] as const;
@@ -219,6 +375,56 @@ async function main() {
     }
   }
 
+  const videoSeriesIds: Record<string, string> = {};
+  const videoEpisodeIdsBySeries: Record<string, string[]> = {};
+
+  for (const seriesDef of VIDEO_SERIES) {
+    const series = await VideoSeriesModel.findOneAndUpdate(
+      { slug: seriesDef.slug },
+      {
+        title: seriesDef.title,
+        slug: seriesDef.slug,
+        description: seriesDef.description,
+        hostOrScholar: seriesDef.host,
+        coverUrl: COVER,
+        language: seriesDef.language,
+        topics: ['siyrat'],
+        channelUrl: seriesDef.channelUrl,
+        status: 'published',
+        rights: videoRights,
+        createdBy: editorId,
+        publishedAt: now,
+        deletedAt: null,
+      },
+      { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
+    );
+    videoSeriesIds[seriesDef.slug] = series!._id.toString();
+    videoEpisodeIdsBySeries[seriesDef.slug] = [];
+
+    for (const epDef of seriesDef.episodes) {
+      const ep = await VideoEpisodeModel.findOneAndUpdate(
+        { seriesId: series!._id, slug: epDef.slug },
+        {
+          seriesId: series!._id,
+          title: epDef.title,
+          slug: epDef.slug,
+          description: epDef.description,
+          youtubeVideoId: epDef.youtubeVideoId,
+          coverUrl: `https://i.ytimg.com/vi/${epDef.youtubeVideoId}/hqdefault.jpg`,
+          durationSeconds: null,
+          episodeNumber: epDef.episodeNumber,
+          status: 'published',
+          rights: videoRights,
+          createdBy: editorId,
+          publishedAt: now,
+          deletedAt: null,
+        },
+        { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
+      );
+      videoEpisodeIdsBySeries[seriesDef.slug]!.push(ep!._id.toString());
+    }
+  }
+
   const bookMeta: Record<string, { bookId: string; chapterIds: string[] }> = {};
 
   for (const bookDef of BOOKS) {
@@ -232,7 +438,7 @@ async function main() {
         description: bookDef.description,
         coverUrl: COVER,
         language: 'uz',
-        categories: ['siyra'],
+        categories: ['siyrat'],
         status: 'published',
         rights,
         createdBy: editorId,
@@ -327,34 +533,51 @@ async function main() {
   const suhbat = episodeIdsBySeries['siyrat-suhbatlari']!;
   const shifoAudio = episodeIdsBySeries['shifo-sharhi']!;
   const enListen = episodeIdsBySeries['seerah-english-listening']!;
+  const nakVideos = videoEpisodeIdsBySeries['nouman-ali-khan-prophet-lessons'] ?? [];
+  const hasanxonVideos = videoEpisodeIdsBySeries['hasanxon-yahyo-siyrat'] ?? [];
+  const husaynxonVideos = videoEpisodeIdsBySeries['husaynxon-yahyo-siyrat'] ?? [];
+  const allVideos = [...hasanxonVideos, ...nakVideos, ...husaynxonVideos];
   const rahiq = bookMeta['ar-rahiqul-maxtum']!;
   const shamoil = bookMeta['shamoili-muhammadiya']!;
   const shifoBook = bookMeta['ash-shifo']!;
   const hadis = bookMeta['navaviy-40-hadis']!;
+  const zad = bookMeta['zad-al-maad']!;
 
   function podcastForDay(dayIndex: number): string {
-    // 0-based
     if (dayIndex < 5) return yogdusi[dayIndex % yogdusi.length]!;
     if (dayIndex < 10) return suhbat[(dayIndex - 5) % suhbat.length]!;
     if (dayIndex < 13) return shifoAudio[(dayIndex - 10) % shifoAudio.length]!;
     return enListen[(dayIndex - 13) % enListen.length]!;
   }
 
+  /** Siyrat-first: prefer Hasanxon → Bayyinah → hasanhusayn; alternate with podcast. */
+  function videoForDay(dayIndex: number): string | null {
+    if (allVideos.length === 0) return null;
+    if (dayIndex % 2 === 1) return allVideos[dayIndex % allVideos.length]!;
+    return null;
+  }
+
   function bookForDay(dayIndex: number): { bookId: string; chapterId: string } {
-    if (dayIndex < 10) {
+    if (dayIndex < 8) {
       return {
         bookId: rahiq.bookId,
         chapterId: rahiq.chapterIds[dayIndex % rahiq.chapterIds.length]!,
       };
     }
-    if (dayIndex < 13) {
+    if (dayIndex < 11) {
       return {
         bookId: shamoil.bookId,
-        chapterId: shamoil.chapterIds[(dayIndex - 10) % shamoil.chapterIds.length]!,
+        chapterId: shamoil.chapterIds[(dayIndex - 8) % shamoil.chapterIds.length]!,
+      };
+    }
+    if (dayIndex < 13) {
+      return {
+        bookId: shifoBook.bookId,
+        chapterId: shifoBook.chapterIds[(dayIndex - 11) % shifoBook.chapterIds.length]!,
       };
     }
     if (dayIndex === 13) {
-      return { bookId: shifoBook.bookId, chapterId: shifoBook.chapterIds[0]! };
+      return { bookId: zad.bookId, chapterId: zad.chapterIds[0]! };
     }
     return { bookId: hadis.bookId, chapterId: hadis.chapterIds[0]! };
   }
@@ -363,6 +586,7 @@ async function main() {
     const day = index + 1;
     const plan = QURAN_DAY_PLAN[index]!;
     const surah = surahMap.get(plan.surahNumber);
+    const videoId = videoForDay(index);
     const episodeId = podcastForDay(index);
     const bookRef = bookForDay(index);
 
@@ -370,7 +594,7 @@ async function main() {
       title: string;
       order: number;
       estimatedMinutes: number;
-      targetType: 'quran_range' | 'podcast_episode' | 'book_chapter';
+      targetType: 'quran_range' | 'podcast_episode' | 'video_episode' | 'book_chapter';
       targetRef: Record<string, unknown>;
     }> = [];
 
@@ -388,13 +612,23 @@ async function main() {
       });
     }
 
-    lessons.push({
-      title: `Yo‘lda: ${theme}`,
-      order: lessons.length + 1,
-      estimatedMinutes: 35,
-      targetType: 'podcast_episode',
-      targetRef: { episodeId },
-    });
+    if (videoId) {
+      lessons.push({
+        title: `Yo‘lda (video): ${theme}`,
+        order: lessons.length + 1,
+        estimatedMinutes: 35,
+        targetType: 'video_episode',
+        targetRef: { episodeId: videoId },
+      });
+    } else {
+      lessons.push({
+        title: `Yo‘lda: ${theme}`,
+        order: lessons.length + 1,
+        estimatedMinutes: 35,
+        targetType: 'podcast_episode',
+        targetRef: { episodeId },
+      });
+    }
 
     lessons.push({
       title: `Kechqurun: o‘qish — ${theme}`,
@@ -407,7 +641,7 @@ async function main() {
     return {
       title: `Kun ${day}/15 · ${theme}`,
       order: day,
-      summary: `Ertalab Qur’on · Yo‘lda podcast · Kechqurun kitob. Mavzu: ${theme}.`,
+      summary: `Ertalab Qur’on · Yo‘lda siyrat (podcast/video) · Kechqurun kitob. Mavzu: ${theme}.`,
       lessons,
     };
   });
@@ -418,7 +652,7 @@ async function main() {
       title: '15 kun: Rasululloh ﷺ ni yaqindan tanish',
       slug: 'siyrat-15-kun',
       summary:
-        'Owner-approved yo‘l. Har kun: Qur’on + siyrat podcast + kitob. Audio/matn fayllari litsenziya bilan yangilanadi.',
+        'Owner-approved yo‘l. Har kun: Qur’on + siyrat (podcast yoki video) + kitob. Media litsenziya bilan yangilanadi.',
       coverUrl: COVER,
       language: 'uz',
       authors: ['NUR Editorial', 'Husanboy'],
@@ -464,6 +698,7 @@ async function main() {
     days: 15,
     quranDaysLinked: quranDays,
     series: Object.keys(seriesIds),
+    videos: Object.keys(videoSeriesIds),
     books: Object.keys(bookMeta),
   });
 

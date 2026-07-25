@@ -404,6 +404,28 @@ Editors/admins may use `/admin` routes to see drafts.
 
 ---
 
+## 5b. Videos (YouTube embed)
+
+Siyrat-first catalog. Stream stays on YouTube; NUR serves metadata + `youtube.com/embed/{id}` only. No download/rehost.
+
+### `GET /api/v1/videos/series`
+
+**Auth:** none  
+**Query:** `page`, `limit`, `q`, `topic`  
+**Response:** published series cards; `siyrat` topics sorted first.
+
+### `GET /api/v1/videos/series/:slug`
+
+**Auth:** none  
+**Response:** series detail + published episodes (`youtubeVideoId`, `embedUrl`, `watchUrl`, thumbnail).
+
+### `GET /api/v1/videos/episodes/:id`
+
+**Auth:** none  
+**Response:** published episode detail for curriculum deep-links.
+
+---
+
 ## 6. Books
 
 ### `GET /api/v1/books`
@@ -539,7 +561,7 @@ Editors/admins may use `/admin` routes to see drafts.
 
 **Auth:** none (published only)
 
-**Query:** `q` (required), `types` optional CSV: `quran,podcasts,books,research`
+**Query:** `q` (required), `types` optional CSV: `quran,podcasts,videos,books,research`
 
 **Response:** typed hit list with `type`, `title`, `slug`/`number`, snippet.
 
@@ -573,6 +595,23 @@ Base: `/api/v1/admin`
 | DELETE | `/admin/podcasts/episodes/:id` | editor, admin |
 
 \*If policy later restricts publish to admin-only, enforce in authorize middleware.
+
+### 10.2b Videos
+
+| Method | Path | Roles |
+| --- | --- | --- |
+| GET | `/admin/videos/series` | editor, admin |
+| POST | `/admin/videos/series` | editor, admin |
+| PATCH | `/admin/videos/series/:id` | editor, admin |
+| POST | `/admin/videos/series/:id/publish` | editor*, admin |
+| DELETE | `/admin/videos/series/:id` | editor, admin |
+| GET | `/admin/videos/series/:id/episodes` | editor, admin |
+| POST | `/admin/videos/episodes` | editor, admin |
+| PATCH | `/admin/videos/episodes/:id` | editor, admin |
+| POST | `/admin/videos/episodes/:id/publish` | editor*, admin |
+| DELETE | `/admin/videos/episodes/:id` | editor, admin |
+
+Episode body accepts `youtubeVideoId` or a `youtube.com/watch?v=` / `youtu.be/` URL (normalized to 11-char ID).
 
 ### 10.3 Books
 

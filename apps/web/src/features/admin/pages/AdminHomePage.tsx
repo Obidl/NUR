@@ -3,6 +3,11 @@ import { useAuthStore } from '@/features/auth/store/authStore';
 
 const links = [
   {
+    to: '/admin/videos',
+    title: 'Videolar',
+    description: 'YouTube embed (siyrat) — qayta host yo‘q.',
+  },
+  {
     to: '/admin/podcasts',
     title: 'Podcastlar',
     description: 'Seriya + epizod, audio URL, nashr.',

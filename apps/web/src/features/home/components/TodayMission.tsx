@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { BookOpen, Check, Circle, Mic2, Play, Settings } from 'lucide-react';
+import { BookOpen, Check, Circle, Mic2, Play, Settings, Video } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/shared/components/Button';
 import type { PathLesson } from '@/features/curriculum/types/curriculum.types';
@@ -61,12 +61,13 @@ function ProgressRing({ percent, label }: { percent: number; label: string }) {
 
 function sectionIdForType(type: string): string {
   if (type === 'quran_range') return 'routine-morning';
-  if (type === 'podcast_episode') return 'routine-commute';
+  if (type === 'podcast_episode' || type === 'video_episode') return 'routine-commute';
   return 'routine-evening';
 }
 
 function lessonIcon(type: string) {
   if (type === 'podcast_episode') return Mic2;
+  if (type === 'video_episode') return Video;
   return BookOpen;
 }
 
@@ -91,7 +92,10 @@ export function TodayMission({
   const percent = dayProgressPercent(lessons, completedIds);
   const minutes = estimateMinutes(lessons);
   const morning = lessons.find((l) => l.targetType === 'quran_range') ?? null;
-  const commute = lessons.find((l) => l.targetType === 'podcast_episode') ?? null;
+  const commute =
+    lessons.find((l) => l.targetType === 'video_episode') ??
+    lessons.find((l) => l.targetType === 'podcast_episode') ??
+    null;
   const evening =
     lessons.find((l) => l.targetType === 'book_chapter') ??
     lessons.find((l) => l.targetType === 'research_article') ??
@@ -136,6 +140,10 @@ export function TodayMission({
 
   async function playCommute() {
     if (!commute) return;
+    if (commute.targetType === 'video_episode') {
+      if (commute.targetHref) window.location.assign(commute.targetHref);
+      return;
+    }
     const episodeId = String(commute.targetRef.episodeId ?? '');
     if (!episodeId) {
       if (commute.targetHref) window.location.assign(commute.targetHref);
@@ -322,22 +330,33 @@ export function TodayMission({
           id="routine-commute"
           title="Yo‘lda"
           done={completedIds.has(commute.id)}
-          markLabel="Podcastni yakunlash"
+          markLabel={
+            commute.targetType === 'video_episode' ? 'Videoni yakunlash' : 'Podcastni yakunlash'
+          }
           saving={saving}
           requireLogin={requireLogin}
           onComplete={() => onComplete(commute.id)}
-          onPrimaryAction={() => void playCommute()}
+          onPrimaryAction={
+            commute.targetType === 'video_episode' ? undefined : () => void playCommute()
+          }
           primaryBusy={playing}
-          openLabel="Davom ettirish"
-          openIcon
+          openHref={commute.targetType === 'video_episode' ? commute.targetHref : undefined}
+          openLabel={commute.targetType === 'video_episode' ? 'Videoni ochish' : 'Davom ettirish'}
+          openIcon={commute.targetType !== 'video_episode'}
         >
-          <p className="text-xs uppercase tracking-wide text-nur-faint">Podcast</p>
+          <p className="text-xs uppercase tracking-wide text-nur-faint">
+            {commute.targetType === 'video_episode' ? 'Video' : 'Podcast'}
+          </p>
           <p className="mt-1 text-lg font-medium text-nur-ink">{displayTitle(commute.title)}</p>
           <p className="mt-1 text-sm text-nur-muted">
             {commute.targetLabel ? displayTitle(commute.targetLabel) : 'Siyrat darsi'}
             {commute.estimatedMinutes ? ` · ~${commute.estimatedMinutes} daq` : ''}
           </p>
-          <p className="mt-4 text-sm text-nur-faint">To‘xtagan joydan davom eting.</p>
+          <p className="mt-4 text-sm text-nur-faint">
+            {commute.targetType === 'video_episode'
+              ? 'YouTube embed — ilova ichida ko‘ring.'
+              : 'To‘xtagan joydan davom eting.'}
+          </p>
           {playError ? <p className="mt-2 text-xs text-[var(--nur-danger)]">{playError}</p> : null}
         </RoutineBlock>
       ) : null}

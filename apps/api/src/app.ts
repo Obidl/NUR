@@ -22,6 +22,10 @@ import {
   adminCurriculumRouter,
   curriculumRouter,
 } from './modules/curriculum/curriculum.routes.js';
+import {
+  adminVideosRouter,
+  videosRouter,
+} from './modules/videos/video.routes.js';
 import { libraryRouter } from './modules/library/library.routes.js';
 import { adminUsersRouter } from './modules/admin/adminUsers.routes.js';
 import { searchRouter } from './modules/search/search.routes.js';
@@ -50,6 +54,8 @@ export function createApp(env: Env) {
   app.use('/api/v1/admin/research', adminResearchRouter);
   app.use('/api/v1/curriculum', curriculumRouter);
   app.use('/api/v1/admin/curriculum', adminCurriculumRouter);
+  app.use('/api/v1/videos', videosRouter);
+  app.use('/api/v1/admin/videos', adminVideosRouter);
   app.use('/api/v1/library', libraryRouter);
   app.use('/api/v1/admin/users', adminUsersRouter);
   app.use('/api/v1/search', searchRouter);

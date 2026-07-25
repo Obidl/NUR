@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Home, Library, Mic2, ScrollText, Search } from 'lucide-react';
+import { Home, Library, ScrollText, Search, Video } from 'lucide-react';
 import { cx } from '@/shared/lib/cx';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { PodcastPlayerBar } from '@/features/podcasts/components/PodcastPlayerBar';
@@ -7,6 +7,7 @@ import { PodcastPlayerBar } from '@/features/podcasts/components/PodcastPlayerBa
 const desktopNav = [
   { to: '/', label: 'Bugun', end: true },
   { to: '/quran', label: 'Qur’on' },
+  { to: '/videos', label: 'Videolar' },
   { to: '/podcasts', label: 'Podcastlar' },
   { to: '/books', label: 'Kitoblar' },
   { to: '/research', label: 'Tadqiqot' },
@@ -18,7 +19,7 @@ const desktopNav = [
 const mobileNav = [
   { to: '/', label: 'Bugun', end: true, icon: Home },
   { to: '/quran', label: 'Qur’on', icon: ScrollText },
-  { to: '/podcasts', label: 'Audio', icon: Mic2 },
+  { to: '/videos', label: 'Video', icon: Video },
   { to: '/search', label: 'Qidir', icon: Search },
   { to: '/library', label: 'Kutub', icon: Library },
 ] as const;

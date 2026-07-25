@@ -22,6 +22,10 @@ const podcastEpisodeRefSchema = z.object({
   episodeId: z.string().min(1),
 });
 
+const videoEpisodeRefSchema = z.object({
+  episodeId: z.string().min(1),
+});
+
 const bookChapterRefSchema = z.object({
   bookId: z.string().min(1),
   chapterId: z.string().min(1),
@@ -76,6 +80,8 @@ function resolveTargetRefSchema(
       return quranRangeRefSchema.safeParse(targetRef);
     case 'podcast_episode':
       return podcastEpisodeRefSchema.safeParse(targetRef);
+    case 'video_episode':
+      return videoEpisodeRefSchema.safeParse(targetRef);
     case 'book_chapter':
       return bookChapterRefSchema.safeParse(targetRef);
     case 'research_article':

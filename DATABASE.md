@@ -95,6 +95,8 @@ Query helper for public content:
 | `podcast_episodes` | Episodes |
 | `podcast_progress` | User episode progress |
 | `podcast_favorites` | User favorites |
+| `video_series` | YouTube embed series (siyrat-first) |
+| `video_episodes` | Episodes with `youtubeVideoId` (no rehost) |
 | `books` | Book catalog |
 | `book_chapters` | Chapters |
 | `book_progress` | User reading progress |
@@ -427,6 +429,74 @@ PodcastFavorite {
 
 ---
 
+### 4.12a `video_series`
+
+YouTube **embed** catalog only — files are not rehosted (`CONTENT_RULES` G-04).
+
+```ts
+VideoSeries {
+  _id: ObjectId
+  title: string
+  slug: string               // unique
+  description: string
+  hostOrScholar: string
+  coverUrl: string
+  language: string
+  topics: string[]           // prefer 'siyrat'
+  channelUrl?: string | null
+  status: ContentStatus
+  rights: RightsInfo         // permission_granted + embed notes
+  createdBy: ObjectId
+  updatedBy?: ObjectId
+  publishedAt?: Date
+  createdAt: Date
+  updatedAt: Date
+  deletedAt?: Date | null
+}
+```
+
+**Indexes**
+
+- unique: `slug`
+- `{ status: 1, publishedAt: -1 }`
+- `{ deletedAt: 1, status: 1 }`
+- `{ topics: 1, status: 1 }`
+
+---
+
+### 4.12b `video_episodes`
+
+```ts
+VideoEpisode {
+  _id: ObjectId
+  seriesId: ObjectId
+  title: string
+  slug: string
+  description: string
+  youtubeVideoId: string     // 11-char ID; stream stays on YouTube
+  coverUrl?: string | null   // often i.ytimg.com thumbnail
+  durationSeconds?: number | null
+  episodeNumber?: number | null
+  status: ContentStatus
+  rights: RightsInfo
+  createdBy: ObjectId
+  updatedBy?: ObjectId
+  publishedAt?: Date
+  createdAt: Date
+  updatedAt: Date
+  deletedAt?: Date | null
+}
+```
+
+**Indexes**
+
+- unique: `{ seriesId: 1, slug: 1 }`
+- `{ seriesId: 1, episodeNumber: 1 }`
+- `{ status: 1, publishedAt: -1 }`
+- `{ youtubeVideoId: 1 }`
+
+---
+
 ### 4.13 `books`
 
 ```ts
@@ -624,6 +694,7 @@ surahs ── ayahs
 reciters ── quran_audio → (surahNumber, ayahNumber?)
 
 podcast_series ── podcast_episodes
+video_series ── video_episodes   // youtubeVideoId → embed only
 books ── book_chapters
 research_articles (standalone + sources[])
 ```

@@ -84,8 +84,9 @@ Module {
 
 Lesson {
   moduleId, title, order
-  targetType: 'quran_range' | 'podcast_episode' | 'book_chapter' | 'research_article'
+  targetType: 'quran_range' | 'podcast_episode' | 'video_episode' | 'book_chapter' | 'research_article'
   targetRef: { ... }  // typed per targetType
+  // video_episode → { episodeId } → /videos/:slug?episode=
   estimatedMinutes?: number
 }
 

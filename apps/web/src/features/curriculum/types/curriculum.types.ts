@@ -1,6 +1,7 @@
 export type LessonTargetType =
   | 'quran_range'
   | 'podcast_episode'
+  | 'video_episode'
   | 'book_chapter'
   | 'research_article';
 

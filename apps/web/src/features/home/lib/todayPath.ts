@@ -7,6 +7,7 @@ import type {
 export const LESSON_KIND_LABEL: Record<string, string> = {
   quran_range: 'Qur’on',
   podcast_episode: 'Podcast',
+  video_episode: 'Video',
   book_chapter: 'Kitob',
   research_article: 'Tadqiqot',
 };
@@ -15,6 +16,7 @@ export const LESSON_KIND_LABEL: Record<string, string> = {
 export const LESSON_SLOT_LABEL: Record<string, string> = {
   quran_range: 'Ertalab',
   podcast_episode: 'Yo‘lda',
+  video_episode: 'Yo‘lda',
   book_chapter: 'Kechqurun',
   research_article: 'Qo‘shimcha',
 };

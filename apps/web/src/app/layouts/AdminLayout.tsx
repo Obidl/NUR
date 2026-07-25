@@ -7,6 +7,7 @@ export function AdminLayout() {
 
   const links = [
     { to: '/admin', label: 'Bosh', end: true },
+    { to: '/admin/videos', label: 'Video' },
     { to: '/admin/podcasts', label: 'Podcast' },
     { to: '/admin/books', label: 'Kitob' },
     { to: '/admin/research', label: 'Tadqiqot' },

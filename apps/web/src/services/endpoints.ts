@@ -28,6 +28,11 @@ export const endpoints = {
     favorites: '/api/v1/podcasts/favorites',
     favorite: (id: string) => `/api/v1/podcasts/favorites/${id}`,
   },
+  videos: {
+    series: '/api/v1/videos/series',
+    seriesDetail: (slug: string) => `/api/v1/videos/series/${slug}`,
+    episode: (id: string) => `/api/v1/videos/episodes/${id}`,
+  },
   books: {
     list: '/api/v1/books',
     detail: (slug: string) => `/api/v1/books/${slug}`,
@@ -78,6 +83,16 @@ export const endpoints = {
       episodes: '/api/v1/admin/podcasts/episodes',
       episode: (id: string) => `/api/v1/admin/podcasts/episodes/${id}`,
       publishEpisode: (id: string) => `/api/v1/admin/podcasts/episodes/${id}/publish`,
+    },
+    videos: {
+      series: '/api/v1/admin/videos/series',
+      itemSeries: (id: string) => `/api/v1/admin/videos/series/${id}`,
+      publishSeries: (id: string) => `/api/v1/admin/videos/series/${id}/publish`,
+      statusSeries: (id: string) => `/api/v1/admin/videos/series/${id}/status`,
+      seriesEpisodes: (id: string) => `/api/v1/admin/videos/series/${id}/episodes`,
+      episodes: '/api/v1/admin/videos/episodes',
+      episode: (id: string) => `/api/v1/admin/videos/episodes/${id}`,
+      publishEpisode: (id: string) => `/api/v1/admin/videos/episodes/${id}/publish`,
     },
     books: {
       list: '/api/v1/admin/books',

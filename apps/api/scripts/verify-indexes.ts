@@ -17,6 +17,8 @@ import '../src/modules/podcasts/podcastSeries.model.js';
 import '../src/modules/podcasts/podcastEpisode.model.js';
 import '../src/modules/podcasts/podcastProgress.model.js';
 import '../src/modules/podcasts/podcastFavorite.model.js';
+import '../src/modules/videos/videoSeries.model.js';
+import '../src/modules/videos/videoEpisode.model.js';
 import '../src/modules/books/book.model.js';
 import '../src/modules/books/bookChapter.model.js';
 import '../src/modules/books/bookProgress.model.js';
@@ -39,6 +41,8 @@ const REQUIRED: Record<string, string[]> = {
   podcast_episodes: ['seriesId_1_slug_1'],
   podcast_progress: ['userId_1_episodeId_1'],
   podcast_favorites: ['userId_1_targetType_1_targetId_1'],
+  video_series: ['slug_1'],
+  video_episodes: ['seriesId_1_slug_1'],
   books: ['slug_1'],
   book_chapters: ['bookId_1_slug_1'],
   book_progress: ['userId_1_bookId_1'],

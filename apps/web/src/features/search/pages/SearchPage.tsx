@@ -12,6 +12,7 @@ import { cx } from '@/shared/lib/cx';
 const TYPE_LABEL: Record<SearchHit['type'], string> = {
   quran: 'Qur’on',
   podcasts: 'Podcast',
+  videos: 'Video',
   books: 'Kitob',
   research: 'Tadqiqot',
 };
@@ -20,6 +21,7 @@ const FILTERS: Array<{ id: string; label: string }> = [
   { id: '', label: 'Hammasi' },
   { id: 'quran', label: 'Qur’on' },
   { id: 'podcasts', label: 'Podcast' },
+  { id: 'videos', label: 'Video' },
   { id: 'books', label: 'Kitob' },
   { id: 'research', label: 'Tadqiqot' },
 ];
