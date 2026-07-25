@@ -49,23 +49,14 @@ Playlist: [PLys356tU5j5QwryNqakQTBiq1dVj7tR5m](https://www.youtube.com/playlist?
 
 | Seriya | Epizodlar | Note |
 | --- | --- | --- |
-| Siyrat yog‘dusi (Islom.uz) | 51 ta (son 1… playlist tartibida) | 15-kun Yo‘lda shu seriyadan boshlanadi (46-sondan) |
+| Siyrat yog‘dusi (Islom.uz) | 51 ta | Priority; Yo‘lda 46-sondan |
+| Hasanxon — Siyrat / Shamoil | ~32 ta | @Hasanxondomla, Shamoil ketma-ket |
+| hasanhusayn | ~20 ta | Suhbat/mavlid — takror nashid cheklangan |
+| Nouman Ali Khan — Prophet ﷺ | ~25 ta | @bayyinah Road to Hajj + Prophet ﷺ only |
 
-#### Other
+#### Starter IDs (legacy note)
 
-| Seriya | Epizod | YouTube ID |
-| --- | --- | --- |
-| NAK — Prophet ﷺ | Lessons from Uhud to Hajj Ep 1 | `YhWp46tsolk` |
-| NAK — Prophet ﷺ | Hudaibiyyah Negotiations Ep 2 | `gEClJEMOCCA` |
-| NAK — Prophet ﷺ | When They Insult Our Prophet | `I6zuKbBlmRo` |
-| NAK — Prophet ﷺ | Sending Salawat on the Prophet | `yTN4Jxc6Kh4` |
-| Hasanxon — Siyrat | Shamoilul-Muhammadiya 1 | `uRh5fnlPUc4` |
-| Hasanxon — Siyrat | Payg‘ambarimiz mag‘firat duosi | `P_RiMD-s26g` |
-| Hasanxon — Siyrat | Eng katta muallim (MAVLID) | `FTBwpeQdwgk` |
-| Hasanxon — Siyrat | Yo Rosululloh | `biNPRapJil4` |
-| hasanhusayn | Rasululloh ﷺ duolari | `LCA4W68c1bE` |
-| hasanhusayn | Niyat va qasd (Husaynxon) | `6ADm1CM48Zc` |
-| hasanhusayn | Bandani Allohdan nima to‘sadi? | `AkEFqRP_WjQ` |
+Older single-ID table replaced by JSON packs under `apps/api/scripts/data/`.
 
 > Kanalni scrape qilmang. Qo‘shimcha ID’lar faqat tekshirib admin orqali.
 

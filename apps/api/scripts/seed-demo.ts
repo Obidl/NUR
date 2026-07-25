@@ -55,6 +55,18 @@ const siyratYogdusiPack = JSON.parse(
   ownerEntryVideoId: string;
   episodes: VideoEpisodeSeed[];
 };
+
+const nakPack = JSON.parse(
+  readFileSync(join(__dirname, 'data/nouman-ali-khan-prophet.json'), 'utf8'),
+) as { channelUrl: string; episodes: VideoEpisodeSeed[] };
+
+const hasanxonPack = JSON.parse(
+  readFileSync(join(__dirname, 'data/hasanxon-yahyo-siyrat.json'), 'utf8'),
+) as { channelUrl: string; episodes: VideoEpisodeSeed[] };
+
+const hasanhusaynPack = JSON.parse(
+  readFileSync(join(__dirname, 'data/hasanhusayn-siyrat.json'), 'utf8'),
+) as { channelUrl: string; episodes: VideoEpisodeSeed[] };
 const DEMO_EMAIL = 'demo.editor@nur.local';
 const DEMO_PASSWORD = 'password123';
 const COVER = 'https://placehold.co/600x800/121820/c58b2d?text=NUR';
@@ -164,125 +176,34 @@ const VIDEO_SERIES: VideoSeriesSeed[] = [
     episodes: siyratYogdusiPack.episodes,
   },
   {
+    slug: 'hasanxon-yahyo-siyrat',
+    title: 'Hasanxon Yahyo — Siyrat / Shamoil',
+    host: 'Hasanxon Yahyo Abdulmajid',
+    description:
+      'Shamoilul-Muhammadiya + Rasululloh ﷺ suhbatlari (@Hasanxondomla). Curated distinct episodes — embed only.',
+    channelUrl: hasanxonPack.channelUrl,
+    language: 'uz',
+    episodes: hasanxonPack.episodes,
+  },
+  {
+    slug: 'husaynxon-yahyo-siyrat',
+    title: 'Hasanxon & Husaynxon — hasanhusayn',
+    host: 'Hasanxon, Husaynxon Yahyo Abdulmajid',
+    description:
+      '@hasanhusayn: suhbat, mavlid, sahoba muhabbati — takror nashidlar cheklangan. Embed only.',
+    channelUrl: hasanhusaynPack.channelUrl,
+    language: 'uz',
+    episodes: hasanhusaynPack.episodes,
+  },
+  {
     slug: 'nouman-ali-khan-prophet-lessons',
     title: 'Nouman Ali Khan — Prophet ﷺ lessons',
     host: 'Nouman Ali Khan (Bayyinah)',
     description:
-      'Official @bayyinah Prophet ﷺ / seerah lessons via YouTube embed (not rehosted). Extend in admin.',
-    channelUrl: 'https://www.youtube.com/@bayyinah',
+      'Official @bayyinah: Prophet’s ﷺ Road to Hajj + Prophet Muhammad ﷺ lessons (not other prophets). Embed only.',
+    channelUrl: nakPack.channelUrl,
     language: 'en',
-    episodes: [
-      {
-        slug: 'lessons-from-uhud-to-hajj-ep1',
-        title: 'Lessons from Uhud to Hajj | Ep 1 | Prophet’s ﷺ Road to Hajj',
-        description:
-          'Verified @bayyinah embed — https://www.youtube.com/watch?v=YhWp46tsolk',
-        youtubeVideoId: 'YhWp46tsolk',
-        episodeNumber: 1,
-      },
-      {
-        slug: 'hudaibiyyah-negotiations-ep2',
-        title: 'Struggles of Hudaibiyyah Negotiations | Ep 2 | Prophet’s ﷺ Road to Hajj',
-        description:
-          'Verified @bayyinah embed — https://www.youtube.com/watch?v=gEClJEMOCCA',
-        youtubeVideoId: 'gEClJEMOCCA',
-        episodeNumber: 2,
-      },
-      {
-        slug: 'when-they-insult-our-prophet',
-        title: '#Muhammad — When They Insult Our Prophet (PBUH)',
-        description:
-          'Verified @bayyinah embed — https://www.youtube.com/watch?v=I6zuKbBlmRo',
-        youtubeVideoId: 'I6zuKbBlmRo',
-        episodeNumber: 3,
-      },
-      {
-        slug: 'sending-salawat-on-the-prophet',
-        title: 'Sending Salawat on the Prophet ﷺ',
-        description:
-          'Verified @bayyinah embed — https://www.youtube.com/watch?v=yTN4Jxc6Kh4',
-        youtubeVideoId: 'yTN4Jxc6Kh4',
-        episodeNumber: 4,
-      },
-    ],
-  },
-  {
-    slug: 'hasanxon-yahyo-siyrat',
-    title: 'Hasanxon Yahyo — Siyrat',
-    host: 'Hasanxon Yahyo Abdulmajid',
-    description:
-      'Siyrat / Rasululloh ﷺ suhbatlari (@Hasanxondomla). YouTube embed only — not rehosted.',
-    channelUrl: 'https://www.youtube.com/@Hasanxondomla',
-    language: 'uz',
-    episodes: [
-      {
-        slug: 'shamoil-muhammadiya-1',
-        title: 'Rosululloh xilqatlari | Shamoilul-Muhammadiya 1-dars',
-        description:
-          'Verified @Hasanxondomla embed — https://www.youtube.com/watch?v=uRh5fnlPUc4',
-        youtubeVideoId: 'uRh5fnlPUc4',
-        episodeNumber: 1,
-      },
-      {
-        slug: 'paygambarimiz-magfirat-duosi',
-        title: 'Payg‘ambarimiz ﷺ ning Allohdan bizlarni mag‘firat so‘rab duo qilishlari',
-        description:
-          'Verified @Hasanxondomla embed — https://www.youtube.com/watch?v=P_RiMD-s26g',
-        youtubeVideoId: 'P_RiMD-s26g',
-        episodeNumber: 2,
-      },
-      {
-        slug: 'eng-katta-muallim-mavlid',
-        title: 'Eng katta muallim | MAVLID-1444',
-        description:
-          'Verified @Hasanxondomla embed — https://www.youtube.com/watch?v=FTBwpeQdwgk',
-        youtubeVideoId: 'FTBwpeQdwgk',
-        episodeNumber: 3,
-      },
-      {
-        slug: 'yo-rosululloh',
-        title: 'Yo Rosululloh ﷺ | Rosulullohni sog‘inganda tinglang',
-        description:
-          'Verified @Hasanxondomla embed — https://www.youtube.com/watch?v=biNPRapJil4',
-        youtubeVideoId: 'biNPRapJil4',
-        episodeNumber: 4,
-      },
-    ],
-  },
-  {
-    slug: 'husaynxon-yahyo-siyrat',
-    title: 'Hasanxon & Husaynxon Yahyo — hasanhusayn',
-    host: 'Hasanxon, Husaynxon Yahyo Abdulmajid',
-    description:
-      'Rasmiy YouTube @hasanhusayn (Telegram bilan bir ekosistem). Embed only — not rehosted.',
-    channelUrl: 'https://www.youtube.com/@hasanhusayn',
-    language: 'uz',
-    episodes: [
-      {
-        slug: 'rasululloh-duolari',
-        title: 'Rasulullohning ﷺ duolarini olarmidingiz',
-        description:
-          'Verified @hasanhusayn embed — https://www.youtube.com/watch?v=LCA4W68c1bE',
-        youtubeVideoId: 'LCA4W68c1bE',
-        episodeNumber: 1,
-      },
-      {
-        slug: 'niyat-va-qasd',
-        title: 'Niyat va qasd | Husaynxon Yahyo Abdulmajid',
-        description:
-          'Verified @hasanhusayn embed — https://www.youtube.com/watch?v=6ADm1CM48Zc',
-        youtubeVideoId: '6ADm1CM48Zc',
-        episodeNumber: 2,
-      },
-      {
-        slug: 'bandani-allohdan-nima-tosadi',
-        title: 'Bandani Allohdan nima to‘sadi? | Husaynxon Yahyo Abdulmajid',
-        description:
-          'Verified @hasanhusayn embed — https://www.youtube.com/watch?v=AkEFqRP_WjQ',
-        youtubeVideoId: 'AkEFqRP_WjQ',
-        episodeNumber: 3,
-      },
-    ],
+    episodes: nakPack.episodes,
   },
 ];
 
