@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/shared/components/Button';
 import type { PathLesson } from '@/features/curriculum/types/curriculum.types';
 import { fetchSurah } from '@/features/quran/api/quranApi';
+import { fetchPodcastEpisode } from '@/features/podcasts/api/podcastApi';
+import { usePodcastPlayerStore } from '@/features/podcasts/store/podcastPlayerStore';
 import {
   LESSON_KIND_LABEL,
   LESSON_SLOT_LABEL,
@@ -12,6 +14,7 @@ import {
   estimateMinutes,
 } from '@/features/home/lib/todayPath';
 import { cx } from '@/shared/lib/cx';
+import { getErrorMessage } from '@/shared/lib/errors';
 
 type TodayMissionProps = {
   greetingName?: string | null;
@@ -20,6 +23,7 @@ type TodayMissionProps = {
   dayTotal: number;
   dayLabel: string | null;
   pathSlug: string;
+  pathPercent: number;
   lessons: PathLesson[];
   completedIds: Set<string>;
   saving: boolean;
@@ -27,21 +31,14 @@ type TodayMissionProps = {
   onComplete: (lessonId: string) => void;
 };
 
-function ProgressRing({ percent }: { percent: number }) {
+function ProgressRing({ percent, label }: { percent: number; label: string }) {
   const r = 36;
   const c = 2 * Math.PI * r;
   const offset = c - (percent / 100) * c;
   return (
     <div className="relative mx-auto h-24 w-24">
       <svg viewBox="0 0 88 88" className="h-24 w-24 -rotate-90" aria-hidden>
-        <circle
-          cx="44"
-          cy="44"
-          r={r}
-          fill="none"
-          stroke="var(--nur-line)"
-          strokeWidth="6"
-        />
+        <circle cx="44" cy="44" r={r} fill="none" stroke="var(--nur-line)" strokeWidth="6" />
         <circle
           cx="44"
           cy="44"
@@ -56,15 +53,25 @@ function ProgressRing({ percent }: { percent: number }) {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-lg font-medium tabular-nums text-nur-ink">{percent}%</span>
-        <span className="text-[10px] uppercase tracking-wide text-nur-faint">yakun</span>
+        <span className="text-[10px] uppercase tracking-wide text-nur-faint">{label}</span>
       </div>
     </div>
   );
 }
 
+function sectionIdForType(type: string): string {
+  if (type === 'quran_range') return 'routine-morning';
+  if (type === 'podcast_episode') return 'routine-commute';
+  return 'routine-evening';
+}
+
 function lessonIcon(type: string) {
   if (type === 'podcast_episode') return Mic2;
   return BookOpen;
+}
+
+function scrollToSection(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 export function TodayMission({
@@ -74,6 +81,7 @@ export function TodayMission({
   dayTotal,
   dayLabel,
   pathSlug,
+  pathPercent,
   lessons,
   completedIds,
   saving,
@@ -89,9 +97,12 @@ export function TodayMission({
     lessons.find((l) => l.targetType === 'research_article') ??
     null;
 
+  const loadEpisode = usePodcastPlayerStore((s) => s.loadEpisode);
   const [previewArabic, setPreviewArabic] = useState<string | null>(null);
   const [previewUz, setPreviewUz] = useState<string | null>(null);
   const [previewSurah, setPreviewSurah] = useState<string | null>(null);
+  const [playError, setPlayError] = useState<string | null>(null);
+  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -123,6 +134,33 @@ export function TodayMission({
     };
   }, [morning?.id, morning?.targetRef.surahNumber, morning?.targetRef.ayahFrom]);
 
+  async function playCommute() {
+    if (!commute) return;
+    const episodeId = String(commute.targetRef.episodeId ?? '');
+    if (!episodeId) {
+      if (commute.targetHref) window.location.assign(commute.targetHref);
+      return;
+    }
+    setPlaying(true);
+    setPlayError(null);
+    try {
+      const detail = await fetchPodcastEpisode(episodeId);
+      loadEpisode({
+        episodeId: detail.id,
+        title: detail.title,
+        seriesTitle: detail.series.title,
+        hostOrScholar: detail.series.hostOrScholar,
+        audioUrl: detail.audioUrl,
+        durationSeconds: detail.durationSeconds,
+        positionSeconds: 0,
+      });
+    } catch (err) {
+      setPlayError(getErrorMessage(err, 'Audio ochilmadi'));
+    } finally {
+      setPlaying(false);
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-lg space-y-10">
       <header className="relative pr-12">
@@ -145,7 +183,6 @@ export function TodayMission({
         </p>
       </header>
 
-      {/* Today's Mission — video 1 composition */}
       <section
         aria-labelledby="mission-heading"
         className="rounded-[var(--radius-l)] border border-nur-line bg-nur-elevated px-5 py-6"
@@ -154,7 +191,7 @@ export function TodayMission({
           Bugungi vazifa
         </h2>
         <div className="mt-4">
-          <ProgressRing percent={percent} />
+          <ProgressRing percent={percent} label="bugun" />
         </div>
         <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs text-nur-faint">
           <div>
@@ -181,60 +218,71 @@ export function TodayMission({
             const Icon = lessonIcon(lesson.targetType);
             const slot =
               LESSON_SLOT_LABEL[lesson.targetType] ?? LESSON_KIND_LABEL[lesson.targetType];
+            const targetSection = sectionIdForType(lesson.targetType);
             return (
               <li key={lesson.id}>
-                <button
-                  type="button"
-                  disabled={done || saving || requireLogin}
-                  onClick={() => onComplete(lesson.id)}
+                <div
                   className={cx(
-                    'flex w-full items-center gap-3 rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/50 px-3 py-3 text-left transition-opacity',
+                    'flex w-full items-center gap-2 rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/50 px-2 py-2',
                     done && 'opacity-70',
-                    !done && !requireLogin && 'hover:bg-nur-sunken',
-                    (saving || requireLogin) && !done && 'opacity-80',
                   )}
-                  aria-label={
-                    done
-                      ? `${displayTitle(lesson.title)} yakunlangan`
-                      : `${displayTitle(lesson.title)} ni yakunlash`
-                  }
                 >
-                  <Icon
-                    className="shrink-0 text-nur-lamp"
-                    size={18}
-                    strokeWidth={1.75}
-                    aria-hidden
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs uppercase tracking-wide text-nur-faint">{slot}</p>
-                    <p className="truncate text-sm font-medium text-nur-ink">
-                      {displayTitle(lesson.title)}
-                    </p>
-                    <p className="truncate text-xs text-nur-faint">
-                      {lesson.targetLabel
-                        ? displayTitle(lesson.targetLabel)
-                        : LESSON_KIND_LABEL[lesson.targetType]}
-                      {lesson.estimatedMinutes ? ` · ~${lesson.estimatedMinutes} daq` : ''}
-                    </p>
-                  </div>
-                  <span className="text-nur-lamp" aria-hidden>
+                  <button
+                    type="button"
+                    className="flex min-w-0 flex-1 items-center gap-3 px-1 py-1 text-left"
+                    onClick={() => scrollToSection(targetSection)}
+                  >
+                    <Icon
+                      className="shrink-0 text-nur-lamp"
+                      size={18}
+                      strokeWidth={1.75}
+                      aria-hidden
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs uppercase tracking-wide text-nur-faint">{slot}</p>
+                      <p className="truncate text-sm font-medium text-nur-ink">
+                        {displayTitle(lesson.title)}
+                      </p>
+                      <p className="truncate text-xs text-nur-faint">
+                        {lesson.targetLabel
+                          ? displayTitle(lesson.targetLabel)
+                          : LESSON_KIND_LABEL[lesson.targetType]}
+                        {lesson.estimatedMinutes ? ` · ~${lesson.estimatedMinutes} daq` : ''}
+                      </p>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    disabled={done || saving || requireLogin}
+                    onClick={() => onComplete(lesson.id)}
+                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center text-nur-lamp disabled:opacity-50"
+                    aria-label={
+                      done
+                        ? `${displayTitle(lesson.title)} yakunlangan`
+                        : `${displayTitle(lesson.title)} ni yakunlash`
+                    }
+                  >
                     {done ? <Check size={20} /> : <Circle size={20} strokeWidth={1.5} />}
-                  </span>
-                </button>
+                  </button>
+                </div>
               </li>
             );
           })}
         </ul>
         {requireLogin ? (
           <p className="mt-3 text-center text-xs text-nur-faint">
-            Belgilash uchun <Link to="/login" className="text-nur-accent">kirish</Link> kerak.
+            Belgilash uchun{' '}
+            <Link to="/login" className="text-nur-accent">
+              kirish
+            </Link>{' '}
+            kerak.
           </p>
         ) : null}
       </section>
 
-      {/* Morning */}
       {morning ? (
         <RoutineBlock
+          id="routine-morning"
           title="Ertalabgi tartib"
           done={completedIds.has(morning.id)}
           markLabel="Ertalabni yakunlash"
@@ -265,22 +313,21 @@ export function TodayMission({
             <p className="mt-3 text-center text-sm leading-6 text-nur-muted">{previewUz}</p>
           ) : null}
           <p className="mt-5 text-xs text-nur-faint">Tafakkur</p>
-          <p className="mt-1 text-sm text-nur-muted">
-            Bugun o‘qigan oyatdan qalbimga nima tegdi?
-          </p>
+          <p className="mt-1 text-sm text-nur-muted">Bugun o‘qigan oyatdan qalbimga nima tegdi?</p>
         </RoutineBlock>
       ) : null}
 
-      {/* Commute */}
       {commute ? (
         <RoutineBlock
+          id="routine-commute"
           title="Yo‘lda"
           done={completedIds.has(commute.id)}
           markLabel="Podcastni yakunlash"
           saving={saving}
           requireLogin={requireLogin}
           onComplete={() => onComplete(commute.id)}
-          openHref={commute.targetHref}
+          onPrimaryAction={() => void playCommute()}
+          primaryBusy={playing}
           openLabel="Davom ettirish"
           openIcon
         >
@@ -291,12 +338,13 @@ export function TodayMission({
             {commute.estimatedMinutes ? ` · ~${commute.estimatedMinutes} daq` : ''}
           </p>
           <p className="mt-4 text-sm text-nur-faint">To‘xtagan joydan davom eting.</p>
+          {playError ? <p className="mt-2 text-xs text-[var(--nur-danger)]">{playError}</p> : null}
         </RoutineBlock>
       ) : null}
 
-      {/* Evening */}
       {evening ? (
         <RoutineBlock
+          id="routine-evening"
           title="Kechqurun"
           done={completedIds.has(evening.id)}
           markLabel="Kechqurunni yakunlash"
@@ -317,16 +365,39 @@ export function TodayMission({
         </RoutineBlock>
       ) : null}
 
-      <p className="pb-8 text-center">
-        <Link to={`/curriculum/${pathSlug}`} className="text-sm text-nur-muted">
-          Butun 15 kunlik yo‘l →
-        </Link>
-      </p>
+      <section id="routine-progress" className="pb-4">
+        <h2 className="text-xl font-medium text-nur-ink">Progress</h2>
+        <div className="mt-4 rounded-[var(--radius-l)] border border-nur-line bg-nur-elevated px-5 py-6">
+          <ProgressRing percent={pathPercent} label="15 kun" />
+          <p className="mt-4 text-center text-sm text-nur-muted">
+            Kun {dayIndex}/{dayTotal}
+            {dayLabel ? ` · ${dayLabel}` : ''}
+          </p>
+          <div className="mt-4">
+            <div className="mb-1 flex justify-between text-xs text-nur-faint">
+              <span>Yo‘l bo‘yicha</span>
+              <span>{pathPercent}%</span>
+            </div>
+            <div className="h-1 overflow-hidden rounded-full bg-nur-sunken">
+              <div
+                className="h-full rounded-full bg-nur-lamp"
+                style={{ width: `${pathPercent}%` }}
+              />
+            </div>
+          </div>
+          <p className="mt-6 text-center">
+            <Link to={`/curriculum/${pathSlug}`} className="text-sm text-nur-muted">
+              Butun yo‘lni ko‘rish →
+            </Link>
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
 
 function RoutineBlock({
+  id,
   title,
   children,
   done,
@@ -337,7 +408,10 @@ function RoutineBlock({
   openHref,
   openLabel,
   openIcon,
+  onPrimaryAction,
+  primaryBusy,
 }: {
+  id: string;
   title: string;
   children: ReactNode;
   done: boolean;
@@ -345,17 +419,30 @@ function RoutineBlock({
   saving: boolean;
   requireLogin?: boolean;
   onComplete: () => void;
-  openHref: string | null;
+  openHref?: string | null;
   openLabel: string;
   openIcon?: boolean;
+  onPrimaryAction?: () => void;
+  primaryBusy?: boolean;
 }) {
   return (
-    <section>
+    <section id={id} className="scroll-mt-24">
       <h2 className="text-xl font-medium text-nur-ink">{title}</h2>
       <div className="mt-4 rounded-[var(--radius-l)] border border-nur-line bg-nur-elevated px-5 py-5">
         {children}
         <div className="mt-6 flex flex-col gap-2">
-          {openHref ? (
+          {onPrimaryAction ? (
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full gap-2"
+              disabled={primaryBusy}
+              onClick={onPrimaryAction}
+            >
+              {openIcon ? <Play size={16} aria-hidden /> : null}
+              {primaryBusy ? 'Ochilmoqda…' : openLabel}
+            </Button>
+          ) : openHref ? (
             <Button to={openHref} variant="secondary" className="w-full gap-2">
               {openIcon ? <Play size={16} aria-hidden /> : null}
               {openLabel}

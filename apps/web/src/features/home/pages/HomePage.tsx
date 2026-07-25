@@ -13,8 +13,10 @@ import type { PathDetail, PathProgressItem } from '@/features/curriculum/types/c
 import { TodayMission } from '@/features/home/components/TodayMission';
 import {
   dayThemeFromModuleTitle,
+  flattenPathLessons,
   formatHomeDates,
   mergeProgressUpdate,
+  pathProgressPercent,
   pickTodayModule,
 } from '@/features/home/lib/todayPath';
 import { getErrorMessage } from '@/shared/lib/errors';
@@ -87,11 +89,16 @@ export function HomePage() {
     () => new Set(progress?.completedLessonIds ?? []),
     [progress],
   );
+  const allLessons = useMemo(() => (path ? flattenPathLessons(path) : []), [path]);
   const today = useMemo(
     () => (path ? pickTodayModule(path, completedIds) : null),
     [path, completedIds],
   );
   const dayTheme = dayThemeFromModuleTitle(today?.moduleTitle);
+  const pathPercent = pathProgressPercent(
+    allLessons.length,
+    allLessons.filter((lesson) => completedIds.has(lesson.id)).length,
+  );
 
   async function markComplete(lessonId: string) {
     if (!path) return;
@@ -159,6 +166,7 @@ export function HomePage() {
           dayTotal={today.dayTotal}
           dayLabel={dayTheme}
           pathSlug={path.slug}
+          pathPercent={pathPercent}
           lessons={today.lessons}
           completedIds={completedIds}
           saving={saving}
