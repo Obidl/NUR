@@ -458,6 +458,33 @@ export async function adminDeleteSeries(userId: string, id: string) {
   return { success: true };
 }
 
+export async function adminListEpisodes(seriesId: string) {
+  if (!Types.ObjectId.isValid(seriesId)) {
+    throw new AppError('VALIDATION_ERROR', 'Invalid seriesId', 422);
+  }
+  const series = await PodcastSeriesModel.findOne({ _id: seriesId, deletedAt: null }).lean();
+  if (!series) throw new AppError('NOT_FOUND', 'Series not found', 404);
+
+  const rows = await PodcastEpisodeModel.find({
+    seriesId,
+    deletedAt: null,
+  })
+    .sort({ episodeNumber: 1, createdAt: 1 })
+    .lean();
+
+  return rows.map((row) => ({
+    id: row._id.toString(),
+    title: row.title,
+    slug: row.slug,
+    description: row.description,
+    audioUrl: row.audioUrl,
+    durationSeconds: row.durationSeconds,
+    episodeNumber: row.episodeNumber ?? null,
+    status: row.status,
+    publishedAt: row.publishedAt,
+  }));
+}
+
 export async function adminCreateEpisode(userId: string, input: CreateEpisodeBody) {
   if (!Types.ObjectId.isValid(input.seriesId)) {
     throw new AppError('VALIDATION_ERROR', 'Invalid seriesId', 422);

@@ -566,6 +566,7 @@ Base: `/api/v1/admin`
 | PATCH | `/admin/podcasts/series/:id` | editor, admin |
 | POST | `/admin/podcasts/series/:id/publish` | editor*, admin |
 | DELETE | `/admin/podcasts/series/:id` | editor, admin |
+| GET | `/admin/podcasts/series/:id/episodes` | editor, admin |
 | POST | `/admin/podcasts/episodes` | editor, admin |
 | PATCH | `/admin/podcasts/episodes/:id` | editor, admin |
 | POST | `/admin/podcasts/episodes/:id/publish` | editor*, admin |

@@ -66,6 +66,45 @@ export async function adminUpdatePodcastEpisode(
   return data.data;
 }
 
+export type AdminEpisodeRow = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  audioUrl: string;
+  durationSeconds: number;
+  episodeNumber: number | null;
+  status: ContentStatus;
+  publishedAt: string | null;
+};
+
+export async function adminListPodcastEpisodes(seriesId: string) {
+  const { data } = await http.get<{ data: AdminEpisodeRow[] }>(
+    endpoints.admin.podcasts.seriesEpisodes(seriesId),
+  );
+  return data.data;
+}
+
+export async function adminCreatePodcastEpisode(input: {
+  seriesId: string;
+  title: string;
+  description: string;
+  audioUrl: string;
+  durationSeconds: number;
+  episodeNumber?: number | null;
+  coverUrl?: string | null;
+  rights: { licenseStatus: string; licenseNotes?: string | null };
+}) {
+  const { data } = await http.post<{
+    data: { id: string; title: string; slug: string; status: ContentStatus; seriesId: string };
+  }>(endpoints.admin.podcasts.episodes, input);
+  return data.data;
+}
+
+export async function adminPublishPodcastEpisode(id: string) {
+  await http.post(endpoints.admin.podcasts.publishEpisode(id));
+}
+
 export async function adminListBooks(params?: { status?: string }) {
   const { data } = await http.get<{ data: AdminContentCard[]; meta: { total: number } }>(
     endpoints.admin.books.list,

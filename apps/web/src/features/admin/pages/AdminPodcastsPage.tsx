@@ -1,23 +1,23 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import {
+  adminCreatePodcastEpisode,
   adminCreatePodcastSeries,
   adminDeletePodcastSeries,
+  adminListPodcastEpisodes,
   adminListPodcastSeries,
+  adminPublishPodcastEpisode,
   adminPublishPodcastSeries,
   adminSetPodcastSeriesStatus,
   adminUpdatePodcastEpisode,
   type AdminContentCard,
+  type AdminEpisodeRow,
   type EditorialStatus,
 } from '@/features/admin/api/adminApi';
 import { ContentWorkflowActions } from '@/features/admin/components/ContentWorkflowActions';
 import { StatusBadge } from '@/features/admin/components/StatusBadge';
-import { fetchPodcastEpisode, fetchPodcastSeriesDetail } from '@/features/podcasts/api/podcastApi';
-import type { PodcastEpisodeSummary } from '@/features/podcasts/types/podcast.types';
 import { Button } from '@/shared/components/Button';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { isPlaceholderMediaUrl } from '@/shared/lib/media';
-
-type EpisodeRow = PodcastEpisodeSummary & { audioUrl: string };
 
 export function AdminPodcastsPage() {
   const [items, setItems] = useState<AdminContentCard[]>([]);
@@ -28,9 +28,15 @@ export function AdminPodcastsPage() {
   const [coverUrl, setCoverUrl] = useState('https://');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
-  const [episodes, setEpisodes] = useState<EpisodeRow[]>([]);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [episodes, setEpisodes] = useState<AdminEpisodeRow[]>([]);
   const [audioDrafts, setAudioDrafts] = useState<Record<string, string>>({});
+
+  const [epTitle, setEpTitle] = useState('');
+  const [epDescription, setEpDescription] = useState('');
+  const [epAudioUrl, setEpAudioUrl] = useState('https://');
+  const [epDurationMin, setEpDurationMin] = useState('30');
+  const [epNumber, setEpNumber] = useState('');
 
   async function reload(status?: string) {
     const result = await adminListPodcastSeries({
@@ -45,26 +51,31 @@ export function AdminPodcastsPage() {
     );
   }, [statusFilter]);
 
-  async function loadEpisodes(slug: string) {
+  async function loadEpisodes(seriesId: string) {
     setBusy(true);
     setError(null);
     try {
-      const detail = await fetchPodcastSeriesDetail(slug);
-      const rows: EpisodeRow[] = [];
+      const rows = await adminListPodcastEpisodes(seriesId);
       const drafts: Record<string, string> = {};
-      for (const ep of detail.episodes) {
-        const full = await fetchPodcastEpisode(ep.id);
-        rows.push({ ...ep, audioUrl: full.audioUrl });
-        drafts[ep.id] = full.audioUrl;
+      for (const ep of rows) {
+        drafts[ep.id] = ep.audioUrl;
       }
       setEpisodes(rows);
       setAudioDrafts(drafts);
-      setExpandedSlug(slug);
+      setExpandedId(seriesId);
     } catch (err) {
       setError(getErrorMessage(err, 'Epizodlar yuklanmadi'));
     } finally {
       setBusy(false);
     }
+  }
+
+  function resetEpisodeForm() {
+    setEpTitle('');
+    setEpDescription('');
+    setEpAudioUrl('https://');
+    setEpDurationMin('30');
+    setEpNumber('');
   }
 
   async function saveAudio(episodeId: string) {
@@ -84,7 +95,7 @@ export function AdminPodcastsPage() {
     }
   }
 
-  async function onCreate(event: FormEvent) {
+  async function onCreateSeries(event: FormEvent) {
     event.preventDefault();
     setBusy(true);
     setError(null);
@@ -102,6 +113,53 @@ export function AdminPodcastsPage() {
       await reload(statusFilter);
     } catch (err) {
       setError(getErrorMessage(err, 'Yaratilmadi'));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onCreateEpisode(event: FormEvent, seriesId: string, seriesStatus: string) {
+    event.preventDefault();
+    const minutes = Number(epDurationMin);
+    if (!Number.isFinite(minutes) || minutes < 1) {
+      setError('Davomiylik (daqiqa) noto‘g‘ri');
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const created = await adminCreatePodcastEpisode({
+        seriesId,
+        title: epTitle.trim(),
+        description: epDescription.trim(),
+        audioUrl: epAudioUrl.trim(),
+        durationSeconds: Math.round(minutes * 60),
+        episodeNumber: epNumber.trim() ? Number(epNumber) : null,
+        rights: {
+          licenseStatus: 'permission_granted',
+          licenseNotes: 'Admin CMS — owner-provided licensed audio URL',
+        },
+      });
+      if (seriesStatus === 'published') {
+        await adminPublishPodcastEpisode(created.id);
+      }
+      resetEpisodeForm();
+      await loadEpisodes(seriesId);
+    } catch (err) {
+      setError(getErrorMessage(err, 'Epizod yaratilmadi'));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function publishEpisode(seriesId: string, episodeId: string) {
+    setBusy(true);
+    setError(null);
+    try {
+      await adminPublishPodcastEpisode(episodeId);
+      await loadEpisodes(seriesId);
+    } catch (err) {
+      setError(getErrorMessage(err, 'Epizod chop etilmadi'));
     } finally {
       setBusy(false);
     }
@@ -125,13 +183,16 @@ export function AdminPodcastsPage() {
       <header>
         <h1 className="text-xl font-medium">Podcast CMS</h1>
         <p className="mt-1 text-sm text-nur-muted">
-          Status oqimi, soft delete, va epizod audio URL (litsenziyalangan manba).
+          Seriya + epizod yaratish, audio URL, publish. Faqat litsenziyalangan manbalar.
         </p>
       </header>
 
       {error ? <p className="text-sm text-[var(--nur-danger)]">{error}</p> : null}
 
-      <form onSubmit={(e) => void onCreate(e)} className="space-y-3 border-b border-nur-line pb-8">
+      <form
+        onSubmit={(e) => void onCreateSeries(e)}
+        className="space-y-3 border-b border-nur-line pb-8"
+      >
         <h2 className="text-sm text-nur-muted">Yangi seriya (draft)</h2>
         <input
           required
@@ -151,7 +212,7 @@ export function AdminPodcastsPage() {
           required
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Tavsif"
+          placeholder="Tavsif (kamida 10 belgi)"
           rows={3}
           className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
         />
@@ -199,53 +260,129 @@ export function AdminPodcastsPage() {
                   variant="secondary"
                   disabled={busy}
                   onClick={() => {
-                    if (expandedSlug === item.slug) {
-                      setExpandedSlug(null);
+                    if (expandedId === item.id) {
+                      setExpandedId(null);
                       setEpisodes([]);
+                      resetEpisodeForm();
                       return;
                     }
-                    void loadEpisodes(item.slug);
+                    void loadEpisodes(item.id);
                   }}
                 >
-                  {expandedSlug === item.slug ? 'Epizodlarni yopish' : 'Audio URL’lar'}
+                  {expandedId === item.id ? 'Epizodlarni yopish' : 'Epizodlar'}
                 </Button>
               </div>
-              {expandedSlug === item.slug ? (
-                <ul className="space-y-4 rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/40 p-3">
-                  {episodes.map((ep) => (
-                    <li key={ep.id} className="space-y-2">
-                      <p className="text-sm font-medium">
-                        {ep.episodeNumber ? `${ep.episodeNumber}. ` : ''}
-                        {ep.title}
-                        {isPlaceholderMediaUrl(ep.audioUrl) ? (
-                          <span className="ml-2 text-[10px] uppercase tracking-wide text-nur-faint">
-                            placeholder
-                          </span>
+              {expandedId === item.id ? (
+                <div className="space-y-5 rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/40 p-3">
+                  <ul className="space-y-4">
+                    {episodes.map((ep) => (
+                      <li key={ep.id} className="space-y-2 border-b border-nur-line/60 pb-4 last:border-0 last:pb-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-sm font-medium">
+                            {ep.episodeNumber ? `${ep.episodeNumber}. ` : ''}
+                            {ep.title}
+                            {isPlaceholderMediaUrl(ep.audioUrl) ? (
+                              <span className="ml-2 text-[10px] uppercase tracking-wide text-nur-faint">
+                                placeholder
+                              </span>
+                            ) : null}
+                          </p>
+                          <StatusBadge status={ep.status} />
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <input
+                            value={audioDrafts[ep.id] ?? ''}
+                            onChange={(e) =>
+                              setAudioDrafts((prev) => ({ ...prev, [ep.id]: e.target.value }))
+                            }
+                            placeholder="https://… (litsenziyalangan audio)"
+                            className="min-w-[16rem] flex-1 rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+                          />
+                          <Button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => void saveAudio(ep.id)}
+                          >
+                            Saqlash
+                          </Button>
+                          {ep.status !== 'published' ? (
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              disabled={busy || item.status !== 'published'}
+                              onClick={() => void publishEpisode(item.id, ep.id)}
+                            >
+                              Chop etish
+                            </Button>
+                          ) : null}
+                        </div>
+                        {ep.status !== 'published' && item.status !== 'published' ? (
+                          <p className="text-[11px] text-nur-faint">
+                            Avval seriyani publish qiling, keyin epizodni.
+                          </p>
                         ) : null}
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        <input
-                          value={audioDrafts[ep.id] ?? ''}
-                          onChange={(e) =>
-                            setAudioDrafts((prev) => ({ ...prev, [ep.id]: e.target.value }))
-                          }
-                          placeholder="https://… (litsenziyalangan audio)"
-                          className="min-w-[16rem] flex-1 rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
-                        />
-                        <Button
-                          type="button"
-                          disabled={busy}
-                          onClick={() => void saveAudio(ep.id)}
-                        >
-                          Saqlash
-                        </Button>
-                      </div>
-                    </li>
-                  ))}
-                  {episodes.length === 0 ? (
-                    <p className="text-xs text-nur-faint">Epizod yo‘q yoki yuklanmoqda…</p>
-                  ) : null}
-                </ul>
+                      </li>
+                    ))}
+                    {episodes.length === 0 ? (
+                      <p className="text-xs text-nur-faint">Hali epizod yo‘q.</p>
+                    ) : null}
+                  </ul>
+
+                  <form
+                    onSubmit={(e) => void onCreateEpisode(e, item.id, item.status)}
+                    className="space-y-2 border-t border-nur-line pt-4"
+                  >
+                    <h3 className="text-xs uppercase tracking-wide text-nur-faint">
+                      Yangi epizod
+                    </h3>
+                    <input
+                      required
+                      value={epTitle}
+                      onChange={(e) => setEpTitle(e.target.value)}
+                      placeholder="Epizod sarlavhasi"
+                      className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+                    />
+                    <textarea
+                      required
+                      value={epDescription}
+                      onChange={(e) => setEpDescription(e.target.value)}
+                      placeholder="Tavsif (kamida 10 belgi)"
+                      rows={2}
+                      className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+                    />
+                    <input
+                      required
+                      value={epAudioUrl}
+                      onChange={(e) => setEpAudioUrl(e.target.value)}
+                      placeholder="Audio URL (https://…)"
+                      className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+                    />
+                    <div className="flex flex-wrap gap-2">
+                      <input
+                        required
+                        type="number"
+                        min={1}
+                        value={epDurationMin}
+                        onChange={(e) => setEpDurationMin(e.target.value)}
+                        placeholder="Daqiqa"
+                        className="w-28 rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+                      />
+                      <input
+                        type="number"
+                        min={1}
+                        value={epNumber}
+                        onChange={(e) => setEpNumber(e.target.value)}
+                        placeholder="№ (ixtiyoriy)"
+                        className="w-32 rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <Button type="submit" disabled={busy}>
+                      {item.status === 'published'
+                        ? 'Yaratish va chop etish'
+                        : 'Draft epizod yaratish'}
+                    </Button>
+                  </form>
+                </div>
               ) : null}
               <ContentWorkflowActions
                 status={item.status}

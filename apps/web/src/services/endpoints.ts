@@ -74,6 +74,7 @@ export const endpoints = {
       itemSeries: (id: string) => `/api/v1/admin/podcasts/series/${id}`,
       publishSeries: (id: string) => `/api/v1/admin/podcasts/series/${id}/publish`,
       statusSeries: (id: string) => `/api/v1/admin/podcasts/series/${id}/status`,
+      seriesEpisodes: (id: string) => `/api/v1/admin/podcasts/series/${id}/episodes`,
       episodes: '/api/v1/admin/podcasts/episodes',
       episode: (id: string) => `/api/v1/admin/podcasts/episodes/${id}`,
       publishEpisode: (id: string) => `/api/v1/admin/podcasts/episodes/${id}/publish`,

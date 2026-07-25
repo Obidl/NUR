@@ -114,6 +114,13 @@ adminPodcastsRouter.delete(
   podcastController.adminDeleteSeries,
 );
 
+adminPodcastsRouter.get(
+  '/series/:id/episodes',
+  ...editorGuard,
+  validateParams(z.object({ id: z.string().min(1) })),
+  podcastController.adminListEpisodes,
+);
+
 adminPodcastsRouter.post(
   '/episodes',
   ...editorGuard,

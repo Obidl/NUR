@@ -174,6 +174,16 @@ export async function adminDeleteSeries(req: Request, res: Response, next: NextF
   }
 }
 
+export async function adminListEpisodes(req: Request, res: Response, next: NextFunction) {
+  try {
+    const params = (req.validatedParams ?? req.params) as { id: string };
+    const data = await podcastService.adminListEpisodes(String(params.id));
+    res.status(200).json({ data });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function adminSetSeriesStatus(req: Request, res: Response, next: NextFunction) {
   try {
     const params = (req.validatedParams ?? req.params) as { id: string };
