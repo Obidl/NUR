@@ -22,6 +22,8 @@ type TodayJourneyProps = {
   saving: boolean;
   onComplete: (lessonId: string) => void;
   requireLogin?: boolean;
+  /** Oxirgi yakunlashdan keyin: kun tugadi banner */
+  dayCompleteBanner?: { dayIndex: number; nextTheme: string | null } | null;
 };
 
 export function TodayJourney({
@@ -38,6 +40,7 @@ export function TodayJourney({
   saving,
   onComplete,
   requireLogin,
+  dayCompleteBanner,
 }: TodayJourneyProps) {
   const allDone = totalCount > 0 && completedCount >= totalCount;
   const examplePath = isExampleLabel(pathTitle);
@@ -62,9 +65,7 @@ export function TodayJourney({
             {dayLabel ? ` · ${dayLabel}` : ''}
           </p>
         </div>
-        <p className="shrink-0 text-sm tabular-nums text-nur-faint">
-          {percent}%
-        </p>
+        <p className="shrink-0 text-sm tabular-nums text-nur-faint">{percent}%</p>
       </div>
 
       <div
@@ -80,6 +81,18 @@ export function TodayJourney({
           style={{ width: `${percent}%` }}
         />
       </div>
+
+      {dayCompleteBanner ? (
+        <p
+          role="status"
+          className="mt-6 rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/50 px-4 py-3 text-sm text-nur-ink"
+        >
+          Kun {dayCompleteBanner.dayIndex} tugadi.
+          {dayCompleteBanner.nextTheme
+            ? ` Ertaga: ${dayCompleteBanner.nextTheme}.`
+            : ' Yo‘l yakuniga yaqin.'}
+        </p>
+      ) : null}
 
       {allDone ? (
         <p className="mt-6 text-sm text-nur-muted">

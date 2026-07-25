@@ -12,11 +12,12 @@ import {
 import type { PathDetail, PathProgressItem } from '@/features/curriculum/types/curriculum.types';
 import { TodayJourney } from '@/features/home/components/TodayJourney';
 import {
+  dayThemeFromModuleTitle,
   flattenPathLessons,
+  formatHomeDates,
   mergeProgressUpdate,
   pathProgressPercent,
   pickTodayLessons,
-  dayThemeFromModuleTitle,
 } from '@/features/home/lib/todayPath';
 import { getErrorMessage } from '@/shared/lib/errors';
 
@@ -27,12 +28,17 @@ export function HomePage() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const accessToken = useAuthStore((state) => state.accessToken);
+  const dates = useMemo(() => formatHomeDates(), []);
 
   const [path, setPath] = useState<PathDetail | null>(null);
   const [progress, setProgress] = useState<PathProgressItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dayCompleteBanner, setDayCompleteBanner] = useState<{
+    dayIndex: number;
+    nextTheme: string | null;
+  } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -97,16 +103,28 @@ export function HomePage() {
   const dayTheme = dayThemeFromModuleTitle(today?.moduleTitle);
 
   async function markComplete(lessonId: string) {
-    if (!path) return;
+    if (!path || !today) return;
     if (!accessToken) {
       navigate('/login', { state: { from: '/' } });
       return;
     }
+    const finishingDay =
+      todayLessons.length === 1 && todayLessons[0]?.id === lessonId;
+    const finishedDayIndex = today.dayIndex;
+    const modules = path.modules.slice().sort((a, b) => a.order - b.order);
+    const nextModule = modules[finishedDayIndex] ?? null;
+
     setSaving(true);
     setError(null);
     try {
       const updated = await completeCurriculumLesson(path.id, lessonId);
       setProgress(mergeProgressUpdate(progress, updated, path));
+      if (finishingDay) {
+        setDayCompleteBanner({
+          dayIndex: finishedDayIndex,
+          nextTheme: dayThemeFromModuleTitle(nextModule?.title ?? null),
+        });
+      }
     } catch (err) {
       setError(getErrorMessage(err, 'Progress saqlanmadi'));
     } finally {
@@ -146,7 +164,13 @@ export function HomePage() {
           transition={{ duration: reduceMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
           className="flex min-h-[calc(100dvh-12rem)] max-w-xl flex-col justify-center md:min-h-[70vh]"
         >
-          <p className="font-display text-5xl tracking-[0.22em] text-nur-ink md:text-6xl">NUR</p>
+          <p className="text-xs text-nur-faint">
+            {dates.hijri ? `${dates.hijri} · ` : ''}
+            {dates.gregorian}
+          </p>
+          <p className="mt-4 font-display text-5xl tracking-[0.22em] text-nur-ink md:text-6xl">
+            NUR
+          </p>
           <h1 className="mt-6 text-2xl font-medium text-nur-ink md:text-3xl">
             {user ? `Assalomu alaykum, ${user.displayName}` : 'Assalomu alaykum'}
           </h1>
@@ -206,6 +230,7 @@ export function HomePage() {
               completedIds={completedIds}
               saving={saving}
               requireLogin={!accessToken}
+              dayCompleteBanner={dayCompleteBanner}
               onComplete={(lessonId) => {
                 if (!accessToken) {
                   navigate('/login', { state: { from: '/' } });

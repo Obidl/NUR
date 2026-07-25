@@ -203,6 +203,7 @@ Only if product pulls curriculum into scope — see `CURRICULUM.md`.
 | T-142 | Link lessons to existing Qur’an/podcast/book/research entities | P2 | ✅ |
 | T-143 | EXAMPLE 15-kun siyrat path seed + Home Kun X/15 | P0 | ✅ |
 | T-144 | Journey UI polish (Ertalab/Yo‘lda/Kechqurun + progress) | P0 | ✅ |
+| T-145 | Home date + kun-tugadi banner; nav «Bugun»; OWNER_CONTENT | P1 | ✅ |
 
 ---
 

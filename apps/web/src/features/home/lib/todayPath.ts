@@ -83,6 +83,27 @@ export function pathProgressPercent(total: number, completedCount: number): numb
   return Math.min(100, Math.round((completedCount / total) * 100));
 }
 
+export function formatHomeDates(now = new Date()): { gregorian: string; hijri: string | null } {
+  const gregorian = new Intl.DateTimeFormat('uz-UZ', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  }).format(now);
+
+  let hijri: string | null = null;
+  try {
+    hijri = new Intl.DateTimeFormat('en-u-ca-islamic', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(now);
+  } catch {
+    hijri = null;
+  }
+
+  return { gregorian, hijri };
+}
+
 export function mergeProgressUpdate(
   previous: PathProgressItem | null,
   update: {

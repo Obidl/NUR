@@ -5,7 +5,7 @@ import { useAuthStore } from '@/features/auth/store/authStore';
 import { PodcastPlayerBar } from '@/features/podcasts/components/PodcastPlayerBar';
 
 const desktopNav = [
-  { to: '/', label: 'Bosh sahifa', end: true },
+  { to: '/', label: 'Bugun', end: true },
   { to: '/quran', label: 'Qur’on' },
   { to: '/podcasts', label: 'Podcastlar' },
   { to: '/books', label: 'Kitoblar' },
@@ -16,7 +16,7 @@ const desktopNav = [
 ] as const;
 
 const mobileNav = [
-  { to: '/', label: 'Home', end: true, icon: Home },
+  { to: '/', label: 'Bugun', end: true, icon: Home },
   { to: '/quran', label: 'Qur’on', icon: ScrollText },
   { to: '/podcasts', label: 'Audio', icon: Mic2 },
   { to: '/search', label: 'Qidir', icon: Search },
