@@ -46,12 +46,33 @@ export function flattenPathLessons(path: PathDetail): PathLesson[] {
 }
 
 /**
- * Joriy kun moduli: birinchi to‘liq tugallanmagan modulning ochiq darslari.
+ * Joriy kun — faqat ochiq darslar (eski API).
  */
 export function pickTodayLessons(
   path: PathDetail,
   completedIds: Iterable<string>,
 ): { lessons: PathLesson[]; dayIndex: number; dayTotal: number; moduleTitle: string | null } {
+  const today = pickTodayModule(path, completedIds);
+  const done = new Set(completedIds);
+  return {
+    ...today,
+    lessons: today.lessons.filter((lesson) => !done.has(lesson.id)),
+  };
+}
+
+/**
+ * Joriy kun moduli — checklist uchun barcha darslar (tugaganlar ham).
+ */
+export function pickTodayModule(
+  path: PathDetail,
+  completedIds: Iterable<string>,
+): {
+  lessons: PathLesson[];
+  dayIndex: number;
+  dayTotal: number;
+  moduleTitle: string | null;
+  allDone: boolean;
+} {
   const done = new Set(completedIds);
   const modules = path.modules.slice().sort((a, b) => a.order - b.order);
   const dayTotal = modules.length || 1;
@@ -62,20 +83,33 @@ export function pickTodayLessons(
     const incomplete = sorted.filter((lesson) => !done.has(lesson.id));
     if (incomplete.length > 0) {
       return {
-        lessons: incomplete,
+        lessons: sorted,
         dayIndex: i + 1,
         dayTotal,
         moduleTitle: module.title,
+        allDone: false,
       };
     }
   }
 
+  const last = modules[modules.length - 1];
   return {
-    lessons: [],
+    lessons: last ? last.lessons.slice().sort((a, b) => a.order - b.order) : [],
     dayIndex: dayTotal,
     dayTotal,
-    moduleTitle: modules[modules.length - 1]?.title ?? null,
+    moduleTitle: last?.title ?? null,
+    allDone: true,
   };
+}
+
+export function estimateMinutes(lessons: PathLesson[]): number {
+  return lessons.reduce((sum, lesson) => sum + (lesson.estimatedMinutes ?? 0), 0);
+}
+
+export function dayProgressPercent(lessons: PathLesson[], completedIds: Set<string>): number {
+  if (!lessons.length) return 0;
+  const done = lessons.filter((lesson) => completedIds.has(lesson.id)).length;
+  return Math.min(100, Math.round((done / lessons.length) * 100));
 }
 
 export function pathProgressPercent(total: number, completedCount: number): number {

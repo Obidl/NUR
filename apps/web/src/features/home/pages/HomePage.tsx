@@ -10,14 +10,12 @@ import {
   fetchCurriculumProgress,
 } from '@/features/curriculum/api/curriculumApi';
 import type { PathDetail, PathProgressItem } from '@/features/curriculum/types/curriculum.types';
-import { TodayJourney } from '@/features/home/components/TodayJourney';
+import { TodayMission } from '@/features/home/components/TodayMission';
 import {
   dayThemeFromModuleTitle,
-  flattenPathLessons,
   formatHomeDates,
   mergeProgressUpdate,
-  pathProgressPercent,
-  pickTodayLessons,
+  pickTodayModule,
 } from '@/features/home/lib/todayPath';
 import { getErrorMessage } from '@/shared/lib/errors';
 
@@ -35,10 +33,6 @@ export function HomePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [dayCompleteBanner, setDayCompleteBanner] = useState<{
-    dayIndex: number;
-    nextTheme: string | null;
-  } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -89,44 +83,27 @@ export function HomePage() {
     };
   }, [accessToken]);
 
-  const lessons = useMemo(() => (path ? flattenPathLessons(path) : []), [path]);
   const completedIds = useMemo(
     () => new Set(progress?.completedLessonIds ?? []),
     [progress],
   );
   const today = useMemo(
-    () => (path ? pickTodayLessons(path, completedIds) : null),
+    () => (path ? pickTodayModule(path, completedIds) : null),
     [path, completedIds],
   );
-  const todayLessons = today?.lessons ?? [];
-  const completedCount = lessons.filter((lesson) => completedIds.has(lesson.id)).length;
-  const percent = pathProgressPercent(lessons.length, completedCount);
-  const nextLesson = todayLessons[0] ?? null;
   const dayTheme = dayThemeFromModuleTitle(today?.moduleTitle);
 
   async function markComplete(lessonId: string) {
-    if (!path || !today) return;
+    if (!path) return;
     if (!accessToken) {
       navigate('/login', { state: { from: '/' } });
       return;
     }
-    const finishingDay =
-      todayLessons.length === 1 && todayLessons[0]?.id === lessonId;
-    const finishedDayIndex = today.dayIndex;
-    const modules = path.modules.slice().sort((a, b) => a.order - b.order);
-    const nextModule = modules[finishedDayIndex] ?? null;
-
     setSaving(true);
     setError(null);
     try {
       const updated = await completeCurriculumLesson(path.id, lessonId);
       setProgress(mergeProgressUpdate(progress, updated, path));
-      if (finishingDay) {
-        setDayCompleteBanner({
-          dayIndex: finishedDayIndex,
-          nextTheme: dayThemeFromModuleTitle(nextModule?.title ?? null),
-        });
-      }
     } catch (err) {
       setError(getErrorMessage(err, 'Progress saqlanmadi'));
     } finally {
@@ -134,116 +111,70 @@ export function HomePage() {
     }
   }
 
+  if (loading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center text-sm text-nur-muted">
+        Yuklanmoqda…
+      </div>
+    );
+  }
+
+  if (!path || !today) {
+    return (
+      <section className="nur-atmosphere mx-auto max-w-lg px-4 py-16">
+        <p className="font-display text-4xl tracking-[0.2em]">NUR</p>
+        <h1 className="mt-6 text-2xl font-medium">Assalomu alaykum</h1>
+        <p className="mt-3 text-nur-muted">Hali o‘quv yo‘li yo‘q.</p>
+        <Button to="/quran" className="mt-6">
+          Qur’onga o‘tish
+        </Button>
+        {error ? <p className="mt-4 text-sm text-[var(--nur-danger)]">{error}</p> : null}
+      </section>
+    );
+  }
+
   return (
-    <section className="nur-atmosphere relative min-h-[calc(100dvh-3.5rem)] overflow-hidden md:min-h-[calc(100dvh-4rem)]">
+    <section
+      data-theme="dark"
+      className="relative min-h-[calc(100dvh-3.5rem)] bg-nur-bg text-nur-ink md:min-h-[calc(100dvh-4rem)]"
+    >
       <motion.div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: reduceMotion ? 0 : 0.8, ease: 'easeOut' }}
+        transition={{ duration: reduceMotion ? 0 : 0.6 }}
       >
-        <div className="absolute left-1/2 top-[-12%] h-[55vmax] w-[70vmax] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,var(--nur-lamp-soft)_0%,transparent_68%)] opacity-80" />
+        <div className="absolute left-1/2 top-[-8%] h-[40vmax] w-[70vmax] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,var(--nur-lamp-soft)_0%,transparent_70%)] opacity-70" />
       </motion.div>
 
-      <div className="relative mx-auto max-w-5xl px-4 pb-28 pt-16 md:px-6 md:pb-16">
-        {import.meta.env.DEV ? (
-          <div
-            role="status"
-            className="mb-8 max-w-xl rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/60 px-4 py-3 text-sm text-nur-muted"
-          >
-            <p className="font-medium text-nur-ink">Lokal demo</p>
-            <p className="mt-1">
-              EXAMPLE kontent production emas. Qur’on — import qilingan dataset; qolganlari
-              namunaviy seed.
-            </p>
-          </div>
-        ) : null}
-
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
-          className="flex min-h-[calc(100dvh-12rem)] max-w-xl flex-col justify-center md:min-h-[70vh]"
-        >
-          <p className="text-xs text-nur-faint">
-            {dates.hijri ? `${dates.hijri} · ` : ''}
-            {dates.gregorian}
-          </p>
-          <p className="mt-4 font-display text-5xl tracking-[0.22em] text-nur-ink md:text-6xl">
-            NUR
-          </p>
-          <h1 className="mt-6 text-2xl font-medium text-nur-ink md:text-3xl">
-            {user ? `Assalomu alaykum, ${user.displayName}` : 'Assalomu alaykum'}
-          </h1>
-          <p className="mt-4 max-w-md text-base text-nur-muted md:text-lg">
-            {loading
-              ? 'Yuklanmoqda…'
-              : path
-                ? percent >= 100
-                  ? 'Yo‘l tugadi. Ertaga yangi kun.'
-                  : today
-                    ? `Kun ${today.dayIndex}/${today.dayTotal} tayyor — oching, tinglang, belgilang.`
-                    : 'Bugungi yo‘l tayyor — oching, tinglang, belgilang.'
-                : 'Tinich, ishonchli islomiy o‘qish va tinglash.'}
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            {nextLesson?.targetHref ? (
-              <Button to={nextLesson.targetHref}>Davom etish</Button>
-            ) : path ? (
-              <Button to={`/curriculum/${path.slug}`}>Yo‘lni ochish</Button>
-            ) : (
-              <Button to="/quran">Qur’onga o‘tish</Button>
-            )}
-            {accessToken ? (
-              <Button to="/curriculum" variant="secondary">
-                Yo‘llar
-              </Button>
-            ) : (
-              <Button to="/login" variant="secondary">
-                Kirish
-              </Button>
-            )}
-          </div>
-          {error ? <p className="mt-4 text-sm text-[var(--nur-danger)]">{error}</p> : null}
-        </motion.div>
-
-        {path && !loading ? (
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: reduceMotion ? 0 : 0.45,
-              delay: reduceMotion ? 0 : 0.12,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="mt-4 border-t border-nur-line/80 pt-12 pb-8"
-          >
-            <TodayJourney
-              pathTitle={path.title}
-              pathSlug={path.slug}
-              percent={percent}
-              completedCount={completedCount}
-              totalCount={lessons.length}
-              dayIndex={today?.dayIndex ?? 1}
-              dayTotal={today?.dayTotal ?? 15}
-              dayLabel={dayTheme}
-              lessons={todayLessons}
-              completedIds={completedIds}
-              saving={saving}
-              requireLogin={!accessToken}
-              dayCompleteBanner={dayCompleteBanner}
-              onComplete={(lessonId) => {
-                if (!accessToken) {
-                  navigate('/login', { state: { from: '/' } });
-                  return;
-                }
-                void markComplete(lessonId);
-              }}
-            />
-          </motion.div>
-        ) : null}
-      </div>
+      <motion.div
+        className="relative mx-auto px-4 py-10 pb-28 md:px-6 md:pb-16"
+        initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: reduceMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {error ? <p className="mb-4 text-center text-sm text-[var(--nur-danger)]">{error}</p> : null}
+        <TodayMission
+          greetingName={user?.displayName}
+          dates={dates}
+          dayIndex={today.dayIndex}
+          dayTotal={today.dayTotal}
+          dayLabel={dayTheme}
+          pathSlug={path.slug}
+          lessons={today.lessons}
+          completedIds={completedIds}
+          saving={saving}
+          requireLogin={!accessToken}
+          onComplete={(lessonId) => {
+            if (!accessToken) {
+              navigate('/login', { state: { from: '/' } });
+              return;
+            }
+            void markComplete(lessonId);
+          }}
+        />
+      </motion.div>
     </section>
   );
 }

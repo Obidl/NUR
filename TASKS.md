@@ -206,6 +206,7 @@ Only if product pulls curriculum into scope — see `CURRICULUM.md`.
 | T-145 | Home date + kun-tugadi banner; nav «Bugun»; OWNER_CONTENT | P1 | ✅ |
 | T-146 | Owner-approved video catalog seed → siyrat-15-kun | P0 | ✅ |
 | T-147 | Placeholder audio notice + admin episode audioUrl editor | P0 | ✅ |
+| T-148 | Home = video-1 Today’s Mission (Ertalab/Yo‘lda/Kechqurun) | P0 | ✅ |
 
 ---
 
