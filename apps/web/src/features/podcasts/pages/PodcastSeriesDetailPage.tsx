@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Heart, Play } from 'lucide-react';
 import {
   addPodcastFavorite,
@@ -17,6 +17,10 @@ import type {
 } from '@/features/podcasts/types/podcast.types';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { Button } from '@/shared/components/Button';
+import { DetailBackLink } from '@/shared/components/DetailBackLink';
+import { DetailLoading } from '@/shared/components/DetailLoading';
+import { ErrorState } from '@/shared/components/Skeleton';
+import { useToast } from '@/shared/components/Toast';
 import { getErrorMessage } from '@/shared/lib/errors';
 
 function formatDuration(seconds: number) {
@@ -30,6 +34,7 @@ export function PodcastSeriesDetailPage() {
   const navigate = useNavigate();
   const accessToken = useAuthStore((s) => s.accessToken);
   const loadEpisode = usePodcastPlayerStore((s) => s.loadEpisode);
+  const { toast } = useToast();
 
   const [series, setSeries] = useState<PodcastSeriesCard | null>(null);
   const [episodes, setEpisodes] = useState<PodcastEpisodeSummary[]>([]);
@@ -117,30 +122,26 @@ export function PodcastSeriesDetailPage() {
       if (seriesFavorite) {
         await removePodcastFavorite(seriesFavorite.id);
         setFavorites((prev) => prev.filter((fav) => fav.id !== seriesFavorite.id));
+        toast('Sevimlidan olib tashlandi', 'info');
       } else {
         const created = await addPodcastFavorite({
           targetType: 'series',
           targetId: series.id,
         });
         setFavorites((prev) => [created, ...prev]);
+        toast('Sevimlilarga qo‘shildi', 'success');
       }
     } catch (err) {
       setError(getErrorMessage(err));
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex min-h-[40vh] items-center justify-center text-sm text-nur-muted">
-        Yuklanmoqda…
-      </div>
-    );
-  }
+  if (loading) return <DetailLoading cover />;
 
   if (error && !series) {
     return (
-      <section className="mx-auto max-w-3xl px-4 py-10">
-        <p className="text-[var(--nur-danger)]">{error}</p>
+      <section className="nur-page">
+        <ErrorState message={error} />
         <Button to="/podcasts" variant="secondary" className="mt-4">
           Orqaga
         </Button>
@@ -151,24 +152,22 @@ export function PodcastSeriesDetailPage() {
   if (!series) return null;
 
   return (
-    <section className="mx-auto max-w-3xl px-4 py-8 pb-28 md:px-6">
-      <Link to="/podcasts" className="text-sm text-nur-muted">
-        ← Podcastlar
-      </Link>
+    <section className="nur-page nur-fade-in pb-28">
+      <DetailBackLink to="/podcasts">Podcastlar</DetailBackLink>
 
-      <div className="mt-6 flex gap-4">
+      <div className="mt-8 flex gap-5">
         <img
           src={series.coverUrl}
           alt=""
-          className="h-28 w-28 rounded-[var(--radius-m)] object-cover"
+          className="h-28 w-28 rounded-[var(--radius-xl)] object-cover shadow-[var(--shadow-sm)]"
         />
         <div className="min-w-0">
-          <h1 className="text-2xl font-medium">{series.title}</h1>
-          <p className="mt-1 text-sm text-nur-muted">{series.hostOrScholar}</p>
+          <h1 className="nur-page-title !text-[1.5rem] md:!text-[1.75rem]">{series.title}</h1>
+          <p className="mt-2 text-sm text-nur-muted">{series.hostOrScholar}</p>
           <button
             type="button"
             onClick={() => void toggleFavorite()}
-            className="mt-3 inline-flex items-center gap-2 text-sm text-nur-lamp"
+            className="mt-4 inline-flex items-center gap-2 rounded-[var(--radius-m)] px-3 py-2 text-sm font-medium text-nur-lamp transition-colors duration-200 hover:bg-nur-lamp-soft"
             aria-label="Sevimlilarga qo‘shish"
           >
             <Heart size={16} fill={seriesFavorite ? 'currentColor' : 'none'} />
@@ -177,43 +176,51 @@ export function PodcastSeriesDetailPage() {
         </div>
       </div>
 
-      <p className="mt-6 text-sm leading-7 text-nur-muted">{series.description}</p>
+      <p className="mt-8 text-sm leading-7 text-nur-muted">{series.description}</p>
       {series.description.toLowerCase().includes('placeholder') ? (
         <p role="status" className="mt-3 text-xs text-nur-faint">
           Asl audio manbalari hali ulanmagan bo‘lishi mumkin — playerda eslatma chiqadi.
         </p>
       ) : null}
-      {error ? <p className="mt-4 text-sm text-[var(--nur-danger)]">{error}</p> : null}
+      {error ? (
+        <p className="mt-4 text-sm text-[var(--nur-danger)]" role="alert">
+          {error}
+        </p>
+      ) : null}
 
-      <h2 className="mt-10 mb-3 text-sm font-medium text-nur-muted">
-        Epizodlar ({episodes.length})
-      </h2>
-      <ul className="divide-y divide-nur-line">
-        {episodes.map((episode) => (
-          <li key={episode.id} className="flex items-center justify-between gap-3 py-4">
-            <div className="min-w-0">
-              <p className="font-medium">
-                {episode.episodeNumber ? `${episode.episodeNumber}. ` : ''}
-                {episode.title}
-              </p>
-              <p className="mt-1 text-xs text-nur-muted">
-                {formatDuration(episode.durationSeconds)}
-                {progressMap[episode.id]
-                  ? ` · davom ${Math.floor(progressMap[episode.id] / 60)} daq.`
-                  : ''}
-              </p>
-            </div>
-            <button
-              type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-nur-lamp text-nur-lamp-ink"
-              aria-label={`${episode.title} ni tinglash`}
-              onClick={() => void playEpisode(episode.id)}
-            >
-              <Play size={16} />
-            </button>
-          </li>
-        ))}
-      </ul>
+      <h2 className="nur-section-title mt-10 mb-3">Epizodlar ({episodes.length})</h2>
+      {episodes.length === 0 ? (
+        <p className="text-sm text-nur-muted">Hali epizod yo‘q.</p>
+      ) : (
+        <ul className="nur-list">
+          {episodes.map((episode) => (
+            <li key={episode.id}>
+              <div className="nur-list-row justify-between">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold tracking-[-0.01em]">
+                    {episode.episodeNumber ? `${episode.episodeNumber}. ` : ''}
+                    {episode.title}
+                  </p>
+                  <p className="mt-1 text-xs text-nur-muted">
+                    {formatDuration(episode.durationSeconds)}
+                    {progressMap[episode.id]
+                      ? ` · davom ${Math.floor(progressMap[episode.id] / 60)} daq.`
+                      : ''}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-m)] bg-nur-lamp text-nur-lamp-ink shadow-[var(--shadow-sm)] transition-[transform,filter] duration-200 hover:brightness-[0.97] active:scale-[0.98]"
+                  aria-label={`${episode.title} ni tinglash`}
+                  onClick={() => void playEpisode(episode.id)}
+                >
+                  <Play size={16} />
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }

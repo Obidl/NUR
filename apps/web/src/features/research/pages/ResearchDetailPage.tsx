@@ -8,9 +8,17 @@ import {
   fetchResearchBookmarks,
 } from '@/features/research/api/researchApi';
 import { renderSafeResearchHtml } from '@/features/research/lib/safeRender';
-import type { ResearchArticle, ResearchBookmark, ResearchCard } from '@/features/research/types/research.types';
+import type {
+  ResearchArticle,
+  ResearchBookmark,
+  ResearchCard,
+} from '@/features/research/types/research.types';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { Button } from '@/shared/components/Button';
+import { DetailBackLink } from '@/shared/components/DetailBackLink';
+import { DetailLoading } from '@/shared/components/DetailLoading';
+import { ErrorState } from '@/shared/components/Skeleton';
+import { useToast } from '@/shared/components/Toast';
 import { getErrorMessage } from '@/shared/lib/errors';
 
 const SOURCE_TYPE_LABEL: Record<string, string> = {
@@ -26,6 +34,7 @@ export function ResearchDetailPage() {
   const { slug = '' } = useParams();
   const navigate = useNavigate();
   const accessToken = useAuthStore((s) => s.accessToken);
+  const { toast } = useToast();
 
   const [article, setArticle] = useState<ResearchArticle | null>(null);
   const [related, setRelated] = useState<ResearchCard[]>([]);
@@ -81,27 +90,23 @@ export function ResearchDetailPage() {
       if (bookmark) {
         await deleteResearchBookmark(bookmark.id);
         setBookmark(null);
+        toast('Xatcho‘p olib tashlandi', 'info');
       } else {
         const created = await createResearchBookmark(article.id);
         setBookmark(created);
+        toast('Xatcho‘p saqlandi', 'success');
       }
     } catch (err) {
       setError(getErrorMessage(err, 'Xatcho‘p saqlanmadi'));
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex min-h-[40vh] items-center justify-center text-sm text-nur-muted">
-        Yuklanmoqda…
-      </div>
-    );
-  }
+  if (loading) return <DetailLoading />;
 
   if (error || !article) {
     return (
-      <section className="mx-auto max-w-3xl px-4 py-10">
-        <p className="text-[var(--nur-danger)]">{error ?? 'Topilmadi'}</p>
+      <section className="nur-page">
+        <ErrorState message={error ?? 'Topilmadi'} />
         <Button to="/research" variant="secondary" className="mt-4">
           Orqaga
         </Button>
@@ -110,15 +115,13 @@ export function ResearchDetailPage() {
   }
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-8 md:px-6">
+    <article className="nur-page nur-fade-in">
       <div className="flex items-start justify-between gap-4">
-        <Link to="/research" className="text-sm text-nur-muted">
-          ← Tadqiqot
-        </Link>
+        <DetailBackLink to="/research">Tadqiqot</DetailBackLink>
         <button
           type="button"
           onClick={() => void toggleBookmark()}
-          className="inline-flex items-center gap-2 text-sm text-nur-muted hover:text-nur-ink"
+          className="inline-flex items-center gap-2 rounded-[var(--radius-m)] px-3 py-2 text-sm font-medium text-nur-muted transition-colors duration-200 hover:bg-nur-sunken hover:text-nur-ink"
           aria-label={bookmark ? 'Xatcho‘pni olib tashlash' : 'Xatcho‘p qo‘shish'}
         >
           {bookmark ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
@@ -126,30 +129,34 @@ export function ResearchDetailPage() {
         </button>
       </div>
 
-      <header className="mt-6">
-        <p className="text-xs uppercase tracking-wide text-nur-faint">{article.category}</p>
-        <h1 className="mt-2 text-2xl font-medium leading-snug">{article.title}</h1>
+      <header className="mt-8">
+        <p className="text-[11px] font-medium uppercase tracking-wide text-nur-faint">
+          {article.category}
+        </p>
+        <h1 className="mt-3 nur-page-title !text-[1.5rem] leading-snug md:!text-[1.75rem]">
+          {article.title}
+        </h1>
         <p className="mt-3 text-sm text-nur-muted">{article.authors.join(', ')}</p>
         {article.reviewer ? (
           <p className="mt-1 text-xs text-nur-faint">Tekshiruvchi: {article.reviewer}</p>
         ) : null}
-        <p className="mt-4 text-sm leading-7 text-nur-muted">{article.summary}</p>
+        <p className="mt-5 text-sm leading-7 text-nur-muted">{article.summary}</p>
       </header>
 
       <div
-        className="prose-nur mt-8 text-sm leading-7 [&_a]:text-nur-accent [&_blockquote]:border-l [&_blockquote]:border-nur-line [&_blockquote]:pl-4 [&_h2]:mt-8 [&_h2]:text-lg [&_h2]:font-medium [&_li]:my-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-3 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-5"
+        className="prose-nur mt-10 text-sm leading-7 [&_a]:text-nur-accent [&_blockquote]:border-l [&_blockquote]:border-nur-line [&_blockquote]:pl-4 [&_h2]:mt-8 [&_h2]:text-lg [&_h2]:font-semibold [&_li]:my-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-3 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-5"
         dangerouslySetInnerHTML={{ __html: safeHtml }}
       />
 
-      <section className="mt-12 border-t border-nur-line pt-8">
-        <h2 className="text-sm font-medium">Manbalar</h2>
+      <section className="nur-surface mt-12 px-5 py-6 md:px-6">
+        <h2 className="text-sm font-semibold tracking-[-0.01em]">Manbalar</h2>
         <p className="mt-1 text-xs text-nur-faint">
           Har bir da’vo manbaga tayangan. Manbasiz maqola nashr qilinmaydi.
         </p>
-        <ul className="mt-4 space-y-4">
+        <ul className="mt-5 space-y-5">
           {article.sources.map((source, index) => (
             <li key={`${source.title}-${index}`} className="text-sm">
-              <p className="font-medium">
+              <p className="font-semibold">
                 {source.title}
                 <span className="ml-2 text-xs font-normal text-nur-faint">
                   {SOURCE_TYPE_LABEL[source.type] ?? source.type}
@@ -161,7 +168,7 @@ export function ResearchDetailPage() {
                   href={source.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-1 inline-block text-xs text-nur-accent"
+                  className="mt-1 inline-block text-xs font-medium text-nur-accent hover:underline"
                 >
                   Havola
                 </a>
@@ -176,21 +183,17 @@ export function ResearchDetailPage() {
       </section>
 
       {related.length > 0 ? (
-        <section className="mt-12 border-t border-nur-line pt-8">
-          <h2 className="text-sm font-medium">O‘xshash maqolalar</h2>
-          <p className="mt-1 text-xs text-nur-faint">
-            Bir xil kategoriya yoki teglar bo‘yicha.
-          </p>
-          <ul className="mt-4 space-y-4">
+        <section className="mt-12">
+          <h2 className="nur-section-title mb-3">O‘xshash maqolalar</h2>
+          <ul className="nur-list">
             {related.map((item) => (
               <li key={item.id}>
-                <Link
-                  to={`/research/${item.slug}`}
-                  className="group block text-sm hover:text-nur-lamp"
-                >
-                  <p className="font-medium group-hover:underline">{item.title}</p>
-                  <p className="mt-1 text-xs text-nur-muted line-clamp-2">{item.summary}</p>
-                  <p className="mt-1 text-xs text-nur-faint">{item.category}</p>
+                <Link to={`/research/${item.slug}`} className="nur-list-row !items-start">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold tracking-[-0.01em]">{item.title}</p>
+                    <p className="mt-1 text-sm text-nur-muted line-clamp-2">{item.summary}</p>
+                    <p className="mt-1 text-xs text-nur-faint">{item.category}</p>
+                  </div>
                 </Link>
               </li>
             ))}

@@ -70,7 +70,7 @@ export function PodcastPlayerBar() {
   if (!audioUrl) return null;
 
   return (
-    <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 border-t border-nur-line bg-nur-elevated/95 px-4 py-3 backdrop-blur md:bottom-0">
+    <div className="sticky bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-30 border-t border-nur-line/80 bg-nur-elevated/90 px-4 py-3.5 shadow-[0_-8px_24px_rgba(12,18,28,0.06)] backdrop-blur-xl md:bottom-0">
       <audio
         ref={audioRef}
         preload="metadata"
@@ -86,7 +86,7 @@ export function PodcastPlayerBar() {
           void persistProgress(accessToken);
         }}
       />
-      <div className="mx-auto flex max-w-5xl flex-col gap-2">
+      <div className="mx-auto flex max-w-5xl flex-col gap-2.5">
         {placeholder ? (
           <p role="status" className="text-xs text-nur-faint">
             Vaqtinchalik demo audio — asl manba URL admin orqali qo‘yiladi.
@@ -94,7 +94,7 @@ export function PodcastPlayerBar() {
         ) : null}
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium">{title}</p>
+            <p className="truncate text-sm font-semibold tracking-[-0.01em]">{title}</p>
             <p className="truncate text-xs text-nur-muted">{hostOrScholar}</p>
           </div>
           <div className="flex items-center gap-2">
@@ -102,7 +102,7 @@ export function PodcastPlayerBar() {
               aria-label="Tezlik"
               value={playbackRate}
               onChange={(event) => setPlaybackRate(Number(event.target.value))}
-              className="rounded-[var(--radius-s)] border border-nur-line bg-nur-bg px-2 py-1 text-xs"
+              className="h-9 rounded-[var(--radius-m)] border border-nur-line bg-nur-bg px-2 text-xs font-medium"
             >
               {[0.75, 1, 1.25, 1.5, 1.75].map((rate) => (
                 <option key={rate} value={rate}>
@@ -112,7 +112,7 @@ export function PodcastPlayerBar() {
             </select>
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-nur-lamp text-nur-lamp-ink"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-m)] bg-nur-lamp text-nur-lamp-ink shadow-[var(--shadow-sm)] transition-[transform,filter] duration-200 hover:brightness-[0.97] active:scale-[0.98]"
               aria-label={isPlaying ? 'Pauza' : 'Ijro'}
               onClick={() => setPlaying(!isPlaying)}
             >
@@ -120,7 +120,7 @@ export function PodcastPlayerBar() {
             </button>
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-nur-line text-nur-muted"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-m)] border border-nur-line text-nur-muted transition-colors duration-200 hover:bg-nur-sunken hover:text-nur-ink"
               aria-label="Yopish"
               onClick={() => {
                 void persistProgress(accessToken);
@@ -131,8 +131,8 @@ export function PodcastPlayerBar() {
             </button>
           </div>
         </div>
-        <label className="flex items-center gap-3 text-xs text-nur-muted">
-          <span>{formatTime(positionSeconds)}</span>
+        <label className="flex items-center gap-3 text-xs tabular-nums text-nur-muted">
+          <span className="w-10 shrink-0">{formatTime(positionSeconds)}</span>
           <input
             type="range"
             min={0}
@@ -144,9 +144,9 @@ export function PodcastPlayerBar() {
               setPosition(next);
               if (audioRef.current) audioRef.current.currentTime = next;
             }}
-            className="w-full"
+            className="h-1.5 w-full cursor-pointer accent-[var(--nur-lamp)]"
           />
-          <span>{formatTime(durationSeconds)}</span>
+          <span className="w-10 shrink-0 text-right">{formatTime(durationSeconds)}</span>
         </label>
       </div>
     </div>

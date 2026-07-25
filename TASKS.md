@@ -210,6 +210,7 @@ Only if product pulls curriculum into scope — see `CURRICULUM.md`.
 | T-149 | Admin: create/list/publish podcast episodes + audio URL | P0 | ✅ |
 | T-150 | Admin: create/list/publish book chapters + body edit | P0 | ✅ |
 | T-151 | Premium UI craft pass (tokens, shell, empty/skeleton/toast) | P1 | ✅ |
+| T-152 | Detail pages + player bar premium polish | P1 | ✅ |
 
 ---
 

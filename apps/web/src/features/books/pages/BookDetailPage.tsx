@@ -3,6 +3,9 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchBook } from '@/features/books/api/bookApi';
 import type { BookCard, BookChapterSummary } from '@/features/books/types/book.types';
 import { Button } from '@/shared/components/Button';
+import { DetailBackLink } from '@/shared/components/DetailBackLink';
+import { DetailLoading } from '@/shared/components/DetailLoading';
+import { ErrorState } from '@/shared/components/Skeleton';
 import { getErrorMessage } from '@/shared/lib/errors';
 
 export function BookDetailPage() {
@@ -36,18 +39,12 @@ export function BookDetailPage() {
     };
   }, [slug]);
 
-  if (loading) {
-    return (
-      <div className="flex min-h-[40vh] items-center justify-center text-sm text-nur-muted">
-        Yuklanmoqda…
-      </div>
-    );
-  }
+  if (loading) return <DetailLoading cover />;
 
   if (error || !book) {
     return (
-      <section className="mx-auto max-w-3xl px-4 py-10">
-        <p className="text-[var(--nur-danger)]">{error ?? 'Topilmadi'}</p>
+      <section className="nur-page">
+        <ErrorState message={error ?? 'Topilmadi'} />
         <Button to="/books" variant="secondary" className="mt-4">
           Orqaga
         </Button>
@@ -56,46 +53,47 @@ export function BookDetailPage() {
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-4 py-8 md:px-6">
-      <Link to="/books" className="text-sm text-nur-muted">
-        ← Kitoblar
-      </Link>
+    <section className="nur-page nur-fade-in">
+      <DetailBackLink to="/books">Kitoblar</DetailBackLink>
 
-      <div className="mt-6 flex gap-4">
+      <div className="mt-8 flex gap-5">
         <img
           src={book.coverUrl}
           alt=""
-          className="h-36 w-24 rounded-[var(--radius-m)] object-cover"
+          className="h-36 w-24 rounded-[var(--radius-xl)] object-cover shadow-[var(--shadow-sm)]"
         />
-        <div>
-          <h1 className="text-2xl font-medium">{book.title}</h1>
-          <p className="mt-1 text-sm text-nur-muted">{book.authors.join(', ')}</p>
+        <div className="min-w-0">
+          <h1 className="nur-page-title !text-[1.5rem] md:!text-[1.75rem]">{book.title}</h1>
+          <p className="mt-2 text-sm text-nur-muted">{book.authors.join(', ')}</p>
           {book.translator ? (
-            <p className="mt-1 text-xs text-nur-muted">Tarjimon: {book.translator}</p>
+            <p className="mt-1 text-xs text-nur-faint">Tarjimon: {book.translator}</p>
           ) : null}
         </div>
       </div>
 
-      <p className="mt-6 text-sm leading-7 text-nur-muted">{book.description}</p>
-      {rightsNote ? <p className="mt-2 text-xs text-nur-faint">{rightsNote}</p> : null}
+      <p className="mt-8 text-sm leading-7 text-nur-muted">{book.description}</p>
+      {rightsNote ? <p className="mt-3 text-xs text-nur-faint">{rightsNote}</p> : null}
 
-      <h2 className="mt-10 mb-3 text-sm font-medium text-nur-muted">
-        Boblar ({chapters.length})
-      </h2>
-      <ul className="divide-y divide-nur-line">
-        {chapters.map((chapter) => (
-          <li key={chapter.id}>
-            <Link
-              to={`/books/${book.slug}/${chapter.slug}`}
-              className="flex items-center justify-between py-4 hover:text-nur-accent"
-            >
-              <span>
-                {chapter.order}. {chapter.title}
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <h2 className="nur-section-title mt-10 mb-3">Boblar ({chapters.length})</h2>
+      {chapters.length === 0 ? (
+        <p className="text-sm text-nur-muted">Hali bob yo‘q.</p>
+      ) : (
+        <ul className="nur-list">
+          {chapters.map((chapter) => (
+            <li key={chapter.id}>
+              <Link
+                to={`/books/${book.slug}/${chapter.slug}`}
+                className="nur-list-row justify-between"
+              >
+                <span className="text-sm font-semibold tracking-[-0.01em]">
+                  {chapter.order}. {chapter.title}
+                </span>
+                <span className="text-xs font-medium text-nur-accent">O‘qish</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }

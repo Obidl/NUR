@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   completeCurriculumLesson,
   fetchCurriculumPath,
@@ -8,7 +8,12 @@ import {
 import type { PathDetail, PathProgressItem } from '@/features/curriculum/types/curriculum.types';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { Button } from '@/shared/components/Button';
+import { DetailBackLink } from '@/shared/components/DetailBackLink';
+import { DetailLoading } from '@/shared/components/DetailLoading';
+import { ErrorState } from '@/shared/components/Skeleton';
+import { useToast } from '@/shared/components/Toast';
 import { getErrorMessage } from '@/shared/lib/errors';
+import { cx } from '@/shared/lib/cx';
 import {
   LESSON_KIND_LABEL,
   LESSON_SLOT_LABEL,
@@ -25,6 +30,7 @@ export function CurriculumDetailPage() {
   const { slug = '' } = useParams();
   const navigate = useNavigate();
   const accessToken = useAuthStore((s) => s.accessToken);
+  const { toast } = useToast();
 
   const [path, setPath] = useState<PathDetail | null>(null);
   const [progress, setProgress] = useState<PathProgressItem | null>(null);
@@ -87,6 +93,7 @@ export function CurriculumDetailPage() {
     try {
       const updated = await completeCurriculumLesson(path.id, lessonId);
       setProgress(mergeProgressUpdate(progress, updated, path));
+      toast('Dars yakunlandi', 'success');
     } catch (err) {
       setError(getErrorMessage(err, 'Progress saqlanmadi'));
     } finally {
@@ -94,18 +101,12 @@ export function CurriculumDetailPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex min-h-[40vh] items-center justify-center text-sm text-nur-muted">
-        Yuklanmoqda…
-      </div>
-    );
-  }
+  if (loading) return <DetailLoading />;
 
   if (error && !path) {
     return (
-      <section className="mx-auto max-w-3xl px-4 py-10">
-        <p className="text-[var(--nur-danger)]">{error}</p>
+      <section className="nur-page">
+        <ErrorState message={error} />
         <Button to="/curriculum" variant="secondary" className="mt-4">
           Orqaga
         </Button>
@@ -119,14 +120,14 @@ export function CurriculumDetailPage() {
   const modules = path.modules.slice().sort((a, b) => a.order - b.order);
 
   return (
-    <section className="mx-auto max-w-3xl px-4 py-8 md:px-6">
-      <Link to="/curriculum" className="text-sm text-nur-muted">
-        ← O‘quv yo‘llari
-      </Link>
+    <section className="nur-page nur-fade-in">
+      <DetailBackLink to="/curriculum">O‘quv yo‘llari</DetailBackLink>
 
-      <header className="mt-6">
+      <header className="mt-8">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-2xl font-medium leading-snug">{displayTitle(path.title)}</h1>
+          <h1 className="nur-page-title !text-[1.5rem] leading-snug md:!text-[1.75rem]">
+            {displayTitle(path.title)}
+          </h1>
           {example ? (
             <span className="rounded-[var(--radius-s)] border border-nur-line px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-nur-faint">
               EXAMPLE
@@ -137,41 +138,50 @@ export function CurriculumDetailPage() {
           {path.authors.map(displayTitle).join(', ')}
         </p>
         <p className="mt-4 text-sm leading-7 text-nur-muted">{displayTitle(path.summary)}</p>
-        <p className="mt-3 text-xs text-nur-faint">
+        <p className="mt-4 text-xs text-nur-faint">
           {today ? `Kun ${today.dayIndex}/${today.dayTotal}` : null}
           {today ? ` · ${percent}%` : `${percent}%`} · {completedCount}/{lessons.length} dars
         </p>
         <div
-          className="mt-3 h-1 overflow-hidden rounded-full bg-nur-sunken"
+          className="mt-3 h-1.5 overflow-hidden rounded-full bg-nur-sunken"
           role="progressbar"
           aria-valuenow={percent}
           aria-valuemin={0}
           aria-valuemax={100}
         >
-          <div className="h-full rounded-full bg-nur-lamp" style={{ width: `${percent}%` }} />
+          <div
+            className="h-full rounded-full bg-nur-lamp transition-[width] duration-300"
+            style={{ width: `${percent}%` }}
+          />
         </div>
       </header>
 
-      {error ? <p className="mt-4 text-sm text-[var(--nur-danger)]">{error}</p> : null}
+      {error ? (
+        <p className="mt-4 text-sm text-[var(--nur-danger)]" role="alert">
+          {error}
+        </p>
+      ) : null}
 
       {nextLesson ? (
-        <div className="mt-6 border-y border-nur-line py-4">
-          <p className="text-xs uppercase tracking-wide text-nur-faint">Hozir</p>
+        <div className="nur-surface mt-8 px-5 py-5">
+          <p className="text-[11px] font-medium uppercase tracking-wide text-nur-faint">Hozir</p>
           <p className="mt-1 text-xs text-nur-faint">
             {LESSON_SLOT_LABEL[nextLesson.targetType] ?? LESSON_KIND_LABEL[nextLesson.targetType]}
           </p>
-          <p className="mt-1 text-sm font-medium">{displayTitle(nextLesson.title)}</p>
+          <p className="mt-2 text-sm font-semibold tracking-[-0.01em]">
+            {displayTitle(nextLesson.title)}
+          </p>
           {nextLesson.targetHref ? (
-            <Button to={nextLesson.targetHref} className="mt-3">
+            <Button to={nextLesson.targetHref} className="mt-4">
               Davom etish
             </Button>
           ) : null}
         </div>
       ) : (
-        <p className="mt-6 text-sm text-nur-muted">Barcha kunlar yakunlangan.</p>
+        <p className="mt-8 text-sm text-nur-muted">Barcha kunlar yakunlangan.</p>
       )}
 
-      <div className="mt-10 space-y-10">
+      <div className="mt-12 space-y-10">
         {modules.map((module, index) => {
           const dayNum = index + 1;
           const theme = dayThemeFromModuleTitle(module.title);
@@ -181,16 +191,21 @@ export function CurriculumDetailPage() {
 
           return (
             <div key={module.id}>
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="text-sm font-medium text-nur-ink">
+              <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+                <h2 className="text-sm font-semibold tracking-[-0.01em] text-nur-ink">
                   Kun {dayNum}
                   {theme ? ` · ${theme}` : ''}
                 </h2>
-                <span className="text-xs text-nur-faint">
+                <span
+                  className={cx(
+                    'text-xs font-medium',
+                    moduleDone ? 'text-nur-lamp' : isCurrent ? 'text-nur-accent' : 'text-nur-faint',
+                  )}
+                >
                   {moduleDone ? 'Tugadi' : isCurrent ? 'Bugun' : ''}
                 </span>
               </div>
-              <ol className="mt-4 space-y-0 divide-y divide-nur-line border-y border-nur-line">
+              <ol className="nur-list">
                 {moduleLessons.map((lesson) => {
                   const done = completed.has(lesson.id);
                   const slot =
@@ -198,11 +213,13 @@ export function CurriculumDetailPage() {
                     LESSON_KIND_LABEL[lesson.targetType] ??
                     lesson.targetType;
                   return (
-                    <li key={lesson.id} className="py-3">
-                      <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div>
-                          <p className="text-xs uppercase tracking-wide text-nur-faint">{slot}</p>
-                          <p className="mt-0.5 text-sm font-medium">
+                    <li key={lesson.id}>
+                      <div className="nur-list-row !items-start justify-between">
+                        <div className="min-w-0">
+                          <p className="text-[11px] font-medium uppercase tracking-wide text-nur-faint">
+                            {slot}
+                          </p>
+                          <p className="mt-1 text-sm font-semibold tracking-[-0.01em]">
                             {displayTitle(lesson.title)}
                             {done ? (
                               <span className="ml-2 text-xs font-normal text-nur-lamp">✓</span>
@@ -218,7 +235,7 @@ export function CurriculumDetailPage() {
                               : ''}
                           </p>
                         </div>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex shrink-0 flex-wrap gap-2">
                           {lesson.targetHref ? (
                             <Button to={lesson.targetHref} variant="secondary">
                               Ochish
