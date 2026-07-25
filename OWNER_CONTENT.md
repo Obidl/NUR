@@ -1,61 +1,49 @@
 # NUR — Owner content checklist (Step 4)
 
-**Status:** Waiting on Product Owner  
-**Last updated:** 2026-07-25  
-**Depends on:** `IDEAL_PROJECT.md`, `CONTENT_RULES.md`, `CURRICULUM.md`
-
-EXAMPLE 15-kun yo‘l ishlaydi. Keyingi sifat sakrash — **siz tasdiqlagan real kontent**.
+**Status:** Approved by Product Owner (Husanboy) — 2026-07-25  
+**Source:** Challenge video catalog (ChatGPT plan + UI reference)  
+**Depends on:** `IDEAL_PROJECT.md`, `CONTENT_RULES.md`
 
 ---
 
-## 1. Qoida
+## 1. Approved catalog
 
-- Qur’on matni invent qilinmaydi (faqat import dataset).  
-- Podcast / kitob publish faqat: manba + huquq + editor tasdiqi.  
-- ChatGPT / video ro‘yxati = **tavsiya**, avtomatik publish emas.
+### Podcastlar (UZ)
+- [x] Siyrat yog‘dusi — Islom.uz  
+- [x] Siyrat suhbatlari — Hasanxon Yahyo Abdulmajid  
+- [x] Ash-Shifo sharhi — Husaynxon Yahyo Abdulmajid  
 
----
-
-## 2. Sizdan kerak (minimal)
-
-Har bir item uchun:
-
-| Maydon | Misol |
-| --- | --- |
-| Nom | … |
-| Muallif / olim | … |
-| Til | uz / en |
-| Manba URL yoki litsenziya | … |
-| Huquq | owned / licensed / … |
-| Path’da kun | Masalan Kun 1 Yo‘lda |
-
-### Podcastlar (yo‘l uchun)
-
-- [ ] O‘zbek asosiy seriya (masalan Siyrat yog‘dusi — **faqat huquq bo‘lsa**)  
-- [ ] Audio URL yoki hosting  
-- [ ] Epizod tartibi (1…N)
+### Podcastlar (EN listening)
+- [x] Yasir Qadhi — Seerah / Omar Suleiman — The Firsts / Qalam / Ahson Syed (curated series)
 
 ### Kitoblar
+- [x] Ar-Rahiqul Maxtum  
+- [x] Shamoili Muhammadiya  
+- [x] Ash-Shifo  
+- [x] 40 Hadis (Navaviy)  
 
-- [ ] Ar-Rahiqul Maxtum (yoki boshqa) — matn manbasi / PDF huquqi  
-- [ ] Boblar tartibi  
+### Qur’on
+- [x] Kunlik short surah ranges (import dataset only)
 
-### Qur’on oraliklari
+### Reference
+- [x] sunnah.com, quran.com, islamhouse.com  
 
-- [ ] Har kun uchun surah + ayah from/to (import qilingan surahlar ichida)
-
----
-
-## 3. Agent nima qiladi (tasdiqdan keyin)
-
-1. Admin orqali yoki seed: real entities (draft → published).  
-2. 15 kun path’ni EXAMPLE o‘rniga / yoniga bog‘laydi.  
-3. Home birinchi yo‘l sifatida yangi path’ni oladi.
+### Path
+- [x] `siyrat-15-kun` — 15 kun Ertalab / Yo‘lda / Kechqurun  
 
 ---
 
-## 4. Hozircha
+## 2. Honest limits (still open)
 
-Live’da **EXAMPLE** badge saqlanadi — bu to‘g‘ri. Bo‘sh katalogdan yaxshiroq; yolg‘on “haqiqiy olim” emas.
+| Item | Status |
+| --- | --- |
+| Licensed podcast audio URLs | Placeholder MP3 — **replace in admin** |
+| Full book / hadith chapter text | Stub only — **import licensed text** |
+| Rehosting Islom.uz / YouTube / Spotify | **Forbidden** until permission + URL |
 
-Tasdiqlangan ro‘yxatni chatga yuboring yoki shu faylga to‘ldiring → `next`.
+---
+
+## 3. Next for owner
+
+Admin yoki DB’da har epizod `audioUrl` ni haqiqiy litsenziyalangan link bilan almashtiring.  
+Kitob boblarini litsenziyalangan matn bilan yangilang.

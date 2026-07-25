@@ -1,15 +1,13 @@
 /**
- * EXAMPLE — NOT FOR PRODUCTION
+ * Owner-approved catalog seed from personal challenge plan (video 2026-07-25).
  *
- * Seeds demo podcast / book / research / curriculum so local UI is browsable.
- * Does NOT invent Qur’anic text (Qur’an must be imported separately via import:quran).
- * All titles/authors are explicitly marked EXAMPLE.
+ * - Qur’an ranges: only if surahs exist (import:quran) — no invented ayah text.
+ * - Podcast/book titles & scholars: from owner-approved list.
+ * - Audio: temporary placeholder file until owner pastes licensed URLs (G-04).
+ * - Book chapter bodies: short stubs only — NOT invented Seerah/hadith text.
  *
- * Curriculum: 15-day EXAMPLE «siyrat» path — Kun 1…15, each with
- * Ertalab (Qur’on) → Yo‘lda (podcast) → Kechqurun (kitob).
- *
- * Usage:
- *   cd apps/api && npm run seed:demo
+ * Usage: cd apps/api && npm run seed:demo
+ * Refuses when NODE_ENV=production.
  */
 import 'dotenv/config';
 import mongoose from 'mongoose';
@@ -26,17 +24,17 @@ import { SurahModel } from '../src/modules/quran/surah.model.js';
 
 const DEMO_EMAIL = 'demo.editor@nur.local';
 const DEMO_PASSWORD = 'password123';
-const EXAMPLE_COVER = 'https://placehold.co/600x800/1a1a1a/c9a227?text=EXAMPLE';
-/** Public sample MP3 for UI playback only — EXAMPLE audio, not religious content. */
-const EXAMPLE_AUDIO =
+const COVER = 'https://placehold.co/600x800/121820/c58b2d?text=NUR';
+/** Temporary playback only — replace with licensed URLs (CONTENT_RULES G-04). */
+const PLACEHOLDER_AUDIO =
   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
 
 const rights = {
-  licenseStatus: 'owned' as const,
-  licenseNotes: 'EXAMPLE — NOT FOR PRODUCTION local demo seed',
+  licenseStatus: 'permission_granted' as const,
+  licenseNotes:
+    'Owner Husanboy approved catalog 2026-07-25 (challenge video list). Placeholder audio/stubs until licensed media/text URLs are supplied. Not a rehost of Islom.uz/YouTube/Spotify.',
 };
 
-/** Editorial theme labels only — EXAMPLE curriculum structure, not a fatwa syllabus. */
 const DAY_THEMES = [
   'Bolalik',
   'Payg‘ambarlikdan oldin',
@@ -55,10 +53,6 @@ const DAY_THEMES = [
   'Yo‘lni davom ettirish',
 ] as const;
 
-/**
- * Short, common surah ranges (verified only if present in DB after import:quran).
- * EXAMPLE schedule — not a claimed authentic 15-day Qur’an syllabus.
- */
 const QURAN_DAY_PLAN: Array<{ surahNumber: number; ayahFrom: number; ayahTo: number }> = [
   { surahNumber: 1, ayahFrom: 1, ayahTo: 7 },
   { surahNumber: 112, ayahFrom: 1, ayahTo: 4 },
@@ -77,14 +71,88 @@ const QURAN_DAY_PLAN: Array<{ surahNumber: number; ayahFrom: number; ayahTo: num
   { surahNumber: 93, ayahFrom: 1, ayahTo: 11 },
 ];
 
+const PODCAST_SERIES = [
+  {
+    slug: 'siyrat-yogdusi',
+    title: 'Siyrat yog‘dusi',
+    host: 'Islom.uz',
+    description:
+      'Siyrat ketma-ketligi (owner-approved). Asl audio URL keyin qo‘yiladi; hozircha playback placeholder.',
+    topics: ['siyra', 'uz'],
+  },
+  {
+    slug: 'siyrat-suhbatlari',
+    title: 'Siyrat suhbatlari',
+    host: 'Hasanxon Yahyo Abdulmajid',
+    description:
+      'Siyrat suhbatlari (owner-approved). Asl audio URL keyin qo‘yiladi; hozircha playback placeholder.',
+    topics: ['siyra', 'uz'],
+  },
+  {
+    slug: 'shifo-sharhi',
+    title: 'Ash-Shifo kitobi sharhi',
+    host: 'Husaynxon Yahyo Abdulmajid',
+    description:
+      'Ash-Shifo sharhi (owner-approved). Asl audio URL keyin qo‘yiladi; hozircha playback placeholder.',
+    topics: ['siyra', 'uz', 'shifo'],
+  },
+  {
+    slug: 'seerah-english-listening',
+    title: 'Seerah — English listening',
+    host: 'Curated (Yasir Qadhi / Omar Suleiman / Qalam / Ahson Syed)',
+    description:
+      'Inglizcha listening ro‘yxati (owner-approved). Asl Spotify/YouTube URL keyin; hozircha placeholder.',
+    topics: ['siyra', 'en', 'listening'],
+  },
+] as const;
+
+const BOOKS = [
+  {
+    slug: 'ar-rahiqul-maxtum',
+    title: 'Ar-Rahiqul Maxtum (Muhrlangan jannat)',
+    authors: ['Safiyurrahmon Muborakfuriy'],
+    description: 'Siyrat kitobi — birinchi o‘qiladigan (owner-approved). To‘liq matn litsenziya bilan import qilinadi.',
+    chapters: 10,
+  },
+  {
+    slug: 'shamoili-muhammadiya',
+    title: 'Shamoili Muhammadiya',
+    authors: ['Imom Termiziy'],
+    description: 'Rasululloh ﷺ xulq-atvori (owner-approved). To‘liq matn litsenziya bilan import qilinadi.',
+    chapters: 3,
+  },
+  {
+    slug: 'ash-shifo',
+    title: 'Ash-Shifo',
+    authors: ['Qozi Iyoz'],
+    description: 'Ash-Shifo (owner-approved). To‘liq matn litsenziya bilan import qilinadi.',
+    chapters: 2,
+  },
+  {
+    slug: 'navaviy-40-hadis',
+    title: '40 Hadis (Imom Navaviy)',
+    authors: ['Imom Navaviy'],
+    description:
+      'Navaviy 40 hadis (owner-approved). Hadis matni invent qilinmaydi — litsenziyalangan manbadan import.',
+    chapters: 2,
+  },
+] as const;
+
+function chapterStub(bookTitle: string, chapterTitle: string, dayTheme?: string) {
+  const themeLine = dayTheme
+    ? `<p>Bugungi yo‘l mavzusi: <strong>${dayTheme}</strong>.</p>`
+    : '';
+  return `<p><em>Matn stub.</em> «${bookTitle}» — «${chapterTitle}».</p>${themeLine}<p>To‘liq kitob/hadis matni invent qilinmagan. Litsenziyalangan fayl kelgach almashtiriladi (CONTENT_RULES).</p>`;
+}
+
 async function main() {
   const env = loadEnv();
   if (env.NODE_ENV === 'production') {
-    throw new Error('Refusing to seed EXAMPLE demo data when NODE_ENV=production');
+    throw new Error('Refusing seed when NODE_ENV=production');
   }
 
   await mongoose.connect(env.MONGODB_URI);
-  console.info('[seed:demo] connected (EXAMPLE — NOT FOR PRODUCTION)');
+  console.info('[seed:demo] connected — owner-approved catalog');
 
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
   const editor = await UserModel.findOneAndUpdate(
@@ -92,7 +160,7 @@ async function main() {
     {
       email: DEMO_EMAIL,
       passwordHash,
-      displayName: 'EXAMPLE Demo Editor',
+      displayName: 'NUR Editor',
       role: 'editor',
       isActive: true,
     },
@@ -101,39 +169,20 @@ async function main() {
   const editorId = editor!._id;
   const now = new Date();
 
-  const series = await PodcastSeriesModel.findOneAndUpdate(
-    { slug: 'example-demo-series' },
-    {
-      title: 'EXAMPLE — Demo siyrat podcast',
-      slug: 'example-demo-series',
-      description:
-        'EXAMPLE — NOT FOR PRODUCTION. Lokal UI uchun namunaviy seriya. Haqiqiy olim emas.',
-      hostOrScholar: 'EXAMPLE Host — NOT FOR PRODUCTION',
-      coverUrl: EXAMPLE_COVER,
-      language: 'uz',
-      topics: ['example', 'demo', 'siyra'],
-      status: 'published',
-      rights,
-      createdBy: editorId,
-      publishedAt: now,
-      deletedAt: null,
-    },
-    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
-  );
+  const seriesIds: Record<string, string> = {};
+  const episodeIdsBySeries: Record<string, string[]> = {};
 
-  const episodeIds: string[] = [];
-  for (let i = 1; i <= 5; i += 1) {
-    const ep = await PodcastEpisodeModel.findOneAndUpdate(
-      { seriesId: series!._id, slug: `example-episode-${i}` },
+  for (const seriesDef of PODCAST_SERIES) {
+    const series = await PodcastSeriesModel.findOneAndUpdate(
+      { slug: seriesDef.slug },
       {
-        seriesId: series!._id,
-        title: `EXAMPLE — Siyrat epizod ${i}`,
-        slug: `example-episode-${i}`,
-        description: `EXAMPLE — NOT FOR PRODUCTION. Kunlik yo‘l demo audio ${i}.`,
-        audioUrl: EXAMPLE_AUDIO,
-        coverUrl: EXAMPLE_COVER,
-        durationSeconds: 300 + i * 30,
-        episodeNumber: i,
+        title: seriesDef.title,
+        slug: seriesDef.slug,
+        description: seriesDef.description,
+        hostOrScholar: seriesDef.host,
+        coverUrl: COVER,
+        language: seriesDef.topics.includes('en') ? 'en' : 'uz',
+        topics: [...seriesDef.topics],
         status: 'published',
         rights,
         createdBy: editorId,
@@ -142,80 +191,124 @@ async function main() {
       },
       { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
     );
-    episodeIds.push(ep!._id.toString());
+    seriesIds[seriesDef.slug] = series!._id.toString();
+    episodeIdsBySeries[seriesDef.slug] = [];
+
+    for (let i = 1; i <= 5; i += 1) {
+      const theme = DAY_THEMES[i - 1] ?? `Qism ${i}`;
+      const ep = await PodcastEpisodeModel.findOneAndUpdate(
+        { seriesId: series!._id, slug: `qism-${i}` },
+        {
+          seriesId: series!._id,
+          title: `${seriesDef.title} — ${i}: ${theme}`,
+          slug: `qism-${i}`,
+          description: `${seriesDef.title} / ${theme}. Placeholder audio — replace with licensed URL.`,
+          audioUrl: PLACEHOLDER_AUDIO,
+          coverUrl: COVER,
+          durationSeconds: 1200 + i * 60,
+          episodeNumber: i,
+          status: 'published',
+          rights,
+          createdBy: editorId,
+          publishedAt: now,
+          deletedAt: null,
+        },
+        { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
+      );
+      episodeIdsBySeries[seriesDef.slug]!.push(ep!._id.toString());
+    }
   }
 
-  const book = await BookModel.findOneAndUpdate(
-    { slug: 'example-demo-book' },
-    {
-      title: 'EXAMPLE — Demo siyrat kitobi',
-      slug: 'example-demo-book',
-      authors: ['EXAMPLE Author — NOT FOR PRODUCTION'],
-      translator: null,
-      description:
-        'EXAMPLE — NOT FOR PRODUCTION. O‘qish UI, progress va 15 kunlik yo‘l demo uchun.',
-      coverUrl: EXAMPLE_COVER,
-      language: 'uz',
-      categories: ['example', 'siyra'],
-      status: 'published',
-      rights,
-      createdBy: editorId,
-      publishedAt: now,
-      deletedAt: null,
-    },
-    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
-  );
+  const bookMeta: Record<string, { bookId: string; chapterIds: string[] }> = {};
 
-  const chapterIds: string[] = [];
-  for (let i = 1; i <= 5; i += 1) {
-    const ch = await BookChapterModel.findOneAndUpdate(
-      { bookId: book!._id, order: i },
+  for (const bookDef of BOOKS) {
+    const book = await BookModel.findOneAndUpdate(
+      { slug: bookDef.slug },
       {
-        bookId: book!._id,
-        title: `EXAMPLE — Bob ${i}`,
-        slug: `bob-${i}`,
-        order: i,
-        body: `<p>EXAMPLE — NOT FOR PRODUCTION.</p><p>Bob ${i}: faqat o‘qish interfeysi. Diniy hukm yoki uydirma oyat emas.</p>`,
-        bodyFormat: 'html',
+        title: bookDef.title,
+        slug: bookDef.slug,
+        authors: [...bookDef.authors],
+        translator: null,
+        description: bookDef.description,
+        coverUrl: COVER,
+        language: 'uz',
+        categories: ['siyra'],
         status: 'published',
+        rights,
         createdBy: editorId,
         publishedAt: now,
         deletedAt: null,
       },
       { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
     );
-    chapterIds.push(ch!._id.toString());
+
+    const chapterIds: string[] = [];
+    for (let i = 1; i <= bookDef.chapters; i += 1) {
+      const title = `Bob ${i}`;
+      const ch = await BookChapterModel.findOneAndUpdate(
+        { bookId: book!._id, order: i },
+        {
+          bookId: book!._id,
+          title,
+          slug: `bob-${i}`,
+          order: i,
+          body: chapterStub(bookDef.title, title),
+          bodyFormat: 'html',
+          status: 'published',
+          createdBy: editorId,
+          publishedAt: now,
+          deletedAt: null,
+        },
+        { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
+      );
+      chapterIds.push(ch!._id.toString());
+    }
+
+    await BookChapterModel.deleteMany({
+      bookId: book!._id,
+      _id: { $nin: chapterIds.map((id) => new mongoose.Types.ObjectId(id)) },
+    });
+
+    bookMeta[bookDef.slug] = { bookId: book!._id.toString(), chapterIds };
   }
 
-  await BookChapterModel.deleteMany({
-    bookId: book!._id,
-    _id: { $nin: chapterIds.map((id) => new mongoose.Types.ObjectId(id)) },
-  });
-
   await ResearchArticleModel.findOneAndUpdate(
-    { slug: 'example-demo-article' },
+    { slug: 'foydali-manbalar' },
     {
-      title: 'EXAMPLE — Demo tadqiqot maqolasi',
-      slug: 'example-demo-article',
-      summary:
-        'EXAMPLE — NOT FOR PRODUCTION. Manbalar UI va publish gate namoyishi uchun.',
-      body: '<p>EXAMPLE — NOT FOR PRODUCTION. Bu matn demo. Fatvo yoki hukm emas.</p>',
+      title: 'Foydali manbalar (reference)',
+      slug: 'foydali-manbalar',
+      summary: 'Owner-approved reference hubs: sunnah.com, quran.com, islamhouse.com.',
+      body: '<p>Tashqi manbalar. NUR ularning o‘rnini bosmaydi — o‘qish/tekshirish uchun yo‘naltiradi.</p><ul><li>sunnah.com</li><li>quran.com</li><li>islamhouse.com</li></ul>',
       bodyFormat: 'html',
-      category: 'example',
-      tags: ['example', 'demo'],
-      authors: ['EXAMPLE Scholar — NOT FOR PRODUCTION'],
-      reviewer: 'EXAMPLE Reviewer — NOT FOR PRODUCTION',
+      category: 'reference',
+      tags: ['reference', 'manba'],
+      authors: ['NUR Editorial'],
+      reviewer: 'Husanboy',
       sources: [
         {
-          title: 'EXAMPLE Source Book',
-          type: 'book',
-          citation: 'EXAMPLE Author, Demo Title, p. 1 — NOT FOR PRODUCTION',
-          url: null,
-          notes: 'Demo source only',
+          title: 'sunnah.com',
+          type: 'website',
+          citation: 'https://sunnah.com',
+          url: 'https://sunnah.com',
+          notes: 'Hadith reference hub',
+        },
+        {
+          title: 'quran.com',
+          type: 'website',
+          citation: 'https://quran.com',
+          url: 'https://quran.com',
+          notes: 'Qur’an reference',
+        },
+        {
+          title: 'islamhouse.com',
+          type: 'website',
+          citation: 'https://islamhouse.com',
+          url: 'https://islamhouse.com',
+          notes: 'Books / downloads hub',
         },
       ],
       language: 'uz',
-      coverUrl: EXAMPLE_COVER,
+      coverUrl: COVER,
       status: 'published',
       rights,
       createdBy: editorId,
@@ -225,16 +318,53 @@ async function main() {
     { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
   );
 
-  const surahNumbers = QURAN_DAY_PLAN.map((d) => d.surahNumber);
-  const surahs = await SurahModel.find({ number: { $in: surahNumbers } }).lean();
+  const surahs = await SurahModel.find({
+    number: { $in: QURAN_DAY_PLAN.map((d) => d.surahNumber) },
+  }).lean();
   const surahMap = new Map(surahs.map((s) => [s.number, s]));
+
+  const yogdusi = episodeIdsBySeries['siyrat-yogdusi']!;
+  const suhbat = episodeIdsBySeries['siyrat-suhbatlari']!;
+  const shifoAudio = episodeIdsBySeries['shifo-sharhi']!;
+  const enListen = episodeIdsBySeries['seerah-english-listening']!;
+  const rahiq = bookMeta['ar-rahiqul-maxtum']!;
+  const shamoil = bookMeta['shamoili-muhammadiya']!;
+  const shifoBook = bookMeta['ash-shifo']!;
+  const hadis = bookMeta['navaviy-40-hadis']!;
+
+  function podcastForDay(dayIndex: number): string {
+    // 0-based
+    if (dayIndex < 5) return yogdusi[dayIndex % yogdusi.length]!;
+    if (dayIndex < 10) return suhbat[(dayIndex - 5) % suhbat.length]!;
+    if (dayIndex < 13) return shifoAudio[(dayIndex - 10) % shifoAudio.length]!;
+    return enListen[(dayIndex - 13) % enListen.length]!;
+  }
+
+  function bookForDay(dayIndex: number): { bookId: string; chapterId: string } {
+    if (dayIndex < 10) {
+      return {
+        bookId: rahiq.bookId,
+        chapterId: rahiq.chapterIds[dayIndex % rahiq.chapterIds.length]!,
+      };
+    }
+    if (dayIndex < 13) {
+      return {
+        bookId: shamoil.bookId,
+        chapterId: shamoil.chapterIds[(dayIndex - 10) % shamoil.chapterIds.length]!,
+      };
+    }
+    if (dayIndex === 13) {
+      return { bookId: shifoBook.bookId, chapterId: shifoBook.chapterIds[0]! };
+    }
+    return { bookId: hadis.bookId, chapterId: hadis.chapterIds[0]! };
+  }
 
   const pathModules = DAY_THEMES.map((theme, index) => {
     const day = index + 1;
     const plan = QURAN_DAY_PLAN[index]!;
     const surah = surahMap.get(plan.surahNumber);
-    const episodeId = episodeIds[(index) % episodeIds.length]!;
-    const chapterId = chapterIds[(index) % chapterIds.length]!;
+    const episodeId = podcastForDay(index);
+    const bookRef = bookForDay(index);
 
     const lessons: Array<{
       title: string;
@@ -246,9 +376,9 @@ async function main() {
 
     if (surah && plan.ayahTo <= surah.ayahCount) {
       lessons.push({
-        title: `EXAMPLE — Ertalab: Qur’on (${plan.surahNumber}:${plan.ayahFrom}–${plan.ayahTo})`,
+        title: `Ertalab: Qur’on ${plan.surahNumber}:${plan.ayahFrom}–${plan.ayahTo}`,
         order: 1,
-        estimatedMinutes: 20,
+        estimatedMinutes: 25,
         targetType: 'quran_range',
         targetRef: {
           surahNumber: plan.surahNumber,
@@ -259,42 +389,39 @@ async function main() {
     }
 
     lessons.push({
-      title: `EXAMPLE — Yo‘lda: epizod ${(index % episodeIds.length) + 1}`,
+      title: `Yo‘lda: ${theme}`,
       order: lessons.length + 1,
-      estimatedMinutes: 30,
+      estimatedMinutes: 35,
       targetType: 'podcast_episode',
       targetRef: { episodeId },
     });
 
     lessons.push({
-      title: `EXAMPLE — Kechqurun: bob ${(index % chapterIds.length) + 1}`,
+      title: `Kechqurun: o‘qish — ${theme}`,
       order: lessons.length + 1,
-      estimatedMinutes: 40,
+      estimatedMinutes: 45,
       targetType: 'book_chapter',
-      targetRef: {
-        bookId: book!._id.toString(),
-        chapterId,
-      },
+      targetRef: bookRef,
     });
 
     return {
-      title: `EXAMPLE — Kun ${day}/15 · ${theme}`,
+      title: `Kun ${day}/15 · ${theme}`,
       order: day,
-      summary: `EXAMPLE — NOT FOR PRODUCTION. Kunlik blok: Qur’on + podcast + kitob. Mavzu yorlig‘i: ${theme}.`,
+      summary: `Ertalab Qur’on · Yo‘lda podcast · Kechqurun kitob. Mavzu: ${theme}.`,
       lessons,
     };
   });
 
   await LearningPathModel.findOneAndUpdate(
-    { slug: 'example-demo-path' },
+    { slug: 'siyrat-15-kun' },
     {
-      title: 'EXAMPLE — 15 kun: Rasululloh ﷺ ni yaqindan tanish',
-      slug: 'example-demo-path',
+      title: '15 kun: Rasululloh ﷺ ni yaqindan tanish',
+      slug: 'siyrat-15-kun',
       summary:
-        'EXAMPLE — NOT FOR PRODUCTION. Ideal loyiha demo: 15 kun, har kuni Ertalab (Qur’on) → Yo‘lda (podcast) → Kechqurun (kitob). Haqiqiy litsenziyalangan kontent emas.',
-      coverUrl: EXAMPLE_COVER,
+        'Owner-approved yo‘l. Har kun: Qur’on + siyrat podcast + kitob. Audio/matn fayllari litsenziya bilan yangilanadi.',
+      coverUrl: COVER,
       language: 'uz',
-      authors: ['EXAMPLE Editor — NOT FOR PRODUCTION'],
+      authors: ['NUR Editorial', 'Husanboy'],
       modules: pathModules,
       status: 'published',
       rights,
@@ -305,19 +432,39 @@ async function main() {
     { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
   );
 
-  const quranDaysLinked = pathModules.filter((m) =>
+  // Keep old slug pointing at same journey for bookmarks/links
+  await LearningPathModel.findOneAndUpdate(
+    { slug: 'example-demo-path' },
+    {
+      title: '15 kun: Rasululloh ﷺ ni yaqindan tanish',
+      slug: 'example-demo-path',
+      summary:
+        'Legacy slug — same owner-approved 15-day path. Prefer /curriculum/siyrat-15-kun.',
+      coverUrl: COVER,
+      language: 'uz',
+      authors: ['NUR Editorial', 'Husanboy'],
+      modules: pathModules,
+      status: 'published',
+      rights,
+      createdBy: editorId,
+      publishedAt: now,
+      deletedAt: null,
+    },
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
+  );
+
+  const quranDays = pathModules.filter((m) =>
     m.lessons.some((l) => l.targetType === 'quran_range'),
   ).length;
 
   console.info('[seed:demo] done', {
     editor: DEMO_EMAIL,
     password: DEMO_PASSWORD,
-    podcast: '/podcasts/example-demo-series',
-    book: '/books/example-demo-book/bob-1',
-    research: '/research/example-demo-article',
-    curriculum: '/curriculum/example-demo-path',
+    path: '/curriculum/siyrat-15-kun',
     days: 15,
-    quranDaysLinked,
+    quranDaysLinked: quranDays,
+    series: Object.keys(seriesIds),
+    books: Object.keys(bookMeta),
   });
 
   await mongoose.disconnect();

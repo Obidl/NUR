@@ -231,7 +231,7 @@ Kontent invent qilinmaydi. UI bo‘sh bo‘lishi mumkin — yolg‘on to‘liq e
 | 1 | Owner: `IDEAL_PROJECT.md` tasdiqi | Yo‘nalish qulflanadi |
 | 2 | Home → Bugungi yo‘l (curriculum progress) | Referens his, NUR look |
 | 3 | EXAMPLE 15-kun path seed (faqat mavjud/EXAMPLE targetlar) | ✅ Demo yo‘l (`example-demo-path`) |
-| 4 | Owner kontent tasdiqi | `OWNER_CONTENT.md` — kutilyapti |
+| 4 | Owner kontent tasdiqi | ✅ Video katalog seed (`siyrat-15-kun`); audio/matn URL hali placeholder |
 | 5 | Polish + production checklist | ✅ Journey UI polish (slot labels, progress); checklist qisman |
 
 ---

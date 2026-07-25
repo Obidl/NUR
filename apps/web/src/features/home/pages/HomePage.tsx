@@ -21,7 +21,7 @@ import {
 } from '@/features/home/lib/todayPath';
 import { getErrorMessage } from '@/shared/lib/errors';
 
-const PREFERRED_SLUG = 'example-demo-path';
+const FALLBACK_SLUGS = ['siyrat-15-kun', 'example-demo-path'] as const;
 
 export function HomePage() {
   const reduceMotion = useReducedMotion();
@@ -54,7 +54,9 @@ export function HomePage() {
           return;
         }
 
-        let slug = items.find((item) => item.slug === PREFERRED_SLUG)?.slug ?? items[0].slug;
+        let slug =
+          FALLBACK_SLUGS.map((s) => items.find((item) => item.slug === s)?.slug).find(Boolean) ??
+          items[0].slug;
 
         if (accessToken) {
           const rows = await fetchCurriculumProgress();
