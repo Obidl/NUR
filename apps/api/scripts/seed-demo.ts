@@ -44,6 +44,8 @@ type VideoSeriesSeed = {
   description: string;
   channelUrl: string;
   language: string;
+  /** Catalog section: siyrat-dars | ustoz | umumiy */
+  catalog: 'siyrat-dars' | 'ustoz' | 'umumiy';
   episodes: VideoEpisodeSeed[];
 };
 
@@ -66,6 +68,18 @@ const hasanxonPack = JSON.parse(
 
 const hasanhusaynPack = JSON.parse(
   readFileSync(join(__dirname, 'data/hasanhusayn-siyrat.json'), 'utf8'),
+) as { channelUrl: string; episodes: VideoEpisodeSeed[] };
+
+const nakUmumiyPack = JSON.parse(
+  readFileSync(join(__dirname, 'data/nouman-ali-khan-umumiy.json'), 'utf8'),
+) as { channelUrl: string; episodes: VideoEpisodeSeed[] };
+
+const hasanxonUmumiyPack = JSON.parse(
+  readFileSync(join(__dirname, 'data/hasanxon-yahyo-umumiy.json'), 'utf8'),
+) as { channelUrl: string; episodes: VideoEpisodeSeed[] };
+
+const hasanhusaynUmumiyPack = JSON.parse(
+  readFileSync(join(__dirname, 'data/hasanhusayn-umumiy.json'), 'utf8'),
 ) as { channelUrl: string; episodes: VideoEpisodeSeed[] };
 const DEMO_EMAIL = 'demo.editor@nur.local';
 const DEMO_PASSWORD = 'password123';
@@ -170,9 +184,10 @@ const VIDEO_SERIES: VideoSeriesSeed[] = [
     title: 'Siyrat yog‘dusi (Islom.uz)',
     host: 'Islom.uz — Qamariddin Bekmuhammad, Yorqin Xalil',
     description:
-      'Owner-priority: Rasululloh ﷺ siyrati (bolalik / payg‘ambarlikdan oldin → Makka → Madina). YouTube embed only — playlist PLys356tU5j5QwryNqakQTBiq1dVj7tR5m. Entry: https://youtu.be/D02mw3_tt4c',
+      'Siyrat darsi: Rasululloh ﷺ hayoti ketma-ket (bolalikdan). Embed only.',
     channelUrl: siyratYogdusiPack.channelUrl,
     language: 'uz',
+    catalog: 'siyrat-dars',
     episodes: siyratYogdusiPack.episodes,
   },
   {
@@ -180,30 +195,66 @@ const VIDEO_SERIES: VideoSeriesSeed[] = [
     title: 'Hasanxon Yahyo — Siyrat / Shamoil',
     host: 'Hasanxon Yahyo Abdulmajid',
     description:
-      'Shamoilul-Muhammadiya + Rasululloh ﷺ suhbatlari (@Hasanxondomla). Curated distinct episodes — embed only.',
+      'Siyrat darsi: Shamoilul-Muhammadiya + Rasululloh ﷺ. Embed only.',
     channelUrl: hasanxonPack.channelUrl,
     language: 'uz',
+    catalog: 'siyrat-dars',
     episodes: hasanxonPack.episodes,
   },
   {
+    slug: 'nouman-ali-khan-prophet-lessons',
+    title: 'Nouman Ali Khan — Prophet ﷺ',
+    host: 'Nouman Ali Khan (Bayyinah)',
+    description:
+      'Ustoz: Payg‘ambar ﷺ Road to Hajj va Prophet Muhammad ﷺ darslari. Embed only.',
+    channelUrl: nakPack.channelUrl,
+    language: 'en',
+    catalog: 'ustoz',
+    episodes: nakPack.episodes,
+  },
+  {
     slug: 'husaynxon-yahyo-siyrat',
-    title: 'Hasanxon & Husaynxon — hasanhusayn',
+    title: 'Hasanxon & Husaynxon — Siyrat',
     host: 'Hasanxon, Husaynxon Yahyo Abdulmajid',
     description:
-      '@hasanhusayn: suhbat, mavlid, sahoba muhabbati — takror nashidlar cheklangan. Embed only.',
+      'Ustoz: Rasululloh ﷺ / sahoba muhabbati (@hasanhusayn). Embed only.',
     channelUrl: hasanhusaynPack.channelUrl,
     language: 'uz',
+    catalog: 'ustoz',
     episodes: hasanhusaynPack.episodes,
   },
   {
-    slug: 'nouman-ali-khan-prophet-lessons',
-    title: 'Nouman Ali Khan — Prophet ﷺ lessons',
+    slug: 'nouman-ali-khan-umumiy',
+    title: 'Nouman Ali Khan — Umumiy',
     host: 'Nouman Ali Khan (Bayyinah)',
     description:
-      'Official @bayyinah: Prophet’s ﷺ Road to Hajj + Prophet Muhammad ﷺ lessons (not other prophets). Embed only.',
-    channelUrl: nakPack.channelUrl,
+      'Umumiy: Qur’on, Q&A, xutba — siyratdan alohida. Embed only.',
+    channelUrl: nakUmumiyPack.channelUrl,
     language: 'en',
-    episodes: nakPack.episodes,
+    catalog: 'umumiy',
+    episodes: nakUmumiyPack.episodes,
+  },
+  {
+    slug: 'hasanxon-yahyo-umumiy',
+    title: 'Hasanxon Yahyo — Umumiy',
+    host: 'Hasanxon Yahyo Abdulmajid',
+    description:
+      'Umumiy suhbatlar (oila, axloq, Qur’on) — siyratdan alohida. Embed only.',
+    channelUrl: hasanxonUmumiyPack.channelUrl,
+    language: 'uz',
+    catalog: 'umumiy',
+    episodes: hasanxonUmumiyPack.episodes,
+  },
+  {
+    slug: 'hasanhusayn-umumiy',
+    title: 'Hasanxon & Husaynxon — Umumiy',
+    host: 'Hasanxon, Husaynxon Yahyo Abdulmajid',
+    description:
+      'Umumiy: ilm, niyat, axloq (@hasanhusayn) — siyratdan alohida. Embed only.',
+    channelUrl: hasanhusaynUmumiyPack.channelUrl,
+    language: 'uz',
+    catalog: 'umumiy',
+    episodes: hasanhusaynUmumiyPack.episodes,
   },
 ];
 
@@ -362,7 +413,13 @@ async function main() {
         hostOrScholar: seriesDef.host,
         coverUrl,
         language: seriesDef.language,
-        topics: isPrimary ? ['siyrat', 'siyrat-yogdusi', 'priority'] : ['siyrat'],
+        topics: [
+          ...(seriesDef.catalog === 'siyrat-dars'
+            ? ['siyrat', 'siyrat-dars', ...(isPrimary ? ['siyrat-yogdusi', 'priority'] : [])]
+            : seriesDef.catalog === 'ustoz'
+              ? ['siyrat', 'ustoz']
+              : ['umumiy']),
+        ],
         channelUrl: seriesDef.channelUrl,
         status: 'published',
         rights: videoRights,

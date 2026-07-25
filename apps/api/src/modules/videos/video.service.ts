@@ -167,6 +167,16 @@ export async function listPublishedSeries(input: {
       { $match: filter },
       {
         $addFields: {
+          catalogBoost: {
+            $switch: {
+              branches: [
+                { case: { $in: ['siyrat-dars', { $ifNull: ['$topics', []] }] }, then: 0 },
+                { case: { $in: ['ustoz', { $ifNull: ['$topics', []] }] }, then: 1 },
+                { case: { $in: ['umumiy', { $ifNull: ['$topics', []] }] }, then: 2 },
+              ],
+              default: 3,
+            },
+          },
           priorityBoost: {
             $cond: [{ $in: ['priority', { $ifNull: ['$topics', []] }] }, 0, 1],
           },
@@ -175,7 +185,7 @@ export async function listPublishedSeries(input: {
           },
         },
       },
-      { $sort: { priorityBoost: 1, siyratBoost: 1, publishedAt: -1, createdAt: -1 } },
+      { $sort: { catalogBoost: 1, priorityBoost: 1, siyratBoost: 1, publishedAt: -1, createdAt: -1 } },
       { $skip: skip },
       { $limit: input.limit },
     ]),
