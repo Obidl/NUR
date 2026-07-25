@@ -31,7 +31,7 @@ export function youtubeWatchUrl(videoId: string) {
 }
 
 export function youtubeEmbedUrl(videoId: string) {
-  return `https://www.youtube.com/embed/${videoId}`;
+  return `https://www.youtube-nocookie.com/embed/${videoId}`;
 }
 
 function isWeakCoverUrl(url: string | null | undefined) {
@@ -51,6 +51,7 @@ function toSeriesCard(
     topics: string[];
     channelUrl?: string | null;
     publishedAt?: Date | null;
+    episodeCount?: number;
   },
   coverOverride?: string | null,
 ) {
@@ -65,7 +66,22 @@ function toSeriesCard(
     topics: series.topics,
     channelUrl: series.channelUrl ?? null,
     publishedAt: series.publishedAt ?? null,
+    episodeCount: typeof series.episodeCount === 'number' ? series.episodeCount : 0,
   };
+}
+
+async function episodeCountsBySeriesIds(seriesIds: Types.ObjectId[]) {
+  if (seriesIds.length === 0) return new Map<string, number>();
+  const rows = await VideoEpisodeModel.aggregate<{ _id: Types.ObjectId; count: number }>([
+    {
+      $match: {
+        seriesId: { $in: seriesIds },
+        ...publicContentFilter(),
+      },
+    },
+    { $group: { _id: '$seriesId', count: { $sum: 1 } } },
+  ]);
+  return new Map(rows.map((row) => [row._id.toString(), row.count]));
 }
 
 async function firstEpisodeThumbBySeriesIds(seriesIds: Types.ObjectId[]) {
@@ -151,25 +167,36 @@ export async function listPublishedSeries(input: {
       { $match: filter },
       {
         $addFields: {
+          priorityBoost: {
+            $cond: [{ $in: ['priority', { $ifNull: ['$topics', []] }] }, 0, 1],
+          },
           siyratBoost: {
             $cond: [{ $in: ['siyrat', { $ifNull: ['$topics', []] }] }, 0, 1],
           },
         },
       },
-      { $sort: { siyratBoost: 1, publishedAt: -1, createdAt: -1 } },
+      { $sort: { priorityBoost: 1, siyratBoost: 1, publishedAt: -1, createdAt: -1 } },
       { $skip: skip },
       { $limit: input.limit },
     ]),
     VideoSeriesModel.countDocuments(filter),
   ]);
 
-  const thumbs = await firstEpisodeThumbBySeriesIds(rows.map((row) => row._id));
+  const seriesIds = rows.map((row) => row._id as Types.ObjectId);
+  const [thumbs, counts] = await Promise.all([
+    firstEpisodeThumbBySeriesIds(seriesIds),
+    episodeCountsBySeriesIds(seriesIds),
+  ]);
 
   return {
     items: rows.map((row) => {
+      const id = row._id.toString();
       const weak = isWeakCoverUrl(row.coverUrl);
-      const fallback = thumbs.get(row._id.toString()) ?? null;
-      return toSeriesCard(row, weak ? fallback : row.coverUrl);
+      const fallback = thumbs.get(id) ?? null;
+      return toSeriesCard(
+        { ...row, episodeCount: counts.get(id) ?? 0 },
+        weak ? fallback : row.coverUrl,
+      );
     }),
     meta: { page: input.page, limit: input.limit, total },
   };
@@ -200,7 +227,10 @@ export async function getPublishedSeriesBySlug(slug: string) {
     : null;
 
   return {
-    series: toSeriesCard(series, isWeakCoverUrl(series.coverUrl) ? coverFallback : series.coverUrl),
+    series: toSeriesCard(
+      { ...series, episodeCount: episodes.length },
+      isWeakCoverUrl(series.coverUrl) ? coverFallback : series.coverUrl,
+    ),
     episodes: episodes.map(toEpisodeSummary),
   };
 }
@@ -223,7 +253,7 @@ export async function getPublishedEpisodeById(id: string) {
 
   return {
     ...toEpisodeSummary(episode),
-    series: toSeriesCard(series),
+    series: toSeriesCard({ ...series, episodeCount: 0 }),
   };
 }
 

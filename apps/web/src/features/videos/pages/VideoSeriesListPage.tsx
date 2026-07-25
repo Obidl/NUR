@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { Video } from 'lucide-react';
 import { fetchVideoSeries } from '@/features/videos/api/videoApi';
 import type { VideoSeriesCard } from '@/features/videos/types/video.types';
+import { useVideoWatchStore } from '@/features/videos/store/videoWatchStore';
 import { CoverImage } from '@/shared/components/CoverImage';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { Input } from '@/shared/components/Field';
 import { PageShell } from '@/shared/components/PageShell';
 import { ErrorState, ListSkeleton } from '@/shared/components/Skeleton';
 import { getErrorMessage } from '@/shared/lib/errors';
+import { displayTitle } from '@/features/home/lib/todayPath';
 
 export function VideoSeriesListPage() {
   const [items, setItems] = useState<VideoSeriesCard[]>([]);
@@ -16,6 +18,7 @@ export function VideoSeriesListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const continueItem = useVideoWatchStore((s) => s.recent[0] ?? null);
 
   useEffect(() => {
     let cancelled = false;
@@ -23,15 +26,8 @@ export function VideoSeriesListPage() {
       setLoading(true);
       setError(null);
       try {
-        const result = await fetchVideoSeries({ q: query || undefined, topic: 'siyrat' });
-        // Fallback: if no siyrat-tagged published series, show all
-        const primary = result.items;
-        if (primary.length === 0 && !query) {
-          const all = await fetchVideoSeries({ q: query || undefined });
-          if (!cancelled) setItems(all.items);
-        } else if (!cancelled) {
-          setItems(primary);
-        }
+        const result = await fetchVideoSeries({ q: query || undefined, limit: 50 });
+        if (!cancelled) setItems(result.items);
       } catch (err) {
         if (!cancelled) setError(getErrorMessage(err, 'Videolar yuklanmadi'));
       } finally {
@@ -47,8 +43,33 @@ export function VideoSeriesListPage() {
   return (
     <PageShell
       title="Videolar"
-      description="Siyrat videolari — YouTube orqali ko‘rish. Fayl qayta host qilinmaydi."
+      description="Siyrat ketma-ket — ilova ichida ko‘ring. YouTube’ga majburan o‘tmaydi."
     >
+      {continueItem ? (
+        <div className="mb-8">
+          <h2 className="nur-section-title mb-3">Davom ettirish</h2>
+          <Link
+            to={`/videos/${continueItem.seriesSlug}?episode=${continueItem.episodeId}`}
+            className="nur-list-row border border-nur-line bg-nur-elevated"
+          >
+            <CoverImage
+              src={continueItem.coverUrl}
+              className="h-16 w-28 shrink-0 rounded-[var(--radius-m)] object-cover shadow-[var(--shadow-xs)]"
+            />
+            <div className="min-w-0">
+              <p className="text-xs uppercase tracking-wide text-nur-lamp">Oxirgi ko‘rilgan</p>
+              <p className="mt-1 truncate text-sm font-semibold tracking-[-0.01em]">
+                {continueItem.episodeNumber ? `${continueItem.episodeNumber}. ` : ''}
+                {displayTitle(continueItem.episodeTitle)}
+              </p>
+              <p className="mt-1 truncate text-sm text-nur-muted">
+                {displayTitle(continueItem.seriesTitle)} · {continueItem.hostOrScholar}
+              </p>
+            </div>
+          </Link>
+        </div>
+      ) : null}
+
       <Input
         type="search"
         value={query}
@@ -70,7 +91,7 @@ export function VideoSeriesListPage() {
         <EmptyState
           icon={<Video className="h-5 w-5" strokeWidth={1.75} />}
           title="Hali video yo‘q"
-          description="Nashr qilingan siyrat seriyasi bo‘sh. Admin orqali YouTube video ID qo‘shiladi."
+          description="Nashr qilingan seriya bo‘sh. Admin orqali YouTube video ID qo‘shiladi."
         />
       ) : null}
 
@@ -83,9 +104,12 @@ export function VideoSeriesListPage() {
                   src={series.coverUrl}
                   className="h-14 w-24 shrink-0 rounded-[var(--radius-m)] object-cover shadow-[var(--shadow-xs)]"
                 />
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold tracking-[-0.01em]">{series.title}</p>
                   <p className="mt-1 truncate text-sm text-nur-muted">{series.hostOrScholar}</p>
+                  <p className="mt-1 text-xs text-nur-faint">
+                    {series.episodeCount} ta video · ketma-ket
+                  </p>
                 </div>
               </Link>
             </li>

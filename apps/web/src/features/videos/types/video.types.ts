@@ -9,6 +9,7 @@ export type VideoSeriesCard = {
   topics: string[];
   channelUrl: string | null;
   publishedAt: string | null;
+  episodeCount: number;
 };
 
 export type VideoEpisodeSummary = {
