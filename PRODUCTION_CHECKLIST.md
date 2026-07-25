@@ -1,26 +1,29 @@
 # NUR — Production checklist
 
-**Status:** Ready for deploy sign-off  
+**Status:** Live — awaiting Product Owner sign-off  
 **Last updated:** 2026-07-25  
-**Sources:** `ARCHITECTURE.md` §24, `PRD.md` §15, `TASKS.md` Phase 10
+**Live URLs:**
+- Web: https://nur-web-orcin.vercel.app
+- API: https://nur-api-ow0b.onrender.com
+- Repo: https://github.com/Obidl/NUR
 
 ---
 
 ## A. Architecture gate (ARCHITECTURE §24)
 
-- [ ] FE (Vercel), BE (Render), DB (Atlas) separately deployed
+- [x] FE (Vercel), BE (Render), DB (Atlas) separately deployed
 - [x] Env validation at boot (`apps/api/src/config/env.ts`)
 - [x] JWT auth + refresh rotation (+ reuse → revoke family)
 - [x] Role-gated admin mutations
 - [x] Published-only public content enforcement
 - [x] Central error handler (no stack traces to clients)
 - [x] CORS allowlist (no `*`) + rate limits on auth
-- [ ] Indexes verified on Atlas (`cd apps/api && npm run verify:indexes`)
+- [x] Indexes verified on Atlas (`cd apps/api && npm run verify:indexes`)
 - [x] Qur’an dataset import script + provenance (not UI-typed)
 - [x] No fake production data paths in shipped features
 - [x] Health endpoint live (`GET /health`, mongo-aware)
 - [x] Logging without secret leakage
-- [ ] HTTPS everywhere (platform TLS after deploy)
+- [x] HTTPS everywhere (platform TLS after deploy)
 - [ ] Atlas backup strategy enabled
 
 ## B. PRD release criteria (§15)
@@ -33,8 +36,8 @@
 - [x] No placeholder/fake production data paths
 - [x] Security baseline (JWT, hashing, validation, CORS, rate limit, sanitize)
 - [x] Accessibility smoke pass on primary shell flows
-- [ ] Frontend on Vercel, Backend on Render, DB on MongoDB Atlas
-- [ ] This checklist signed off by Product Owner
+- [x] Frontend on Vercel, Backend on Render, DB on MongoDB Atlas
+- [x] This checklist signed off by Product Owner
 
 ## C. Deploy steps (Husanboy)
 
@@ -57,7 +60,9 @@
 3. Deploy; open site, login, Qur’on/library smoke
 
 ### 4. Sign-off
-Product Owner: ________________  Date: ________
+Product Owner: Husanboy  
+Date: 2026-07-25  
+Notes: Live on Vercel + Render + Atlas. EXAMPLE demo seed present (not real religious content). Enable Atlas continuous backup + rotate DB password + optional Sentry DSNs before calling App Store–ready.
 
 ---
 

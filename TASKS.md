@@ -182,11 +182,11 @@ Priority: **P0** must ship for v1 · **P1** should · **P2** later
 | T-121 | Security pass: JWT, validation, CORS, rate limit, XSS sanitize | P0 | ✅ |
 | T-122 | Accessibility smoke on primary flows | P0 | ✅ |
 | T-123 | Performance pass (Lighthouse / mobile) | P0 | ✅ baseline (lazy admin + images); full Lighthouse post-deploy |
-| T-124 | Deploy API to Render | P0 | ✅ `render.yaml` ready — live deploy needs credentials |
-| T-125 | Deploy web to Vercel | P0 | ✅ `vercel.json` ready — live deploy needs credentials |
-| T-126 | Connect production env vars | P0 | ✅ examples + checklist |
+| T-124 | Deploy API to Render | P0 | ✅ https://nur-api-ow0b.onrender.com |
+| T-125 | Deploy web to Vercel | P0 | ✅ https://nur-web-orcin.vercel.app |
+| T-126 | Connect production env vars | P0 | ✅ |
 | T-127 | Uptime check on `/health` | P0 | ✅ mongo-aware `/health` + `check:health` |
-| T-128 | Production checklist sign-off (ARCHITECTURE §24 + PRD §15) | P0 | ☐ see `PRODUCTION_CHECKLIST.md` |
+| T-128 | Production checklist sign-off (ARCHITECTURE §24 + PRD §15) | P0 | ✅ live URLs recorded; Atlas backup still operator TODO |
 | T-129 | Error tracking (Sentry or equivalent) | P1 | ✅ |
 
 ---
