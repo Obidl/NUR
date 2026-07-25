@@ -1,0 +1,104 @@
+:root {
+  /* Atmosphere */
+  --nur-bg: #f3f6f8;
+  --nur-bg-elevated: #ffffff;
+  --nur-bg-sunken: #e8eef2;
+  --nur-ink: #121820;
+  --nur-ink-muted: #5b6775;
+  --nur-ink-faint: #9aa6b2;
+
+  /* Brand / lamp */
+  --nur-lamp: #c58b2d;
+  --nur-lamp-soft: #f0dfc0;
+  --nur-lamp-ink: #3a2a10;
+
+  /* Interactive */
+  --nur-accent: #1f6f78;
+  --nur-accent-soft: #d5ecee;
+  --nur-focus: #1f6f78;
+
+  /* Lines */
+  --nur-line: #d5dde4;
+  --nur-line-strong: #b7c2cc;
+
+  /* Feedback */
+  --nur-success: #2f6d4f;
+  --nur-warning: #9a6b16;
+  --nur-danger: #9b3d3d;
+
+  /* Qur’an surface */
+  --nur-quran-bg: #f7f1e8;
+  --nur-quran-ink: #101820;
+  --nur-quran-ornament: #b8923a;
+
+  /* Overlay */
+  --nur-overlay: rgba(12, 18, 28, 0.48);
+
+  /* Motion */
+  --motion-fast: 150ms;
+  --motion-mid: 250ms;
+  --motion-slow: 400ms;
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Radius */
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-l: 16px;
+
+  /* Qur’an user preference */
+  --quran-font-size: 28px;
+
+  color-scheme: light;
+  font-family: Manrope, system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--nur-ink);
+  background-color: var(--nur-bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme='dark'] {
+  --nur-bg: #0c1218;
+  --nur-bg-elevated: #141c24;
+  --nur-bg-sunken: #090e13;
+  --nur-ink: #e8eef4;
+  --nur-ink-muted: #9aa6b2;
+  --nur-ink-faint: #6d7a86;
+
+  --nur-lamp: #d7a34a;
+  --nur-lamp-soft: #3a2f1c;
+  --nur-lamp-ink: #1a140a;
+
+  --nur-accent: #5fb4bc;
+  --nur-accent-soft: #163036;
+  --nur-focus: #5fb4bc;
+
+  --nur-line: #24303a;
+  --nur-line-strong: #334250;
+
+  --nur-success: #6fbf93;
+  --nur-warning: #e0b35a;
+  --nur-danger: #e08787;
+
+  --nur-quran-bg: #121820;
+  --nur-quran-ink: #eef3f7;
+  --nur-quran-ornament: #d7a34a;
+
+  --nur-overlay: rgba(0, 0, 0, 0.64);
+
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
