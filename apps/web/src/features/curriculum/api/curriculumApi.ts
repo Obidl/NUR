@@ -31,8 +31,15 @@ export async function fetchCurriculumProgress() {
   return data.data;
 }
 
+export type PathProgressUpdate = {
+  pathId: string;
+  currentLessonId: string | null;
+  completedLessonIds: string[];
+  updatedAt: string;
+};
+
 export async function completeCurriculumLesson(pathId: string, completeLessonId: string) {
-  const { data } = await http.put<{ data: PathProgressItem }>(endpoints.curriculum.progress, {
+  const { data } = await http.put<{ data: PathProgressUpdate }>(endpoints.curriculum.progress, {
     pathId,
     completeLessonId,
   });

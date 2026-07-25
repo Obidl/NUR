@@ -6,6 +6,7 @@ App Store–grade Islamic learning platform.
 
 ```text
 NUR/
+├── IDEAL_PROJECT.md     # Jamlangan ideal (Bugungi yo‘l + siyrat path)
 ├── *.md                 # Product & engineering specifications
 ├── PRODUCTION_CHECKLIST.md
 ├── render.yaml          # Render API blueprint

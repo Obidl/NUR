@@ -11,6 +11,8 @@
 
 NUR is the calm place Muslims open every day to continue the Qur’an, listen to trusted teachers, and study sourced Islamic knowledge — without noise.
 
+**Ideal jamlangan model (UI + 15 kunlik yo‘l + kontent):** `IDEAL_PROJECT.md` — product owner tasdiqidan keyin Home “Bugungi yo‘l” shimoli.
+
 ---
 
 ## 2. Brand

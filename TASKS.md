@@ -159,6 +159,7 @@ Priority: **P0** must ship for v1 · **P1** should · **P2** later
 | T-104 | Profile/settings page | P0 | ✅ |
 | T-105 | Home atmosphere + brand enter motion | P0 | ✅ |
 | T-106 | Global search API + UI | P1 | ✅ |
+| T-107 | Home «Bugungi yo‘l» checklist (curriculum progress) | P0 | ✅ |
 
 ---
 
@@ -200,6 +201,8 @@ Only if product pulls curriculum into scope — see `CURRICULUM.md`.
 | T-140 | Curriculum schema + APIs | P2 | ✅ |
 | T-141 | Curriculum FE paths | P2 | ✅ |
 | T-142 | Link lessons to existing Qur’an/podcast/book/research entities | P2 | ✅ |
+| T-143 | EXAMPLE 15-kun siyrat path seed + Home Kun X/15 | P0 | ✅ |
+| T-144 | Journey UI polish (Ertalab/Yo‘lda/Kechqurun + progress) | P0 | ✅ |
 
 ---
 
