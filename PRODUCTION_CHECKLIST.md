@@ -51,8 +51,8 @@
 ### 2. Render (API)
 1. Connect repo → Blueprint `render.yaml` **or** Web Service `apps/api`  
 2. Set env: `MONGODB_URI`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `CORS_ORIGIN=https://<vercel-domain>`  
-3. Deploy; confirm `GET https://<api>/health` → `status: ok`, `mongo: up`  
-4. Optional keep-alive: cron/uptime → `/health` every 5m (`npm run check:health`)
+3. Deploy; confirm `GET https://nur-api-ow0b.onrender.com/health` → `status: ok`, `mongo: up`  
+4. Keep-alive: GitHub Action `.github/workflows/api-health-keepalive.yml` (every ~10m)
 
 ### 3. Vercel (Web)
 1. Project root `apps/web`  

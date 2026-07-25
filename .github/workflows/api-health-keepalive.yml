@@ -1,0 +1,32 @@
+# Keep Render free-tier API warm + basic uptime signal.
+name: API health keep-alive
+
+on:
+  schedule:
+    # ~every 10 minutes (GitHub cron can drift)
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: GET /health
+        env:
+          HEALTH_URL: https://nur-api-ow0b.onrender.com/health
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            echo "Attempt $attempt…"
+            code=$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 90 "$HEALTH_URL" || echo 000)
+            echo "HTTP $code"
+            cat /tmp/health.json || true
+            echo
+            if [ "$code" = "200" ] && grep -q '"status":"ok"' /tmp/health.json && grep -q '"mongo":"up"' /tmp/health.json; then
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "Health check failed"
+          exit 1
