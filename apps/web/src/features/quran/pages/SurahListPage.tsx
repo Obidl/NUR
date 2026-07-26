@@ -74,14 +74,24 @@ export function SurahListPage() {
       title="Qur’on"
       description="Matn: quran-uthmani · Tarjima: Muhammad Sodik Muhammad Yusuf (uz.sodik)"
     >
-      {continueHref ? (
+      {continueHref && progress ? (
         <Link
           to={continueHref}
           className="nur-surface mb-6 flex items-center justify-between gap-3 px-4 py-3.5 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-sm)]"
         >
           <span className="text-sm text-nur-muted">Davom etish</span>
-          <span className="text-sm font-semibold text-nur-accent">
-            Surah {progress?.surahNumber} · oyat {progress?.ayahNumber}
+          <span className="min-w-0 text-right text-sm font-semibold text-nur-accent">
+            <span className="block truncate">
+              {progress.surahName ?? `Surah ${progress.surahNumber}`}
+            </span>
+            <span className="mt-0.5 block text-xs font-normal text-nur-muted">
+              {progress.ayahNumber}-oyat
+              {progress.nameArabic ? (
+                <span className="font-quran ms-2" dir="rtl" lang="ar">
+                  {progress.nameArabic}
+                </span>
+              ) : null}
+            </span>
           </span>
         </Link>
       ) : null}

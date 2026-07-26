@@ -58,6 +58,8 @@ export type QuranProgress = {
   mode: 'read' | 'listen';
   surahNumber: number;
   ayahNumber: number;
+  surahName?: string;
+  nameArabic?: string | null;
   updatedAt: string;
 };
 

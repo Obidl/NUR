@@ -3,6 +3,7 @@ import { Pause, Play, X } from 'lucide-react';
 import { useQuranPlayerStore } from '@/features/quran/store/quranPlayerStore';
 
 type QuranAudioBarProps = {
+  /** Called when playback moves to / focuses an ayah (including auto-next). */
   onAyahBoundary?: (ayahNumber: number) => void;
 };
 
@@ -13,13 +14,14 @@ export function QuranAudioBar({ onAyahBoundary }: QuranAudioBarProps) {
   const reciterName = useQuranPlayerStore((s) => s.reciterName);
   const surahNumber = useQuranPlayerStore((s) => s.surahNumber);
   const ayahNumber = useQuranPlayerStore((s) => s.ayahNumber);
+  const ayahCount = useQuranPlayerStore((s) => s.ayahCount);
   const scope = useQuranPlayerStore((s) => s.scope);
   const error = useQuranPlayerStore((s) => s.error);
   const pause = useQuranPlayerStore((s) => s.pause);
   const setPlaying = useQuranPlayerStore((s) => s.setPlaying);
   const stop = useQuranPlayerStore((s) => s.stop);
   const playAyah = useQuranPlayerStore((s) => s.playAyah);
-  const playSurah = useQuranPlayerStore((s) => s.playSurah);
+  const playNextAyah = useQuranPlayerStore((s) => s.playNextAyah);
 
   useEffect(() => {
     const el = audioRef.current;
@@ -52,21 +54,27 @@ export function QuranAudioBar({ onAyahBoundary }: QuranAudioBarProps) {
         ref={audioRef}
         preload="metadata"
         onEnded={() => {
-          setPlaying(false);
-          if (scope === 'ayah' && surahNumber && ayahNumber) {
-            onAyahBoundary?.(ayahNumber);
-          }
+          void (async () => {
+            const next = await playNextAyah();
+            if (next != null) {
+              onAyahBoundary?.(next);
+              return;
+            }
+            setPlaying(false);
+            if (ayahNumber) onAyahBoundary?.(ayahNumber);
+          })();
         }}
       />
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-nur-ink">
-            {scope === 'surah'
-              ? `Surah ${surahNumber}`
-              : `Surah ${surahNumber} · oyat ${ayahNumber}`}
+            Surah {surahNumber}
+            {ayahNumber ? ` · oyat ${ayahNumber}` : ''}
+            {ayahCount ? ` / ${ayahCount}` : ''}
           </p>
           <p className="truncate text-xs text-nur-muted">
-            {reciterName ?? 'Qori'} · islomiy CDN audio
+            {reciterName ?? 'Qori'}
+            {scope === 'surah' ? ' · surah ketma-ket' : ' · oyat'}
           </p>
           {error ? <p className="text-xs text-[var(--nur-danger)]">{error}</p> : null}
         </div>
@@ -77,11 +85,15 @@ export function QuranAudioBar({ onAyahBoundary }: QuranAudioBarProps) {
             aria-label={isPlaying ? 'Pauza' : 'Ijro'}
             onClick={() => {
               if (!audioUrl) return;
-              if (isPlaying) pause();
-              else if (scope === 'ayah' && surahNumber && ayahNumber) {
-                void playAyah(surahNumber, ayahNumber);
-              } else if (scope === 'surah' && surahNumber) {
-                void playSurah(surahNumber);
+              if (isPlaying) {
+                pause();
+                return;
+              }
+              if (surahNumber && ayahNumber) {
+                void playAyah(surahNumber, ayahNumber, {
+                  ayahCount: ayahCount ?? undefined,
+                  autoAdvance: true,
+                });
               } else {
                 setPlaying(true);
               }

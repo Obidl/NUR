@@ -85,9 +85,13 @@ async function main() {
   const textChecksum = checksum(arabicPayload);
   const importedAt = new Date();
 
+  function stripBom(text: string) {
+    return text.replace(/^\uFEFF/, '');
+  }
+
   const surahDocs = arabic.data.surahs.map((surah) => ({
     number: surah.number,
-    nameArabic: surah.name,
+    nameArabic: stripBom(surah.name),
     nameLatin: surah.englishName,
     nameUz: null,
     ayahCount: surah.numberOfAyahs ?? surah.ayahs.length,
@@ -114,8 +118,8 @@ async function main() {
         surahNumber: arabicSurah.number,
         ayahNumber: arabicAyah.numberInSurah,
         globalAyahNumber: arabicAyah.number,
-        textArabic: arabicAyah.text,
-        textUz: uzbekAyah.text,
+        textArabic: stripBom(arabicAyah.text),
+        textUz: stripBom(uzbekAyah.text),
         translationMeta: {
           translatorName: uzbek.data.edition.englishName || 'Muhammad Sodik Muhammad Yusuf',
           translationKey: UZBEK_EDITION,

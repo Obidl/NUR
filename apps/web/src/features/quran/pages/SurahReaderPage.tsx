@@ -305,8 +305,8 @@ export function SurahReaderPage() {
             type="button"
             variant="secondary"
             onClick={() => {
-              if (!selectedReciterId) return;
-              void playSurah(surahNumber);
+              if (!selectedReciterId || !detail) return;
+              void playSurah(surahNumber, detail.ayahs.length);
               void persistReadProgress(1);
             }}
           >
@@ -331,7 +331,10 @@ export function SurahReaderPage() {
               isBookmarked={bookmarkMap.has(ayah.ayahNumber)}
               canBookmark
               onPlay={() => {
-                void playAyah(surahNumber, ayah.ayahNumber);
+                void playAyah(surahNumber, ayah.ayahNumber, {
+                  ayahCount: detail.ayahs.length,
+                  autoAdvance: true,
+                });
                 setFocusedAyah(ayah.ayahNumber);
                 void persistReadProgress(ayah.ayahNumber);
                 if (accessToken) {
@@ -353,6 +356,19 @@ export function SurahReaderPage() {
         onAyahBoundary={(ayahNumber) => {
           setFocusedAyah(ayahNumber);
           void persistReadProgress(ayahNumber);
+          window.setTimeout(() => {
+            document.getElementById(`ayah-${ayahNumber}`)?.scrollIntoView({
+              behavior: reduceMotion ? 'auto' : 'smooth',
+              block: 'center',
+            });
+          }, 40);
+          if (accessToken) {
+            void saveQuranProgress({
+              mode: 'listen',
+              surahNumber,
+              ayahNumber,
+            }).catch(() => undefined);
+          }
         }}
       />
     </div>

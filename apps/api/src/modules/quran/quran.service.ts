@@ -8,6 +8,11 @@ import { QuranProgressModel } from './quranProgress.model.js';
 import { QuranBookmarkModel } from './quranBookmark.model.js';
 import type { CreateBookmarkBody, UpsertProgressBody } from './quran.validation.js';
 
+/** Strip UTF-8 BOM that some mushaf editions prepend (e.g. Fatiha 1). */
+function cleanArabicText(text: string) {
+  return text.replace(/^\uFEFF+/, '');
+}
+
 function toSurahDto(surah: {
   number: number;
   nameArabic: string;
@@ -18,7 +23,7 @@ function toSurahDto(surah: {
 }) {
   return {
     number: surah.number,
-    nameArabic: surah.nameArabic,
+    nameArabic: cleanArabicText(surah.nameArabic),
     nameLatin: surah.nameLatin,
     nameUz: surah.nameUz ?? null,
     ayahCount: surah.ayahCount,
@@ -66,7 +71,7 @@ export async function getSurahWithAyahs(surahNumber: number) {
     ayahs: ayahs.map((ayah) => ({
       surahNumber: ayah.surahNumber,
       ayahNumber: ayah.ayahNumber,
-      textArabic: ayah.textArabic,
+      textArabic: cleanArabicText(ayah.textArabic),
       textUz: ayah.textUz ?? null,
       translation: ayah.translationMeta
         ? {
@@ -96,7 +101,7 @@ export async function searchAyahs(q: string, limit: number) {
       return textHits.map((ayah) => ({
         surahNumber: ayah.surahNumber,
         ayahNumber: ayah.ayahNumber,
-        textArabic: ayah.textArabic,
+        textArabic: cleanArabicText(ayah.textArabic),
         textUz: ayah.textUz ?? null,
       }));
     }
@@ -114,7 +119,7 @@ export async function searchAyahs(q: string, limit: number) {
   return ayahs.map((ayah) => ({
     surahNumber: ayah.surahNumber,
     ayahNumber: ayah.ayahNumber,
-    textArabic: ayah.textArabic,
+    textArabic: cleanArabicText(ayah.textArabic),
     textUz: ayah.textUz ?? null,
   }));
 }
@@ -235,12 +240,22 @@ export async function listAudio(input: {
 
 export async function getProgress(userId: string) {
   const rows = await QuranProgressModel.find({ userId }).lean();
-  return rows.map((row) => ({
-    mode: row.mode,
-    surahNumber: row.surahNumber,
-    ayahNumber: row.ayahNumber,
-    updatedAt: row.updatedAt,
-  }));
+  const surahNumbers = [...new Set(rows.map((row) => row.surahNumber))];
+  const surahs = await SurahModel.find({ number: { $in: surahNumbers } }).lean();
+  const surahMap = new Map(surahs.map((s) => [s.number, s]));
+
+  return rows.map((row) => {
+    const surah = surahMap.get(row.surahNumber);
+    return {
+      mode: row.mode,
+      surahNumber: row.surahNumber,
+      ayahNumber: row.ayahNumber,
+      surahName:
+        surah?.nameUz ?? surah?.nameLatin ?? `Surah ${row.surahNumber}`,
+      nameArabic: surah ? cleanArabicText(surah.nameArabic) : null,
+      updatedAt: row.updatedAt,
+    };
+  });
 }
 
 export async function upsertProgress(userId: string, input: UpsertProgressBody) {
