@@ -1,6 +1,6 @@
 # NUR — Design System
 
-**Status:** Draft v1.1.0  
+**Status:** Draft v1.2.0  
 **Last updated:** 2026-07-26  
 **Depends on:** `PRODUCT.md`, `UI_GUIDELINES.md`  
 **Implementation:** CSS variables + Tailwind theme extension
@@ -9,117 +9,105 @@
 
 ## 1. Visual Direction
 
-### Name: **Quiet Light (Sokin nur)**
+### Name: **Quiet Light (Sokin nur)** — readability first
 
-NUR’s look is **warm cream quiet** — like soft dawn light in a library or mosque courtyard.
+Minimal, calm, refined. **O‘qilishi oson** is the top priority. No gamified noise.
 
 | Attribute | Choice |
 | --- | --- |
-| Mood | Calm, refined, luminous — never noisy or gamified |
-| Atmosphere | Soft radial lamp/emerald wash at 3–8% opacity; optional geometric texture only at 3–6% |
-| Primary CTA | Deep emerald `#1C3D34` |
-| Signal / progress | Warm gold `#C9A227` |
-| Sacred text surface | Cream-gold `#F7F0DD` |
-| Body text | Warm charcoal `#2A2A28` (not pure black) |
+| Page background | Cool off-white `#F7F7F5` |
+| Cards | Pure white `#FFFFFF` |
+| Body text | Near-black `#1F1E1B` on light only |
+| Secondary text | Mid-dark gray `#54514A` (never pale gray) |
+| Primary CTA | Deep emerald `#16342C` + **white** text |
+| Signal (icons / progress only) | Dark gold `#A87C0E` |
+| Sacred Arabic surface | Cream `#FBF6E8` + ink `#1F1E1B` |
+
+### Contrast rule (binding)
+
+Gold or light-colored **text** must never sit on a light background.
+
+- Dark text + light surface, **or**
+- White text + dark surface  
+
+No in-between. WCAG AA body text ≥ **4.5:1**.
 
 ### Typography
 
-| Role | Font |
-| --- | --- |
-| Display / headings | **Fraunces** |
-| UI / body | **Inter** |
-| Long reading | **Fraunces** |
-| Qur’an Arabic | **Amiri** (min ~28–32px mobile, line-height ≥ 2) |
+| Role | Font | Notes |
+| --- | --- | --- |
+| Headings | **Fraunces** | Display / page titles |
+| UI / body | **Inter** | Min 15–16px |
+| Qur’an Arabic | **Amiri** | 28–32px+, line-height ≥ 2 |
 
-### Explicitly rejected looks
+### Explicitly rejected
 
-1. Purple-on-white / purple→indigo SaaS gradients  
-2. Harsh terracotta-as-brand (terracotta only for soft danger `#B5533C`)  
-3. Broadsheet newspaper: hairline rules, zero radius, dense columns  
-4. Neon glow “Islamic futurism” / gamified confetti  
-5. Stock photo backgrounds of people or places  
+1. Purple SaaS gradients  
+2. Gold/amber as large body text on cream  
+3. Pale gray (`#9aa…`) body/meta on white  
+4. Stock photo backgrounds without solid text card/overlay  
+5. Gamified confetti / neon  
 
 ---
 
-## 2. Design Tokens (CSS Variables)
-
-Implement in `:root` and `[data-theme='dark']`.
-
-### 2.1 Color — Light theme
+## 2. Tokens (light)
 
 ```css
 :root {
-  --nur-bg: #faf9f5;
-  --nur-bg-elevated: #f2eee4;
-  --nur-bg-sunken: #ebe6db;
-  --nur-ink: #2a2a28;
-  --nur-ink-muted: #6b685f;
-  --nur-ink-faint: #9a968c;
+  --nur-bg: #f7f7f5;
+  --nur-bg-elevated: #ffffff;
+  --nur-bg-sunken: #ecece9;
+  --nur-ink: #1f1e1b;
+  --nur-ink-muted: #54514a;
+  --nur-ink-faint: #54514a;
 
-  --nur-lamp: #c9a227;          /* gold signal */
-  --nur-lamp-soft: #f3e8c4;
-  --nur-lamp-ink: #3d3210;
+  --nur-lamp: #a87c0e;       /* icons, rings, dividers only */
+  --nur-lamp-soft: #f5ecd4;
+  --nur-lamp-ink: #ffffff;   /* text ON filled gold */
 
-  --nur-accent: #1c3d34;        /* emerald CTA */
-  --nur-accent-soft: #d8e6e1;
-  --nur-accent-ink: #faf9f5;
-  --nur-focus: #1c3d34;
+  --nur-accent: #16342c;
+  --nur-accent-ink: #ffffff;
+  --nur-focus: #16342c;
 
-  --nur-line: #e7e3d8;
-  --nur-danger: #b5533c;
+  --nur-line: #e4e2dc;
+  --nur-danger: #a84832;
 
-  --nur-quran-bg: #f7f0dd;
+  --nur-quran-bg: #fbf6e8;
+  --nur-quran-ink: #1f1e1b;
+  --nur-quran-muted: #54514a;
 }
 ```
 
-Dark mode: bg `#14161A`, elevated `#1D2027`, gold `#D4B24C`, emerald `#2E5C4F`.
+`--nur-lamp` = gold signal. `--nur-accent` = emerald CTA. Primary buttons use **accent**.
 
-### Binding CSS var names
-
-Existing code uses `--nur-lamp` (gold) and `--nur-accent` (emerald). Primary buttons use **accent/emerald**; progress rings and bookmarks use **lamp/gold**.
+Dark: bg `#14161A`, elevated `#1D2027`, muted text stays light enough for AA on dark surfaces.
 
 ---
 
-## 3. Spacing & Layout
+## 3. Spacing, radius, motion
 
-| Token | Value |
-| --- | --- |
-| `--space-1`–`--space-8` | 4 → 64px (8px grid) |
-
-Prefer airy Quiet Light spacing: page edges 20–24px mobile, 40–64px desktop.
-
-| Radius | Value | Use |
-| --- | --- | --- |
-| `--radius-m` | 14px | Buttons |
-| `--radius-l` / `--radius-xl` | 20–24px | Cards / lists |
-| `--radius-pill` | 9999px | Chips, nav active pill |
-
-Shadows: soft emerald-tinted — e.g. `0 8px 24px rgba(28,61,52,0.06)`.
-
-Motion: 250–500ms ease-out; progress ~700ms; breath glow 4–6s. Honor `prefers-reduced-motion`.
+Cards/lists: `--radius-l` / `--radius-xl` (20–24px). Soft emerald-tinted shadows. Motion 250–500ms ease-out; honor `prefers-reduced-motion`.
 
 ---
 
 ## 4. Components
 
-| Variant | Look |
+| Control | Look |
 | --- | --- |
-| `primary` | Emerald fill + light text |
-| `secondary` | Outline / transparent + line |
-| `ghost` | Transparent |
-| `danger` | Soft terracotta |
-
-- Lists preferred for catalogs (`.nur-list` / `.nur-list-row`)
-- Sacred Arabic in `.nur-sacred`
-- Players docked; emerald play control
+| Primary button | Emerald + white |
+| Secondary | Outline, dark text |
+| Section labels | Uppercase muted **ink** (not gold) |
+| Progress ring stroke | Gold |
+| Completed check fill | Gold + white glyph, or emerald fill |
+| Sacred block | `.nur-sacred` cream + dark Arabic |
 
 ---
 
 ## 5. Navigation
 
-- Desktop: top text nav; active = soft beige pill  
-- Mobile tab bar: Bugun, Qur’on, Videolar, Yo‘llar, Ko‘proq  
+Desktop: top text nav, active soft white/beige pill.  
+Mobile: Bugun · Qur’on · Video · Yo‘llar · Ko‘proq — active emerald.
 
 ---
 
-*Stack, content safety, and FE/BE separation in `CLAUDE.md` / `ARCHITECTURE.md` remain binding. Quiet Light supersedes the prior “Lamp on Ink” visual draft.*
+*Stack / content safety / FE–BE separation in `CLAUDE.md` and `ARCHITECTURE.md` remain binding.*

@@ -23,7 +23,7 @@ createRoot(rootElement).render(
           </p>
           <button
             type="button"
-            className="mt-6 rounded-[var(--radius-m)] bg-nur-lamp px-5 py-3 text-sm font-medium text-nur-lamp-ink"
+            className="mt-6 rounded-[var(--radius-m)] bg-nur-accent px-5 py-3 text-sm font-medium text-[var(--nur-accent-ink)]"
             onClick={() => window.location.assign('/')}
           >
             Bosh sahifa

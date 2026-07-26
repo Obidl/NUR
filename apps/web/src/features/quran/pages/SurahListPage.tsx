@@ -120,7 +120,7 @@ export function SurahListPage() {
       {continueHref && progress ? (
         <Link
           to={continueHref}
-          className="mb-8 flex items-center justify-between gap-3 rounded-[var(--radius-xl)] bg-nur-lamp-soft/70 px-5 py-4 ring-1 ring-nur-lamp/25 transition-[transform,box-shadow] duration-150 hover:shadow-[var(--shadow-sm)] active:scale-[0.99]"
+          className="nur-surface mb-8 flex items-center justify-between gap-3 px-5 py-4 transition-[transform,box-shadow] duration-150 hover:shadow-[var(--shadow-sm)] active:scale-[0.99]"
         >
           <span className="nur-section-label">Davom etish</span>
           <span className="min-w-0 text-right text-sm font-semibold text-nur-ink">
@@ -224,7 +224,7 @@ export function SurahListPage() {
                 to={`/quran/${surah.number}`}
                 className="nur-surface-interactive flex items-center gap-4 px-4 py-4"
               >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--nur-lamp)_14%,transparent)] font-display text-sm font-medium text-nur-lamp-ink">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-nur-accent font-display text-sm font-medium text-[var(--nur-accent-ink)]">
                   {surah.number}
                 </span>
                 <div className="min-w-0 flex-1">
@@ -263,7 +263,7 @@ export function SurahListPage() {
                   {hit.surahNumber}:{hit.ayahNumber}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs text-nur-lamp">
+                  <p className="text-xs font-medium text-nur-muted">
                     {hit.surahName ?? `Surah ${hit.surahNumber}`} · {hit.ayahNumber}-oyat
                   </p>
                   <p

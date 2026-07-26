@@ -1,40 +1,40 @@
 :root {
-  /* Quiet Light — warm cream atmosphere */
-  --nur-bg: #faf9f5;
-  --nur-bg-elevated: #f2eee4;
-  --nur-bg-sunken: #ebe6db;
-  --nur-ink: #2a2a28;
-  --nur-ink-muted: #6b685f;
-  --nur-ink-faint: #9a968c;
+  /* Quiet Light — readability first (WCAG AA) */
+  --nur-bg: #f7f7f5;
+  --nur-bg-elevated: #ffffff;
+  --nur-bg-sunken: #ecece9;
+  --nur-ink: #1f1e1b;
+  --nur-ink-muted: #54514a;
+  --nur-ink-faint: #54514a;
 
-  /* Gold — progress, bookmark, sacred signal */
-  --nur-lamp: #c9a227;
-  --nur-lamp-soft: #f3e8c4;
-  --nur-lamp-ink: #3d3210;
-  --nur-lamp-glow: color-mix(in srgb, var(--nur-lamp) 12%, transparent);
+  /* Gold — icons, progress rings, dividers ONLY (never body text on light) */
+  --nur-lamp: #a87c0e;
+  --nur-lamp-soft: #f5ecd4;
+  --nur-lamp-ink: #ffffff;
+  --nur-lamp-glow: color-mix(in srgb, var(--nur-lamp) 10%, transparent);
 
-  /* Emerald — primary CTA, active nav, focus */
-  --nur-accent: #1c3d34;
-  --nur-accent-soft: #d8e6e1;
-  --nur-accent-ink: #faf9f5;
-  --nur-focus: #1c3d34;
+  /* Emerald — primary CTA, active nav, focus (white text on fill) */
+  --nur-accent: #16342c;
+  --nur-accent-soft: #dce8e4;
+  --nur-accent-ink: #ffffff;
+  --nur-focus: #16342c;
 
   /* Lines */
-  --nur-line: #e7e3d8;
-  --nur-line-strong: #d4cfc2;
+  --nur-line: #e4e2dc;
+  --nur-line-strong: #cecbc3;
 
   /* Feedback */
-  --nur-success: #1c3d34;
-  --nur-warning: #c9a227;
-  --nur-danger: #b5533c;
+  --nur-success: #16342c;
+  --nur-warning: #a87c0e;
+  --nur-danger: #a84832;
 
-  /* Sacred / Qur’an surface */
-  --nur-quran-bg: #f7f0dd;
-  --nur-quran-ink: #2a2a28;
-  --nur-quran-ornament: #c9a227;
-  --nur-quran-muted: #6b685f;
+  /* Sacred / Qur’an surface — dark ink on cream-gold */
+  --nur-quran-bg: #fbf6e8;
+  --nur-quran-ink: #1f1e1b;
+  --nur-quran-ornament: #a87c0e;
+  --nur-quran-muted: #54514a;
 
-  --nur-overlay: rgba(42, 42, 40, 0.4);
+  --nur-overlay: rgba(31, 30, 27, 0.45);
 
   /* Spacing — 8px grid */
   --space-1: 4px;
@@ -46,7 +46,7 @@
   --space-7: 48px;
   --space-8: 64px;
 
-  /* Type */
+  /* Type — Inter body min 16px */
   --text-display: 2.5rem;
   --text-display-lh: 1.15;
   --text-h1: 2rem;
@@ -61,27 +61,27 @@
   --text-body-sm-lh: 1.65;
   --text-meta: 0.8125rem;
   --text-meta-lh: 1.5;
-  --text-label: 0.6875rem;
+  --text-label: 0.75rem;
   --text-label-lh: 1.4;
 
-  /* Motion — slow, breathing */
+  /* Motion */
   --motion-fast: 150ms;
   --motion-mid: 250ms;
   --motion-slow: 400ms;
   --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Radius — Quiet Light */
+  /* Radius */
   --radius-s: 10px;
   --radius-m: 14px;
   --radius-l: 20px;
   --radius-xl: 24px;
   --radius-pill: 9999px;
 
-  /* Soft emerald-tinted shadows */
-  --shadow-xs: 0 2px 8px rgba(28, 61, 52, 0.04);
-  --shadow-sm: 0 8px 24px rgba(28, 61, 52, 0.06);
-  --shadow-md: 0 12px 32px rgba(28, 61, 52, 0.08);
+  /* Soft shadows */
+  --shadow-xs: 0 2px 8px rgba(22, 52, 44, 0.04);
+  --shadow-sm: 0 8px 24px rgba(22, 52, 44, 0.06);
+  --shadow-md: 0 12px 32px rgba(22, 52, 44, 0.08);
 
   --quran-font-size: 30px;
 
@@ -102,31 +102,31 @@
   --nur-bg: #14161a;
   --nur-bg-elevated: #1d2027;
   --nur-bg-sunken: #121418;
-  --nur-ink: #eceae4;
-  --nur-ink-muted: #a09c94;
-  --nur-ink-faint: #6e6b64;
+  --nur-ink: #f2f1ee;
+  --nur-ink-muted: #c4c0b8;
+  --nur-ink-faint: #c4c0b8;
 
-  --nur-lamp: #d4b24c;
+  --nur-lamp: #c9a227;
   --nur-lamp-soft: #3a3420;
   --nur-lamp-ink: #1a1608;
   --nur-lamp-glow: color-mix(in srgb, var(--nur-lamp) 18%, transparent);
 
   --nur-accent: #2e5c4f;
   --nur-accent-soft: #1a2e28;
-  --nur-accent-ink: #faf9f5;
+  --nur-accent-ink: #ffffff;
   --nur-focus: #2e5c4f;
 
   --nur-line: #2a2e36;
   --nur-line-strong: #3a404c;
 
   --nur-success: #2e5c4f;
-  --nur-warning: #d4b24c;
-  --nur-danger: #c46a55;
+  --nur-warning: #c9a227;
+  --nur-danger: #d0705a;
 
   --nur-quran-bg: #1a1c20;
-  --nur-quran-ink: #eceae4;
-  --nur-quran-ornament: #d4b24c;
-  --nur-quran-muted: #a09c94;
+  --nur-quran-ink: #f2f1ee;
+  --nur-quran-ornament: #c9a227;
+  --nur-quran-muted: #c4c0b8;
 
   --nur-overlay: rgba(0, 0, 0, 0.56);
 
@@ -138,24 +138,24 @@
 }
 
 [data-quran-theme='parchment'] {
-  --nur-quran-bg: #f7f0dd;
-  --nur-quran-ink: #2a2a28;
-  --nur-quran-ornament: #c9a227;
-  --nur-quran-muted: #6b685f;
+  --nur-quran-bg: #fbf6e8;
+  --nur-quran-ink: #1f1e1b;
+  --nur-quran-ornament: #a87c0e;
+  --nur-quran-muted: #54514a;
 }
 
 [data-quran-theme='mist'] {
-  --nur-quran-bg: #f2eee4;
-  --nur-quran-ink: #2a2a28;
-  --nur-quran-ornament: #1c3d34;
-  --nur-quran-muted: #6b685f;
+  --nur-quran-bg: #f7f7f5;
+  --nur-quran-ink: #1f1e1b;
+  --nur-quran-ornament: #16342c;
+  --nur-quran-muted: #54514a;
 }
 
 [data-quran-theme='night'] {
   --nur-quran-bg: #14161a;
-  --nur-quran-ink: #eceae4;
-  --nur-quran-ornament: #d4b24c;
-  --nur-quran-muted: #a09c94;
+  --nur-quran-ink: #f2f1ee;
+  --nur-quran-ornament: #c9a227;
+  --nur-quran-muted: #c4c0b8;
 }
 
 @media (prefers-reduced-motion: reduce) {

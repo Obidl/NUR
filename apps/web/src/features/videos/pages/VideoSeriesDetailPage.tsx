@@ -261,7 +261,7 @@ export function VideoSeriesDetailPage() {
                   Ko‘rildi
                 </Button>
               ) : (
-                <span className="inline-flex items-center gap-1 self-center text-xs text-nur-lamp">
+                <span className="inline-flex items-center gap-1 self-center text-xs font-medium text-nur-accent">
                   <Check className="h-3.5 w-3.5" strokeWidth={2} />
                   Ko‘rilgan
                 </span>
@@ -318,9 +318,9 @@ export function VideoSeriesDetailPage() {
                       {orderLabel}. {displayTitle(episode.title)}
                     </p>
                     {active ? (
-                      <p className="mt-1 text-xs text-nur-lamp">Hozir ko‘rilmoqda</p>
+                      <p className="mt-1 text-xs font-medium text-nur-accent">Hozir ko‘rilmoqda</p>
                     ) : done ? (
-                      <p className="mt-1 text-xs text-nur-lamp">Ko‘rilgan</p>
+                      <p className="mt-1 text-xs font-medium text-nur-accent">Ko‘rilgan</p>
                     ) : (
                       <p className="mt-1 text-xs text-nur-muted line-clamp-1">
                         {displayTitle(episode.description)}

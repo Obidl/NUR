@@ -167,7 +167,7 @@ export function PodcastSeriesDetailPage() {
           <button
             type="button"
             onClick={() => void toggleFavorite()}
-            className="mt-4 inline-flex items-center gap-2 rounded-[var(--radius-m)] px-3 py-2 text-sm font-medium text-nur-lamp transition-colors duration-200 hover:bg-nur-lamp-soft"
+            className="mt-4 inline-flex items-center gap-2 rounded-[var(--radius-m)] px-3 py-2 text-sm font-medium text-nur-accent transition-colors duration-200 hover:bg-nur-accent-soft"
             aria-label="Sevimlilarga qo‘shish"
           >
             <Heart size={16} fill={seriesFavorite ? 'currentColor' : 'none'} />

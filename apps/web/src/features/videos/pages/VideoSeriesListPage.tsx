@@ -116,7 +116,7 @@ export function VideoSeriesListPage() {
               className="h-16 w-28 shrink-0 rounded-[var(--radius-m)] object-cover "
             />
             <div className="min-w-0">
-              <p className="text-xs uppercase tracking-wide text-nur-lamp">Oxirgi ko‘rilgan</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-nur-muted">Oxirgi ko‘rilgan</p>
               <p className="mt-1 truncate text-sm font-semibold tracking-[-0.01em]">
                 {continueItem.episodeNumber ? `${continueItem.episodeNumber}. ` : ''}
                 {displayTitle(continueItem.episodeTitle)}

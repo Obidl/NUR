@@ -266,7 +266,7 @@ export function TodayMission({
                       'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-[background-color,box-shadow,color] duration-500',
                       done
                         ? 'bg-nur-lamp text-nur-lamp-ink shadow-[0_0_16px_color-mix(in_srgb,var(--nur-lamp)_35%,transparent)]'
-                        : 'text-nur-lamp ring-1 ring-nur-lamp/40',
+                        : 'text-nur-accent ring-1 ring-nur-accent/30',
                     )}
                     aria-label={
                       done
@@ -481,7 +481,7 @@ function RoutineBlock({
               {requireLogin ? 'Kirish kerak' : markLabel}
             </Button>
           ) : (
-            <p className="text-center text-sm text-nur-lamp">✓ Yakunlangan</p>
+            <p className="text-center text-sm font-medium text-nur-accent">✓ Yakunlangan</p>
           )}
         </div>
       </div>

@@ -336,7 +336,7 @@ export function SurahReaderPage() {
                     className={cx(
                       'rounded-[var(--radius-m)] border px-2 py-2.5 text-xs font-medium transition-colors',
                       readerTheme === item.id
-                        ? 'border-nur-lamp bg-nur-lamp-soft text-nur-lamp-ink'
+                        ? 'border-nur-accent bg-nur-accent text-[var(--nur-accent-ink)]'
                         : 'border-[color-mix(in_srgb,var(--nur-quran-muted)_20%,transparent)] text-[var(--nur-quran-muted)]',
                     )}
                   >

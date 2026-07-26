@@ -208,7 +208,7 @@ export function CurriculumDetailPage() {
                         'nur-breath bg-white text-nur-accent ring-nur-accent',
                       !moduleDone &&
                         !isCurrent &&
-                        'bg-transparent text-nur-faint ring-nur-line opacity-50',
+                        'bg-transparent text-nur-muted ring-nur-line opacity-60',
                     )}
                     aria-hidden
                   >
@@ -224,7 +224,7 @@ export function CurriculumDetailPage() {
                     <span
                       className={cx(
                         'text-xs font-medium',
-                        moduleDone ? 'text-nur-lamp' : isCurrent ? 'text-nur-accent' : 'text-nur-faint',
+                        moduleDone ? 'text-nur-accent' : isCurrent ? 'text-nur-accent' : 'text-nur-muted',
                       )}
                     >
                       {moduleDone ? 'Tugadi' : isCurrent ? 'Bugun' : ''}
@@ -245,10 +245,10 @@ export function CurriculumDetailPage() {
                               <p className="mt-1 text-sm font-semibold tracking-[-0.01em]">
                                 {displayTitle(lesson.title)}
                                 {done ? (
-                                  <span className="ml-2 text-xs font-normal text-nur-lamp">✓</span>
+                                  <span className="ml-2 text-xs font-normal text-nur-accent">✓</span>
                                 ) : null}
                               </p>
-                              <p className="mt-1 text-xs text-nur-faint">
+                              <p className="mt-1 text-xs text-nur-muted">
                                 {LESSON_KIND_LABEL[lesson.targetType] ?? lesson.targetType}
                                 {lesson.targetLabel
                                   ? ` · ${displayTitle(lesson.targetLabel)}`

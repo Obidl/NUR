@@ -329,7 +329,7 @@ export function BookChapterReaderPage() {
                       <div className="mt-2 flex gap-3">
                         <button
                           type="button"
-                          className="text-xs font-medium text-nur-lamp"
+                          className="text-xs font-medium text-nur-accent"
                           onClick={() => {
                             setEditingId(row.id);
                             setEditNote(row.note ?? '');

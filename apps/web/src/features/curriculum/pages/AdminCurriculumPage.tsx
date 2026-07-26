@@ -178,7 +178,7 @@ export function AdminCurriculumPage() {
       </header>
 
       {error ? <p className="text-sm text-[var(--nur-danger)]">{error}</p> : null}
-      {message ? <p className="text-sm text-nur-lamp">{message}</p> : null}
+      {message ? <p className="text-sm font-medium text-nur-accent">{message}</p> : null}
 
       <form onSubmit={(e) => void onSubmit(e)} className="space-y-3 border-y border-nur-line py-6">
         <h2 className="text-sm font-medium">{editingId ? 'Tahrirlash' : 'Yangi yo‘l'}</h2>
