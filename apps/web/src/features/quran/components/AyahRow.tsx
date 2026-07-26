@@ -25,53 +25,42 @@ export function AyahRow({
   onToggleBookmark,
   onFocus,
 }: AyahRowProps) {
-  const size = Math.max(fontSize, 30);
+  const size = Math.max(fontSize, 32);
 
   return (
     <article
       id={`ayah-${ayah.ayahNumber}`}
       className={cx(
-        'group relative scroll-mt-28 py-8 transition-colors duration-300 md:py-10',
-        isActive && 'bg-[color-mix(in_srgb,var(--nur-lamp)_6%,transparent)]',
+        'nur-ayah-card group scroll-mt-28 transition-[box-shadow,border-color,transform] duration-250',
+        isActive && 'border-nur-accent/35 shadow-[var(--shadow-sm)] ring-1 ring-nur-accent/15',
       )}
       onClick={onFocus}
     >
-      {/* Ornamental ayah number — floats beside the verse */}
       <div className="mb-5 flex items-center justify-between gap-3">
         <span
-          className={cx(
-            'inline-flex h-9 min-w-9 items-center justify-center rounded-full font-display text-xs font-medium tabular-nums transition-colors',
-            isActive
-              ? 'bg-nur-accent text-[var(--nur-accent-ink)]'
-              : 'bg-nur-sunken text-nur-ink',
-          )}
+          className={cx('nur-ayah-number', isActive && 'nur-ayah-number-active')}
           aria-label={`${ayah.ayahNumber}-oyat`}
         >
           {ayah.ayahNumber}
         </span>
 
-        <div
-          className={cx(
-            'flex items-center gap-0.5 opacity-80 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100',
-            isActive && '!opacity-100',
-          )}
-        >
+        <div className="flex items-center gap-1">
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-[var(--nur-quran-muted)] transition-colors hover:bg-black/5 hover:text-nur-accent"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-nur-muted transition-colors hover:bg-nur-accent-soft hover:text-nur-accent"
             aria-label={`${ayah.ayahNumber}-oyatni tinglash`}
             onClick={(event) => {
               event.stopPropagation();
               onPlay();
             }}
           >
-            <Play size={16} strokeWidth={1.6} />
+            <Play size={17} strokeWidth={1.75} fill="currentColor" className="opacity-90" />
           </button>
           {canBookmark ? (
             <button
               type="button"
               className={cx(
-                'inline-flex h-10 w-10 items-center justify-center rounded-full text-[var(--nur-quran-muted)] transition-colors hover:bg-black/5 hover:text-nur-accent',
+                'inline-flex h-10 w-10 items-center justify-center rounded-full text-nur-muted transition-colors hover:bg-nur-accent-soft hover:text-nur-accent',
                 isBookmarked && 'text-nur-accent',
               )}
               aria-label={isBookmarked ? 'Xatcho‘pni olib tashlash' : 'Xatcho‘p qo‘shish'}
@@ -81,39 +70,32 @@ export function AyahRow({
               }}
             >
               {isBookmarked ? (
-                <BookmarkCheck size={16} strokeWidth={1.6} />
+                <BookmarkCheck size={17} strokeWidth={1.75} />
               ) : (
-                <Bookmark size={16} strokeWidth={1.6} />
+                <Bookmark size={17} strokeWidth={1.75} />
               )}
             </button>
           ) : null}
         </div>
       </div>
 
-      {/* Arabic — primary reading plane */}
-      <p
-        className="font-quran mx-auto max-w-[40rem] text-center leading-[2.15] text-[var(--nur-quran-ink)] md:text-right"
-        dir="rtl"
-        lang="ar"
-        style={{ fontSize: `${size}px` }}
-      >
-        {ayah.textArabic}
-      </p>
-
-      {/* Translation — secondary, quiet, not a second card */}
-      {showTranslation && ayah.textUz ? (
+      {/* Arabic on cream sacred plane — high contrast dark ink */}
+      <div className="rounded-[var(--radius-l)] bg-[var(--nur-quran-bg)] px-4 py-6 md:px-6 md:py-7">
         <p
-          className="mx-auto mt-6 max-w-[34rem] border-s-2 border-[color-mix(in_srgb,var(--nur-lamp)_35%,transparent)] ps-4 text-start text-[0.9375rem] leading-[1.85] text-[var(--nur-quran-muted)] md:text-base"
-          lang="uz-Cyrl"
+          className="nur-ayah-arabic"
+          dir="rtl"
+          lang="ar"
+          style={{ fontSize: `${size}px` }}
         >
+          {ayah.textArabic}
+        </p>
+      </div>
+
+      {showTranslation && ayah.textUz ? (
+        <p className="nur-ayah-translation" lang="uz-Cyrl">
           {ayah.textUz}
         </p>
       ) : null}
-
-      <div
-        className="mx-auto mt-8 h-px max-w-[12rem] bg-[color-mix(in_srgb,var(--nur-quran-ornament)_22%,transparent)]"
-        aria-hidden
-      />
     </article>
   );
 }

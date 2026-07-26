@@ -17,11 +17,11 @@ type QuranSettingsState = {
 };
 
 function readFontSize(): number {
-  if (typeof localStorage === 'undefined') return 32;
+  if (typeof localStorage === 'undefined') return 34;
   const raw = localStorage.getItem(FONT_KEY);
-  const parsed = raw ? Number(raw) : 32;
-  if (!Number.isFinite(parsed)) return 32;
-  return Math.min(42, Math.max(22, parsed));
+  const parsed = raw ? Number(raw) : 34;
+  if (!Number.isFinite(parsed)) return 34;
+  return Math.min(48, Math.max(26, parsed));
 }
 
 function readTheme(): QuranReaderTheme {
@@ -45,7 +45,7 @@ export const useQuranSettingsStore = create<QuranSettingsState>((set) => ({
   readerTheme: readTheme(),
 
   setFontSize: (size) => {
-    const next = Math.min(42, Math.max(22, size));
+    const next = Math.min(48, Math.max(26, size));
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(FONT_KEY, String(next));
     }
@@ -69,7 +69,7 @@ export const useQuranSettingsStore = create<QuranSettingsState>((set) => ({
 
   hydrateFromUserPreference: (fontSize) => {
     if (typeof fontSize === 'number') {
-      const next = Math.min(42, Math.max(22, fontSize));
+      const next = Math.min(48, Math.max(26, fontSize));
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem(FONT_KEY, String(next));
       }
