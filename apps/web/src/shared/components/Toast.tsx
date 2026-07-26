@@ -58,16 +58,16 @@ export function ToastProvider({ children }: PropsWithChildren) {
               exit={{ opacity: 0, y: 8, scale: 0.98 }}
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
               className={cx(
-                'pointer-events-auto flex max-w-md items-start gap-3 rounded-[var(--radius-l)] border border-nur-line bg-nur-elevated/95 px-4 py-3 text-nur-ink shadow-[var(--shadow-md)] backdrop-blur-md',
-                item.tone === 'success' && 'border-[var(--nur-success)]/40',
-                item.tone === 'error' && 'border-[var(--nur-danger)]/45',
+                'pointer-events-auto flex max-w-md items-center gap-3 rounded-[var(--radius-pill)] border border-nur-line bg-white px-4 py-3 text-nur-ink shadow-[var(--shadow-sm)]',
+                item.tone === 'success' && 'border-nur-accent/20',
+                item.tone === 'error' && 'border-[var(--nur-danger)]/35',
               )}
             >
               <p className="min-w-0 flex-1 text-sm leading-relaxed">{item.message}</p>
               <button
                 type="button"
                 onClick={() => dismiss(item.id)}
-                className="shrink-0 rounded-[var(--radius-s)] p-1 text-nur-faint transition-colors hover:bg-nur-sunken hover:text-nur-ink"
+                className="shrink-0 rounded-full p-1 text-nur-faint transition-colors hover:bg-nur-elevated hover:text-nur-ink"
                 aria-label="Yopish"
               >
                 <X className="h-4 w-4" strokeWidth={1.75} />

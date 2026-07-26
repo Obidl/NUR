@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Home, Library, ScrollText, Search, Video } from 'lucide-react';
+import { BookOpen, Home, MoreHorizontal, ScrollText, Video } from 'lucide-react';
 import { cx } from '@/shared/lib/cx';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { PodcastPlayerBar } from '@/features/podcasts/components/PodcastPlayerBar';
@@ -20,33 +20,37 @@ const mobileNav = [
   { to: '/', label: 'Bugun', end: true, icon: Home },
   { to: '/quran', label: 'Qur’on', icon: ScrollText },
   { to: '/videos', label: 'Video', icon: Video },
-  { to: '/search', label: 'Qidir', icon: Search },
-  { to: '/library', label: 'Kutub', icon: Library },
+  { to: '/curriculum', label: 'Yo‘llar', icon: BookOpen },
+  { to: '/more', label: 'Ko‘proq', icon: MoreHorizontal },
 ] as const;
 
 export function RootLayout() {
   const accessToken = useAuthStore((state) => state.accessToken);
   const user = useAuthStore((state) => state.user);
   const { pathname } = useLocation();
-  const missionHome = pathname === '/';
+  const onMoreSection =
+    pathname === '/more' ||
+    pathname.startsWith('/podcasts') ||
+    pathname.startsWith('/books') ||
+    pathname.startsWith('/research') ||
+    pathname.startsWith('/search') ||
+    pathname.startsWith('/library') ||
+    pathname.startsWith('/settings');
 
   return (
-    <div
-      data-theme={missionHome ? 'dark' : undefined}
-      className="flex min-h-dvh flex-col bg-nur-bg text-nur-ink"
-    >
+    <div className="flex min-h-dvh flex-col bg-nur-bg text-nur-ink">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[var(--radius-m)] focus:bg-nur-lamp focus:px-3 focus:py-2 focus:text-nur-lamp-ink"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[var(--radius-m)] focus:bg-nur-accent focus:px-3 focus:py-2 focus:text-[var(--nur-accent-ink)]"
       >
         Asosiy kontentga o‘tish
       </a>
 
-      <header className="sticky top-0 z-30 border-b border-nur-line/50 bg-nur-elevated/80 backdrop-blur-xl supports-[backdrop-filter]:bg-nur-elevated/70">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-2.5 md:px-6">
+      <header className="sticky top-0 z-30 border-b border-nur-line/60 bg-[color-mix(in_srgb,var(--nur-bg)_88%,transparent)] backdrop-blur-xl">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-3 md:px-8">
           <NavLink
             to="/"
-            className="font-display text-lg font-semibold tracking-[0.2em] text-nur-ink transition-opacity duration-200 hover:opacity-75"
+            className="font-display text-lg font-semibold tracking-[0.22em] text-nur-ink transition-opacity duration-250 hover:opacity-70"
             aria-label="NUR bosh sahifa"
           >
             NUR
@@ -63,10 +67,10 @@ export function RootLayout() {
                 end={'end' in item ? item.end : false}
                 className={({ isActive }) =>
                   cx(
-                    'rounded-[var(--radius-m)] px-3 py-2 text-nur-muted transition-[color,background-color] duration-200',
+                    'rounded-[var(--radius-pill)] px-3.5 py-2 text-nur-muted transition-[color,background-color] duration-250',
                     isActive
-                      ? 'bg-nur-sunken/80 font-medium text-nur-ink'
-                      : 'hover:bg-nur-sunken/50 hover:text-nur-ink',
+                      ? 'bg-nur-elevated font-medium text-nur-ink'
+                      : 'hover:bg-nur-elevated/70 hover:text-nur-ink',
                   )
                 }
               >
@@ -78,10 +82,10 @@ export function RootLayout() {
                 to="/settings"
                 className={({ isActive }) =>
                   cx(
-                    'ml-1 rounded-[var(--radius-m)] px-3 py-2 text-nur-muted transition-[color,background-color] duration-200',
+                    'ml-1 rounded-[var(--radius-pill)] px-3.5 py-2 text-nur-muted transition-colors duration-250',
                     isActive
-                      ? 'bg-nur-sunken/80 font-medium text-nur-ink'
-                      : 'hover:bg-nur-sunken/50 hover:text-nur-ink',
+                      ? 'bg-nur-elevated font-medium text-nur-ink'
+                      : 'hover:bg-nur-elevated/70 hover:text-nur-ink',
                   )
                 }
               >
@@ -90,31 +94,26 @@ export function RootLayout() {
             ) : (
               <NavLink
                 to="/login"
-                className="ml-1 rounded-[var(--radius-m)] bg-nur-lamp px-3.5 py-2 font-semibold text-nur-lamp-ink transition-[filter,transform] duration-200 hover:brightness-[0.97] active:scale-[0.98]"
+                className="ml-1 rounded-[var(--radius-m)] bg-nur-accent px-4 py-2 font-semibold text-[var(--nur-accent-ink)] transition-[filter,transform] duration-150 hover:brightness-110 active:scale-[0.98]"
               >
                 Kirish
               </NavLink>
             )}
           </nav>
 
-          <div className="flex items-center gap-0.5 md:hidden">
-            <NavLink
-              to="/curriculum"
-              className="rounded-[var(--radius-m)] px-2.5 py-2 text-sm text-nur-muted transition-colors hover:text-nur-ink"
-            >
-              Yo‘llar
-            </NavLink>
+          <div className="flex items-center gap-1 md:hidden">
             {accessToken ? (
               <NavLink
                 to="/settings"
-                className="rounded-[var(--radius-m)] px-2.5 py-2 text-sm text-nur-muted transition-colors hover:text-nur-ink"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-nur-muted shadow-[var(--shadow-xs)] ring-1 ring-nur-line"
+                aria-label="Sozlamalar"
               >
-                Profil
+                {user?.displayName?.charAt(0)?.toUpperCase() ?? 'N'}
               </NavLink>
             ) : (
               <NavLink
                 to="/login"
-                className="rounded-[var(--radius-m)] bg-nur-lamp px-3 py-2 text-sm font-semibold text-nur-lamp-ink"
+                className="rounded-[var(--radius-m)] bg-nur-accent px-3 py-2 text-sm font-semibold text-[var(--nur-accent-ink)]"
               >
                 Kirish
               </NavLink>
@@ -125,7 +124,7 @@ export function RootLayout() {
 
       <main
         id="main-content"
-        className="flex-1 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0"
+        className="flex-1 pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:pb-0"
       >
         <Outlet />
       </main>
@@ -133,12 +132,13 @@ export function RootLayout() {
       <PodcastPlayerBar />
 
       <nav
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-nur-line/60 bg-nur-elevated/92 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-nur-line/70 bg-[color-mix(in_srgb,var(--nur-bg)_92%,transparent)] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
         aria-label="Mobil navigatsiya"
       >
         <ul className="mx-auto grid max-w-lg grid-cols-5 px-1">
           {mobileNav.map((item) => {
             const Icon = item.icon;
+            const forceActive = item.to === '/more' && onMoreSection && pathname !== '/';
             return (
               <li key={item.to}>
                 <NavLink
@@ -146,24 +146,30 @@ export function RootLayout() {
                   end={'end' in item ? item.end : false}
                   className={({ isActive }) =>
                     cx(
-                      'flex flex-col items-center gap-0.5 rounded-[var(--radius-m)] px-1 py-2 text-[10px] font-medium tracking-wide transition-colors duration-200',
-                      isActive ? 'text-nur-ink' : 'text-nur-muted',
+                      'relative flex flex-col items-center gap-0.5 rounded-[var(--radius-m)] px-1 py-2 text-[10px] font-medium tracking-wide transition-colors duration-250',
+                      isActive || forceActive ? 'text-nur-accent' : 'text-nur-muted',
                     )
                   }
                 >
-                  {({ isActive }) => (
-                    <>
-                      <span
-                        className={cx(
-                          'flex h-8 w-8 items-center justify-center rounded-[var(--radius-m)] transition-colors duration-200',
-                          isActive && 'bg-nur-sunken text-nur-ink',
-                        )}
-                      >
-                        <Icon className="h-5 w-5" aria-hidden strokeWidth={isActive ? 2 : 1.75} />
-                      </span>
-                      {item.label}
-                    </>
-                  )}
+                  {({ isActive }) => {
+                    const active = isActive || forceActive;
+                    return (
+                      <>
+                        {active ? (
+                          <span
+                            className="absolute top-1 h-1 w-1 rounded-full bg-nur-accent"
+                            aria-hidden
+                          />
+                        ) : null}
+                        <Icon
+                          className="mt-1 h-5 w-5"
+                          aria-hidden
+                          strokeWidth={active ? 2 : 1.5}
+                        />
+                        {item.label}
+                      </>
+                    );
+                  }}
                 </NavLink>
               </li>
             );

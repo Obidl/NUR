@@ -72,10 +72,19 @@ export function ResearchListPage() {
             <li key={article.id}>
               <Link to={`/research/${article.slug}`} className="nur-list-row !items-start">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold tracking-[-0.01em]">{article.title}</p>
-                  <p className="mt-1 text-sm text-nur-muted line-clamp-2">{article.summary}</p>
-                  <p className="mt-2 text-xs text-nur-faint">
-                    {article.authors.join(', ')} · {article.category}
+                  <p className="font-display text-base font-medium tracking-[-0.015em]">
+                    {article.title}
+                  </p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-nur-muted line-clamp-2">
+                    {article.summary}
+                  </p>
+                  <p className="mt-2.5 text-xs text-nur-faint">
+                    {article.authors.join(', ')}
+                    {article.category ? (
+                      <span className="ms-2 inline-flex rounded-[var(--radius-pill)] bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-nur-accent ring-1 ring-nur-line">
+                        {article.category}
+                      </span>
+                    ) : null}
                   </p>
                 </div>
               </Link>

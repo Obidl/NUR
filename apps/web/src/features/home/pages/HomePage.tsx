@@ -145,22 +145,12 @@ export function HomePage() {
   }
 
   return (
-    <section className="relative min-h-[calc(100dvh-3.5rem)] bg-nur-bg text-nur-ink md:min-h-[calc(100dvh-4rem)]">
+    <section className="nur-atmosphere relative min-h-[calc(100dvh-3.5rem)] text-nur-ink md:min-h-[calc(100dvh-4rem)]">
       <motion.div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        initial={reduceMotion ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: reduceMotion ? 0 : 0.6 }}
-      >
-        <div className="absolute left-1/2 top-[-8%] h-[40vmax] w-[70vmax] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,var(--nur-lamp-glow)_0%,transparent_72%)] opacity-80" />
-      </motion.div>
-
-      <motion.div
-        className="relative mx-auto px-4 py-10 pb-28 md:px-6 md:pb-16"
-        initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+        className="relative mx-auto px-5 py-10 pb-28 md:px-8 md:pb-16"
+        initial={reduceMotion ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: reduceMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
         {error ? <p className="mb-4 text-center text-sm text-[var(--nur-danger)]">{error}</p> : null}
         <TodayMission

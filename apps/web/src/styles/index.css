@@ -15,9 +15,9 @@
   --color-nur-accent-soft: var(--nur-accent-soft);
   --color-nur-line: var(--nur-line);
   --color-nur-quran: var(--nur-quran-bg);
-  --font-display: 'Sora', sans-serif;
-  --font-sans: 'Manrope', sans-serif;
-  --font-reading: 'Source Serif 4', serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-reading: 'Fraunces', Georgia, serif;
   --font-quran: 'Amiri', serif;
 }
 
@@ -59,13 +59,13 @@
     margin-inline: auto;
     width: 100%;
     max-width: 48rem;
-    padding-inline: var(--space-4);
+    padding-inline: 1.25rem;
     padding-block: var(--space-6) var(--space-7);
   }
 
   @media (min-width: 768px) {
     .nur-page {
-      padding-inline: var(--space-6);
+      padding-inline: var(--space-8);
       padding-block: var(--space-7) var(--space-8);
     }
   }
@@ -77,8 +77,8 @@
   .nur-page-title {
     font-family: var(--font-display);
     font-size: 1.875rem;
-    font-weight: 600;
-    letter-spacing: -0.025em;
+    font-weight: 500;
+    letter-spacing: -0.02em;
     line-height: 1.2;
     color: var(--nur-ink);
   }
@@ -99,53 +99,60 @@
   }
 
   .nur-section-label {
-    font-size: var(--text-meta);
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    line-height: var(--text-meta-lh);
-    color: var(--nur-ink-muted);
-    text-transform: none;
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    line-height: var(--text-label-lh);
+    text-transform: uppercase;
+    color: var(--nur-lamp);
   }
 
-  /* Legacy alias */
   .nur-section-title {
-    font-size: var(--text-meta);
+    font-family: var(--font-display);
+    font-size: 1.25rem;
     font-weight: 500;
-    letter-spacing: 0.01em;
-    line-height: var(--text-meta-lh);
-    color: var(--nur-ink-muted);
+    letter-spacing: -0.015em;
+    color: var(--nur-ink);
   }
 
   .nur-surface {
-    border: 1px solid color-mix(in srgb, var(--nur-line) 85%, transparent);
-    border-radius: var(--radius-l);
+    border: 1px solid var(--nur-line);
+    border-radius: var(--radius-xl);
     background: var(--nur-bg-elevated);
     box-shadow: var(--shadow-xs);
   }
 
   .nur-surface-interactive {
-    border: 1px solid color-mix(in srgb, var(--nur-line) 85%, transparent);
-    border-radius: var(--radius-l);
+    border: 1px solid var(--nur-line);
+    border-radius: var(--radius-xl);
     background: var(--nur-bg-elevated);
     box-shadow: var(--shadow-xs);
     transition:
-      background-color var(--motion-mid) var(--ease-standard),
-      border-color var(--motion-mid) var(--ease-standard),
-      box-shadow var(--motion-mid) var(--ease-out);
+      transform var(--motion-fast) var(--ease-out),
+      box-shadow var(--motion-mid) var(--ease-out),
+      border-color var(--motion-mid) var(--ease-standard);
   }
 
   .nur-surface-interactive:hover {
-    border-color: var(--nur-line-strong);
-    background: color-mix(in srgb, var(--nur-bg-elevated) 92%, var(--nur-bg-sunken));
     box-shadow: var(--shadow-sm);
   }
 
+  .nur-surface-interactive:active {
+    transform: scale(0.98);
+  }
+
   .nur-card {
-    border: 1px solid color-mix(in srgb, var(--nur-line) 85%, transparent);
-    border-radius: var(--radius-l);
+    border: 1px solid var(--nur-line);
+    border-radius: var(--radius-xl);
     background: var(--nur-bg-elevated);
     box-shadow: var(--shadow-xs);
     padding: var(--space-5);
+  }
+
+  .nur-sacred {
+    border-radius: var(--radius-l);
+    background: var(--nur-quran-bg);
+    padding: var(--space-4) var(--space-5);
   }
 
   .nur-input {
@@ -153,15 +160,18 @@
     min-height: 2.75rem;
     border-radius: var(--radius-m);
     border: 1px solid var(--nur-line);
-    background: var(--nur-bg-elevated);
+    background: #fff;
     padding: 0.625rem 0.875rem;
     font-size: var(--text-body-sm);
     line-height: 1.45;
     color: var(--nur-ink);
     transition:
       border-color var(--motion-mid) var(--ease-standard),
-      box-shadow var(--motion-mid) var(--ease-standard),
-      background-color var(--motion-mid) var(--ease-standard);
+      box-shadow var(--motion-mid) var(--ease-standard);
+  }
+
+  [data-theme='dark'] .nur-input {
+    background: var(--nur-bg-sunken);
   }
 
   .nur-input::placeholder {
@@ -175,8 +185,7 @@
   .nur-input:focus {
     outline: none;
     border-color: var(--nur-focus);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--nur-focus) 18%, transparent);
-    background: var(--nur-bg-elevated);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--nur-focus) 16%, transparent);
   }
 
   .nur-input:disabled {
@@ -189,10 +198,6 @@
     box-shadow: none;
   }
 
-  .nur-input[aria-invalid='true']:focus {
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--nur-danger) 16%, transparent);
-  }
-
   textarea.nur-input {
     min-height: 6.5rem;
     padding-top: 0.75rem;
@@ -202,8 +207,8 @@
 
   .nur-list {
     overflow: hidden;
-    border: 1px solid color-mix(in srgb, var(--nur-line) 85%, transparent);
-    border-radius: var(--radius-l);
+    border: 1px solid var(--nur-line);
+    border-radius: var(--radius-xl);
     background: var(--nur-bg-elevated);
     box-shadow: var(--shadow-xs);
   }
@@ -213,25 +218,37 @@
     align-items: center;
     gap: var(--space-4);
     padding: var(--space-4) var(--space-5);
-    min-height: 3.5rem;
+    min-height: 3.75rem;
     transition: background-color var(--motion-mid) var(--ease-standard);
   }
 
   .nur-list-row:hover {
-    background: color-mix(in srgb, var(--nur-bg-sunken) 45%, transparent);
+    background: color-mix(in srgb, var(--nur-bg-sunken) 55%, transparent);
   }
 
   .nur-list > li + li,
   .nur-list > * + * {
-    border-top: 1px solid color-mix(in srgb, var(--nur-line) 80%, transparent);
+    border-top: 1px solid var(--nur-line);
   }
 
   .nur-empty,
   .nur-error {
-    border: 1px solid color-mix(in srgb, var(--nur-line) 85%, transparent);
-    border-radius: var(--radius-l);
+    border: 1px solid var(--nur-line);
+    border-radius: var(--radius-xl);
     background: var(--nur-bg-elevated);
     box-shadow: var(--shadow-xs);
+  }
+
+  .nur-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: var(--radius-pill);
+    padding: 0.35rem 0.85rem;
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
   .nur-skeleton {
@@ -239,11 +256,11 @@
     background: linear-gradient(
       90deg,
       var(--nur-bg-sunken) 0%,
-      color-mix(in srgb, var(--nur-bg-elevated) 70%, var(--nur-bg-sunken)) 50%,
+      color-mix(in srgb, var(--nur-bg-elevated) 80%, #fff) 50%,
       var(--nur-bg-sunken) 100%
     );
     background-size: 200% 100%;
-    animation: nur-shimmer 1.4s var(--ease-standard) infinite;
+    animation: nur-shimmer 1.5s var(--ease-standard) infinite;
   }
 
   .nur-fade-in {
@@ -257,15 +274,19 @@
   }
 
   .nur-link:hover {
-    color: color-mix(in srgb, var(--nur-accent) 80%, var(--nur-ink));
+    color: color-mix(in srgb, var(--nur-accent) 75%, var(--nur-ink));
+  }
+
+  .nur-breath {
+    animation: nur-breath 5s ease-in-out infinite;
   }
 }
 
 @layer utilities {
   .nur-atmosphere {
     background:
-      radial-gradient(1100px 520px at 50% -12%, var(--nur-lamp-glow), transparent 72%),
-      radial-gradient(800px 440px at 100% 0%, color-mix(in srgb, var(--nur-accent-soft) 70%, transparent), transparent 62%),
+      radial-gradient(900px 480px at 50% -8%, var(--nur-lamp-glow), transparent 70%),
+      radial-gradient(700px 400px at 100% 0%, color-mix(in srgb, var(--nur-accent) 6%, transparent), transparent 65%),
       var(--nur-bg);
   }
 
@@ -317,7 +338,7 @@
 @keyframes nur-fade-in {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -325,12 +346,22 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .nur-skeleton {
-    animation: none;
+@keyframes nur-breath {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--nur-lamp) 0%, transparent);
+    opacity: 1;
   }
+  50% {
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--nur-lamp) 12%, transparent);
+    opacity: 0.92;
+  }
+}
 
-  .nur-fade-in {
+@media (prefers-reduced-motion: reduce) {
+  .nur-skeleton,
+  .nur-fade-in,
+  .nur-breath {
     animation: none;
   }
 }

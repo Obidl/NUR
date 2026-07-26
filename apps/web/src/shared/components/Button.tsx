@@ -6,16 +6,16 @@ type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 const variantClass: Record<Variant, string> = {
   primary:
-    'bg-nur-lamp text-nur-lamp-ink shadow-[var(--shadow-xs)] hover:brightness-[0.97] hover:shadow-[var(--shadow-sm)] active:scale-[0.98]',
+    'bg-nur-accent text-[var(--nur-accent-ink)] shadow-[var(--shadow-xs)] hover:brightness-110 active:scale-[0.98]',
   secondary:
-    'bg-nur-elevated text-nur-ink border border-nur-line hover:bg-nur-sunken hover:border-[var(--nur-line-strong)] active:scale-[0.98]',
-  ghost: 'bg-transparent text-nur-ink hover:bg-nur-sunken/80 active:scale-[0.98]',
+    'bg-transparent text-nur-ink border border-nur-line hover:bg-nur-elevated active:scale-[0.98]',
+  ghost: 'bg-transparent text-nur-ink hover:bg-nur-elevated active:scale-[0.98]',
   danger:
     'bg-[var(--nur-danger)] text-white shadow-[var(--shadow-xs)] hover:brightness-95 active:scale-[0.98]',
 };
 
 const baseClass =
-  'inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--radius-m)] px-5 text-sm font-semibold tracking-[-0.01em] transition-[transform,box-shadow,background-color,border-color,filter,opacity] duration-200 ease-[var(--ease-out)] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:active:scale-100';
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--radius-m)] px-5 text-sm font-semibold tracking-[-0.01em] transition-[transform,box-shadow,background-color,border-color,filter,opacity] duration-150 ease-[var(--ease-out)] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:active:scale-100';
 
 type ButtonProps = PropsWithChildren<{
   variant?: Variant;

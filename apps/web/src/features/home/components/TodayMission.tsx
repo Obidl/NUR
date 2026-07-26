@@ -32,28 +32,31 @@ type TodayMissionProps = {
 };
 
 function ProgressRing({ percent, label }: { percent: number; label: string }) {
-  const r = 36;
+  const r = 40;
   const c = 2 * Math.PI * r;
   const offset = c - (percent / 100) * c;
   return (
-    <div className="relative mx-auto h-24 w-24">
-      <svg viewBox="0 0 88 88" className="h-24 w-24 -rotate-90" aria-hidden>
-        <circle cx="44" cy="44" r={r} fill="none" stroke="var(--nur-line)" strokeWidth="6" />
+    <div className="relative mx-auto h-28 w-28 nur-breath rounded-full">
+      <svg viewBox="0 0 96 96" className="h-28 w-28 -rotate-90" aria-hidden>
+        <circle cx="48" cy="48" r={r} fill="none" stroke="var(--nur-line)" strokeWidth="5" />
         <circle
-          cx="44"
-          cy="44"
+          cx="48"
+          cy="48"
           r={r}
           fill="none"
           stroke="var(--nur-lamp)"
-          strokeWidth="6"
+          strokeWidth="5"
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={offset}
+          style={{ transition: 'stroke-dashoffset 700ms var(--ease-out)' }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-lg font-medium tabular-nums text-nur-ink">{percent}%</span>
-        <span className="text-[10px] uppercase tracking-wide text-nur-faint">{label}</span>
+        <span className="font-display text-2xl font-medium tabular-nums text-nur-ink">
+          {percent}%
+        </span>
+        <span className="nur-section-label mt-0.5 !text-[9px]">{label}</span>
       </div>
     </div>
   );
@@ -171,18 +174,20 @@ export function TodayMission({
 
   return (
     <div className="mx-auto w-full max-w-lg space-y-12">
-      <header className="relative pr-12">
+      <header className="relative pr-14">
         <Link
           to="/settings"
-          className="absolute right-0 top-0 inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-m)] text-nur-muted transition-colors hover:bg-nur-sunken hover:text-nur-ink"
+          className="absolute right-0 top-0 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-nur-muted shadow-[var(--shadow-xs)] ring-1 ring-nur-line transition-colors hover:text-nur-ink"
           aria-label="Sozlamalar"
         >
-          <Settings size={18} strokeWidth={1.75} />
+          <Settings size={18} strokeWidth={1.5} />
         </Link>
-        <p className="text-xs text-nur-lamp">{dates.hijri ? `${dates.hijri}` : ''}</p>
+        {dates.hijri ? (
+          <p className="nur-section-label">{dates.hijri}</p>
+        ) : null}
         <p className="mt-1 text-sm leading-relaxed text-nur-muted">{dates.gregorian}</p>
-        <p className="mt-4 font-display text-sm tracking-[0.22em] text-nur-ink">NUR</p>
-        <h1 className="mt-4 font-display text-3xl font-medium tracking-[-0.02em] text-nur-ink md:text-[2rem]">
+        <p className="mt-5 font-display text-sm tracking-[0.22em] text-nur-ink">NUR</p>
+        <h1 className="mt-4 font-display text-[1.75rem] font-medium leading-tight tracking-[-0.02em] text-nur-ink md:text-3xl">
           Assalomu alaykum{greetingName ? `, ${greetingName}` : ''}
         </h1>
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-nur-muted">
@@ -191,33 +196,33 @@ export function TodayMission({
         </p>
       </header>
 
-      <section aria-labelledby="mission-heading" className="nur-surface px-5 py-7 md:px-6">
+      <section aria-labelledby="mission-heading" className="nur-surface px-5 py-8 md:px-7">
         <h2 id="mission-heading" className="nur-section-label text-center">
           Bugungi vazifa
         </h2>
-        <div className="mt-5">
+        <div className="mt-6">
           <ProgressRing percent={percent} label="bugun" />
         </div>
-        <div className="mt-6 grid grid-cols-3 gap-3 text-center text-xs text-nur-faint">
-          <div>
-            <p className="text-sm font-medium tabular-nums text-nur-ink">
-              Kun {dayIndex}/{dayTotal}
+        <div className="mt-7 grid grid-cols-3 divide-x divide-nur-line text-center text-xs text-nur-faint">
+          <div className="px-2">
+            <p className="text-sm font-semibold tabular-nums text-nur-ink">
+              {dayIndex}/{dayTotal}
             </p>
-            <p className="mt-0.5">Yo‘l</p>
+            <p className="mt-1">Kun</p>
           </div>
-          <div>
-            <p className="text-sm font-medium tabular-nums text-nur-ink">~{minutes || '—'}m</p>
-            <p className="mt-0.5">Bugun</p>
+          <div className="px-2">
+            <p className="text-sm font-semibold tabular-nums text-nur-ink">~{minutes || '—'}m</p>
+            <p className="mt-1">Vaqt</p>
           </div>
-          <div>
-            <p className="text-sm font-medium tabular-nums text-nur-ink">
+          <div className="px-2">
+            <p className="text-sm font-semibold tabular-nums text-nur-ink">
               {lessons.filter((l) => completedIds.has(l.id)).length}/{lessons.length}
             </p>
-            <p className="mt-0.5">Qadam</p>
+            <p className="mt-1">Qadam</p>
           </div>
         </div>
 
-        <ul className="mt-7 space-y-1">
+        <ul className="mt-8 space-y-2">
           {lessons.map((lesson) => {
             const done = completedIds.has(lesson.id);
             const Icon = lessonIcon(lesson.targetType);
@@ -228,24 +233,21 @@ export function TodayMission({
               <li key={lesson.id}>
                 <div
                   className={cx(
-                    'flex w-full items-center gap-1 rounded-[var(--radius-m)] px-1 py-1.5',
-                    done && 'opacity-65',
+                    'flex w-full items-center gap-1 rounded-[var(--radius-l)] bg-white/60 px-1 py-1 ring-1 ring-nur-line/80',
+                    done && 'opacity-70',
                   )}
                 >
                   <button
                     type="button"
-                    className="flex min-w-0 flex-1 items-center gap-3 rounded-[var(--radius-m)] px-2 py-2 text-left transition-colors hover:bg-nur-sunken/60"
+                    className="flex min-w-0 flex-1 items-center gap-3 rounded-[var(--radius-l)] px-2.5 py-2.5 text-left"
                     onClick={() => scrollToSection(targetSection)}
                   >
-                    <Icon
-                      className="shrink-0 text-nur-lamp"
-                      size={18}
-                      strokeWidth={1.75}
-                      aria-hidden
-                    />
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-nur-elevated text-nur-accent ring-1 ring-nur-line">
+                      <Icon size={16} strokeWidth={1.75} aria-hidden />
+                    </span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs text-nur-faint">{slot}</p>
-                      <p className="truncate text-sm font-medium tracking-[-0.01em] text-nur-ink">
+                      <p className="nur-section-label !text-[9px] !tracking-[0.1em]">{slot}</p>
+                      <p className="truncate text-sm font-semibold tracking-[-0.01em] text-nur-ink">
                         {displayTitle(lesson.title)}
                       </p>
                       <p className="truncate text-xs leading-relaxed text-nur-faint">
@@ -260,14 +262,19 @@ export function TodayMission({
                     type="button"
                     disabled={done || saving || requireLogin}
                     onClick={() => onComplete(lesson.id)}
-                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center text-nur-lamp disabled:opacity-50"
+                    className={cx(
+                      'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-[background-color,box-shadow,color] duration-500',
+                      done
+                        ? 'bg-nur-lamp text-nur-lamp-ink shadow-[0_0_16px_color-mix(in_srgb,var(--nur-lamp)_35%,transparent)]'
+                        : 'text-nur-lamp ring-1 ring-nur-lamp/40',
+                    )}
                     aria-label={
                       done
                         ? `${displayTitle(lesson.title)} yakunlangan`
                         : `${displayTitle(lesson.title)} ni yakunlash`
                     }
                   >
-                    {done ? <Check size={20} /> : <Circle size={20} strokeWidth={1.5} />}
+                    {done ? <Check size={18} strokeWidth={2.25} /> : <Circle size={18} strokeWidth={1.5} />}
                   </button>
                 </div>
               </li>

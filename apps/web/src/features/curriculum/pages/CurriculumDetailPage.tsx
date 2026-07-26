@@ -181,85 +181,110 @@ export function CurriculumDetailPage() {
         <p className="mt-8 text-sm text-nur-muted">Barcha kunlar yakunlangan.</p>
       )}
 
-      <div className="mt-12 space-y-10">
-        {modules.map((module, index) => {
-          const dayNum = index + 1;
-          const theme = dayThemeFromModuleTitle(module.title);
-          const moduleLessons = module.lessons.slice().sort((a, b) => a.order - b.order);
-          const moduleDone = moduleLessons.every((lesson) => completed.has(lesson.id));
-          const isCurrent = today?.dayIndex === dayNum && !moduleDone;
+      <div className="mt-12">
+        <ol className="relative space-y-0 ps-2">
+          {modules.map((module, index) => {
+            const dayNum = index + 1;
+            const theme = dayThemeFromModuleTitle(module.title);
+            const moduleLessons = module.lessons.slice().sort((a, b) => a.order - b.order);
+            const moduleDone = moduleLessons.every((lesson) => completed.has(lesson.id));
+            const isCurrent = today?.dayIndex === dayNum && !moduleDone;
+            const isLast = index === modules.length - 1;
 
-          return (
-            <div key={module.id}>
-              <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="text-sm font-semibold tracking-[-0.01em] text-nur-ink">
-                  Kun {dayNum}
-                  {theme ? ` · ${theme}` : ''}
-                </h2>
-                <span
-                  className={cx(
-                    'text-xs font-medium',
-                    moduleDone ? 'text-nur-lamp' : isCurrent ? 'text-nur-accent' : 'text-nur-faint',
-                  )}
-                >
-                  {moduleDone ? 'Tugadi' : isCurrent ? 'Bugun' : ''}
-                </span>
-              </div>
-              <ol className="nur-list">
-                {moduleLessons.map((lesson) => {
-                  const done = completed.has(lesson.id);
-                  const slot =
-                    LESSON_SLOT_LABEL[lesson.targetType] ??
-                    LESSON_KIND_LABEL[lesson.targetType] ??
-                    lesson.targetType;
-                  return (
-                    <li key={lesson.id}>
-                      <div className="nur-list-row !items-start justify-between">
-                        <div className="min-w-0">
-                          <p className="text-[11px] font-medium uppercase tracking-wide text-nur-faint">
-                            {slot}
-                          </p>
-                          <p className="mt-1 text-sm font-semibold tracking-[-0.01em]">
-                            {displayTitle(lesson.title)}
-                            {done ? (
-                              <span className="ml-2 text-xs font-normal text-nur-lamp">✓</span>
-                            ) : null}
-                          </p>
-                          <p className="mt-1 text-xs text-nur-faint">
-                            {LESSON_KIND_LABEL[lesson.targetType] ?? lesson.targetType}
-                            {lesson.targetLabel
-                              ? ` · ${displayTitle(lesson.targetLabel)}`
-                              : ''}
-                            {lesson.estimatedMinutes
-                              ? ` · ~${lesson.estimatedMinutes} daq`
-                              : ''}
-                          </p>
-                        </div>
-                        <div className="flex shrink-0 flex-wrap gap-2">
-                          {lesson.targetHref ? (
-                            <Button to={lesson.targetHref} variant="secondary">
-                              Ochish
-                            </Button>
-                          ) : null}
-                          {!done ? (
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              disabled={saving}
-                              onClick={() => void markComplete(lesson.id)}
-                            >
-                              Yakunlash
-                            </Button>
-                          ) : null}
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ol>
-            </div>
-          );
-        })}
+            return (
+              <li key={module.id} className="relative flex gap-4 pb-10 last:pb-0">
+                {!isLast ? (
+                  <span
+                    className="absolute start-[0.95rem] top-8 bottom-0 w-px bg-nur-line"
+                    aria-hidden
+                  />
+                ) : null}
+                <div className="relative z-[1] shrink-0 pt-0.5">
+                  <span
+                    className={cx(
+                      'flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold ring-2',
+                      moduleDone && 'bg-nur-lamp text-nur-lamp-ink ring-nur-lamp',
+                      isCurrent &&
+                        'nur-breath bg-white text-nur-accent ring-nur-accent',
+                      !moduleDone &&
+                        !isCurrent &&
+                        'bg-transparent text-nur-faint ring-nur-line opacity-50',
+                    )}
+                    aria-hidden
+                  >
+                    {moduleDone ? '✓' : dayNum}
+                  </span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+                    <h2 className="font-display text-base font-medium tracking-[-0.015em] text-nur-ink">
+                      Kun {dayNum}
+                      {theme ? ` — ${theme}` : ''}
+                    </h2>
+                    <span
+                      className={cx(
+                        'text-xs font-medium',
+                        moduleDone ? 'text-nur-lamp' : isCurrent ? 'text-nur-accent' : 'text-nur-faint',
+                      )}
+                    >
+                      {moduleDone ? 'Tugadi' : isCurrent ? 'Bugun' : ''}
+                    </span>
+                  </div>
+                  <ol className="nur-list">
+                    {moduleLessons.map((lesson) => {
+                      const done = completed.has(lesson.id);
+                      const slot =
+                        LESSON_SLOT_LABEL[lesson.targetType] ??
+                        LESSON_KIND_LABEL[lesson.targetType] ??
+                        lesson.targetType;
+                      return (
+                        <li key={lesson.id}>
+                          <div className="nur-list-row !items-start justify-between">
+                            <div className="min-w-0">
+                              <p className="nur-section-label !text-[9px]">{slot}</p>
+                              <p className="mt-1 text-sm font-semibold tracking-[-0.01em]">
+                                {displayTitle(lesson.title)}
+                                {done ? (
+                                  <span className="ml-2 text-xs font-normal text-nur-lamp">✓</span>
+                                ) : null}
+                              </p>
+                              <p className="mt-1 text-xs text-nur-faint">
+                                {LESSON_KIND_LABEL[lesson.targetType] ?? lesson.targetType}
+                                {lesson.targetLabel
+                                  ? ` · ${displayTitle(lesson.targetLabel)}`
+                                  : ''}
+                                {lesson.estimatedMinutes
+                                  ? ` · ~${lesson.estimatedMinutes} daq`
+                                  : ''}
+                              </p>
+                            </div>
+                            <div className="flex shrink-0 flex-wrap gap-2">
+                              {lesson.targetHref ? (
+                                <Button to={lesson.targetHref} variant="secondary">
+                                  Ochish
+                                </Button>
+                              ) : null}
+                              {!done ? (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  disabled={saving}
+                                  onClick={() => void markComplete(lesson.id)}
+                                >
+                                  Yakunlash
+                                </Button>
+                              ) : null}
+                            </div>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );

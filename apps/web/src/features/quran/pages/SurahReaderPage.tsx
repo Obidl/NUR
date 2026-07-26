@@ -340,6 +340,7 @@ export function SurahReaderPage() {
           <Button
             type="button"
             variant="secondary"
+            className="!rounded-[var(--radius-pill)]"
             onClick={() => {
               if (!selectedReciterId || !detail) return;
               void playSurah(surahNumber, detail.ayahs.length);

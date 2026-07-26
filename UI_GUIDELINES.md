@@ -10,7 +10,7 @@
 ## 1. Purpose
 
 This document defines how NUR **looks, flows, and behaves** in the interface.  
-Tokens, type scales, and color values live in `DESIGN_SYSTEM.md`. This file owns **composition, UX patterns, and do/don’t rules**.
+Tokens, type scales, and color values live in `DESIGN_SYSTEM.md` (**Quiet Light**). This file owns **composition, UX patterns, and do/don’t rules**.
 
 ---
 

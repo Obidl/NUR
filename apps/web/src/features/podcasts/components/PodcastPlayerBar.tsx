@@ -112,7 +112,7 @@ export function PodcastPlayerBar() {
             </select>
             <button
               type="button"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-m)] bg-nur-lamp text-nur-lamp-ink transition-[transform,filter] duration-200 hover:brightness-[0.97] active:scale-[0.98]"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-nur-accent text-[var(--nur-accent-ink)] transition-[transform,filter] duration-150 hover:brightness-110 active:scale-[0.98]"
               aria-label={isPlaying ? 'Pauza' : 'Ijro'}
               onClick={() => setPlaying(!isPlaying)}
             >

@@ -120,10 +120,10 @@ export function SurahListPage() {
       {continueHref && progress ? (
         <Link
           to={continueHref}
-          className="nur-surface mb-8 flex items-center justify-between gap-3 px-5 py-4 transition-colors hover:bg-nur-sunken/30"
+          className="mb-8 flex items-center justify-between gap-3 rounded-[var(--radius-xl)] bg-nur-lamp-soft/70 px-5 py-4 ring-1 ring-nur-lamp/25 transition-[transform,box-shadow] duration-150 hover:shadow-[var(--shadow-sm)] active:scale-[0.99]"
         >
-          <span className="text-sm text-nur-muted">Davom etish</span>
-          <span className="min-w-0 text-right text-sm font-semibold text-nur-accent">
+          <span className="nur-section-label">Davom etish</span>
+          <span className="min-w-0 text-right text-sm font-semibold text-nur-ink">
             <span className="block truncate">
               {progress.surahName ?? `Surah ${progress.surahNumber}`}
             </span>

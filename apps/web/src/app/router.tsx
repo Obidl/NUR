@@ -4,6 +4,7 @@ import { RootLayout } from '@/app/layouts/RootLayout';
 import { AuthLayout } from '@/app/layouts/AuthLayout';
 import { AdminLayout } from '@/app/layouts/AdminLayout';
 import { HomePage } from '@/features/home/pages/HomePage';
+import { MorePage } from '@/features/home/pages/MorePage';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 import { ForgotPasswordPage } from '@/features/auth/pages/ForgotPasswordPage';
@@ -78,6 +79,7 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       { index: true, element: <HomePage /> },
+      { path: 'more', element: <MorePage /> },
       { path: 'quran', element: <SurahListPage /> },
       { path: 'quran/:surahNumber', element: <SurahReaderPage /> },
       { path: 'podcasts', element: <PodcastSeriesListPage /> },
