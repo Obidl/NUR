@@ -217,27 +217,30 @@ export function SurahListPage() {
       ) : null}
 
       {!loading && mode === 'surahs' && surahs.length > 0 ? (
-        <ul className="nur-list">
+        <ul className="space-y-2">
           {surahs.map((surah) => (
             <li key={surah.number}>
-              <Link to={`/quran/${surah.number}`} className="nur-list-row">
-                <span
-                  className={cx(
-                    'flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/50 text-sm font-medium text-nur-muted',
-                  )}
-                >
+              <Link
+                to={`/quran/${surah.number}`}
+                className="nur-surface-interactive flex items-center gap-4 px-4 py-4"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--nur-lamp)_14%,transparent)] font-display text-sm font-medium text-nur-lamp-ink">
                   {surah.number}
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-3">
-                    <p className="truncate text-sm font-semibold tracking-[-0.01em] text-nur-ink">
+                    <p className="truncate font-display text-base font-medium tracking-[-0.015em] text-nur-ink">
                       {surah.nameUz ?? surah.nameLatin}
                     </p>
-                    <p className="font-quran shrink-0 text-lg text-nur-ink" dir="rtl" lang="ar">
+                    <p
+                      className="font-quran shrink-0 text-xl leading-none text-nur-ink"
+                      dir="rtl"
+                      lang="ar"
+                    >
                       {surah.nameArabic}
                     </p>
                   </div>
-                  <p className="mt-1 text-xs text-nur-muted">
+                  <p className="mt-1.5 text-xs text-nur-muted">
                     {surah.ayahCount} oyat ·{' '}
                     {surah.revelationType === 'meccan' ? 'Makkiy' : 'Madaniy'}
                   </p>
