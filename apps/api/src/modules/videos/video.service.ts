@@ -33,7 +33,8 @@ export function youtubeWatchUrl(videoId: string) {
 }
 
 export function youtubeEmbedUrl(videoId: string) {
-  return `https://www.youtube-nocookie.com/embed/${videoId}`;
+  // Standard embed host — more reliable with Referer checks than youtube-nocookie alone.
+  return `https://www.youtube.com/embed/${videoId}`;
 }
 
 function isWeakCoverUrl(url: string | null | undefined) {

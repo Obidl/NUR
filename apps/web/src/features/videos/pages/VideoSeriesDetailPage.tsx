@@ -25,9 +25,20 @@ import { displayTitle } from '@/features/home/lib/todayPath';
 function embedSrc(embedUrl: string) {
   try {
     const url = new URL(embedUrl);
+    // Prefer www.youtube.com/embed — Error 153 / config failures are less common with origin set.
+    if (url.hostname.includes('youtube')) {
+      url.hostname = 'www.youtube.com';
+      if (!url.pathname.startsWith('/embed/')) {
+        const id = url.searchParams.get('v') ?? url.pathname.split('/').pop();
+        if (id) url.pathname = `/embed/${id}`;
+      }
+    }
     url.searchParams.set('rel', '0');
     url.searchParams.set('modestbranding', '1');
     url.searchParams.set('playsinline', '1');
+    if (typeof window !== 'undefined' && window.location?.origin) {
+      url.searchParams.set('origin', window.location.origin);
+    }
     return url.toString();
   } catch {
     return `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}rel=0&modestbranding=1&playsinline=1`;

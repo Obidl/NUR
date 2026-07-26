@@ -24,19 +24,19 @@ const SECTIONS: CatalogSection[] = [
     id: 'siyrat-dars',
     title: 'Siyrat darslar',
     description: 'Rasululloh ﷺ hayoti — asosiy ketma-ket kurslar',
-    match: (s) => s.topics.includes('siyrat-dars'),
+    match: (s) => (s.topics ?? []).includes('siyrat-dars'),
   },
   {
     id: 'ustoz',
     title: 'Ustozlar — Payg‘ambar ﷺ',
     description: 'Nouman Ali Khan, Hasanxon & Husaynxon — siyrat / Prophet ﷺ',
-    match: (s) => s.topics.includes('ustoz'),
+    match: (s) => (s.topics ?? []).includes('ustoz'),
   },
   {
     id: 'umumiy',
     title: 'Umumiy videolar',
     description: 'Shu ustozlarning boshqa (siyratsiz) suhbatlari — alohida',
-    match: (s) => s.topics.includes('umumiy'),
+    match: (s) => (s.topics ?? []).includes('umumiy'),
   },
 ];
 
