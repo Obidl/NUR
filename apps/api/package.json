@@ -13,6 +13,7 @@
     "test:watch": "vitest",
     "import:quran": "tsx scripts/import-quran.ts",
     "upsert:quran-reciters": "tsx scripts/upsert-quran-reciters.ts",
+    "upsert:surah-names-uz": "tsx scripts/upsert-surah-names-uz.ts",
     "seed:demo": "tsx scripts/seed-demo.ts",
     "verify:indexes": "tsx scripts/verify-indexes.ts",
     "check:health": "tsx scripts/check-health.ts"

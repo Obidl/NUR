@@ -18,6 +18,9 @@
  */
 
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import { loadEnv } from '../src/config/env.js';
@@ -26,6 +29,7 @@ import { AyahModel } from '../src/modules/quran/ayah.model.js';
 import { ReciterModel } from '../src/modules/quran/reciter.model.js';
 import { QuranAudioModel } from '../src/modules/quran/quranAudio.model.js';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const ARABIC_EDITION = 'quran-uthmani';
 const UZBEK_EDITION = 'uz.sodik';
 const AUDIO_EDITION = 'ar.alafasy';
@@ -33,6 +37,10 @@ const DATASET_VERSION = 'alquran-cloud-2026-07-25';
 const API_BASE = 'https://api.alquran.cloud/v1';
 const CDN_AYAH_BASE = `https://cdn.islamic.network/quran/audio/128/${AUDIO_EDITION}`;
 const CDN_SURAH_BASE = `https://cdn.islamic.network/quran/audio-surah/128/${AUDIO_EDITION}`;
+
+const SURAH_NAMES_UZ = JSON.parse(
+  readFileSync(join(__dirname, 'data', 'surah-names-uz.json'), 'utf8'),
+) as string[];
 
 type CloudSurah = {
   number: number;
@@ -81,6 +89,9 @@ async function main() {
   if (arabic.data.surahs.length !== 114 || uzbek.data.surahs.length !== 114) {
     throw new Error('Expected 114 surahs from both editions');
   }
+  if (SURAH_NAMES_UZ.length !== 114) {
+    throw new Error(`Expected 114 Uzbek surah names, got ${SURAH_NAMES_UZ.length}`);
+  }
 
   const arabicPayload = JSON.stringify(arabic.data.surahs);
   const textChecksum = checksum(arabicPayload);
@@ -94,7 +105,7 @@ async function main() {
     number: surah.number,
     nameArabic: stripBom(surah.name),
     nameLatin: surah.englishName,
-    nameUz: null,
+    nameUz: SURAH_NAMES_UZ[surah.number - 1] ?? null,
     ayahCount: surah.numberOfAyahs ?? surah.ayahs.length,
     revelationType: surah.revelationType.toLowerCase() === 'meccan' ? 'meccan' : 'medinan',
   }));

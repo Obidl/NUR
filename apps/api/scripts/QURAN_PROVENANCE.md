@@ -27,6 +27,13 @@
 - `uz.sodik` text is **Cyrillic** Uzbek. UI is Latin Uzbek; the app labels this explicitly until a licensed Latin edition is chosen.
 - `nameUz` (114 surah names in Latin) is not invented — fill only from an owner-approved list.
 
+## Surah display names (Uzbek Latin)
+
+- **Source:** [uz.wikipedia — Qurʼondagi suralar roʻyxati](https://uz.wikipedia.org/wiki/Qurʼondagi_suralar_roʻyxati)
+- **File:** `scripts/data/surah-names-uz.json` (114 names, without trailing «surasi»)
+- **Upsert:** `npm run upsert:surah-names-uz`
+- These are **metadata labels only** — not Qur’anic Arabic text and not ayah translations.
+
 ## Import command
 
 ```bash
