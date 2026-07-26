@@ -87,6 +87,13 @@ export async function searchAyahs(q: string, limit: number) {
   const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const regex = new RegExp(escaped, 'i');
 
+  let rows: Array<{
+    surahNumber: number;
+    ayahNumber: number;
+    textArabic: string;
+    textUz?: string | null;
+  }> = [];
+
   try {
     const textHits = await AyahModel.find(
       { $text: { $search: q } },
@@ -98,30 +105,35 @@ export async function searchAyahs(q: string, limit: number) {
       .lean();
 
     if (textHits.length > 0) {
-      return textHits.map((ayah) => ({
-        surahNumber: ayah.surahNumber,
-        ayahNumber: ayah.ayahNumber,
-        textArabic: cleanArabicText(ayah.textArabic),
-        textUz: ayah.textUz ?? null,
-      }));
+      rows = textHits;
     }
   } catch {
     // Fall back to regex if text index is unavailable.
   }
 
-  const ayahs = await AyahModel.find({
-    $or: [{ textArabic: regex }, { textUz: regex }],
-  })
-    .limit(limit)
-    .select('surahNumber ayahNumber textArabic textUz')
-    .lean();
+  if (rows.length === 0) {
+    rows = await AyahModel.find({
+      $or: [{ textArabic: regex }, { textUz: regex }],
+    })
+      .limit(limit)
+      .select('surahNumber ayahNumber textArabic textUz')
+      .lean();
+  }
 
-  return ayahs.map((ayah) => ({
-    surahNumber: ayah.surahNumber,
-    ayahNumber: ayah.ayahNumber,
-    textArabic: cleanArabicText(ayah.textArabic),
-    textUz: ayah.textUz ?? null,
-  }));
+  const surahNumbers = [...new Set(rows.map((row) => row.surahNumber))];
+  const surahs = await SurahModel.find({ number: { $in: surahNumbers } }).lean();
+  const surahMap = new Map(surahs.map((s) => [s.number, s]));
+
+  return rows.map((ayah) => {
+    const surah = surahMap.get(ayah.surahNumber);
+    return {
+      surahNumber: ayah.surahNumber,
+      ayahNumber: ayah.ayahNumber,
+      textArabic: cleanArabicText(ayah.textArabic),
+      textUz: ayah.textUz ?? null,
+      surahName: surah?.nameUz ?? surah?.nameLatin ?? `Surah ${ayah.surahNumber}`,
+    };
+  });
 }
 
 export async function listReciters() {

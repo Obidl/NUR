@@ -1,6 +1,7 @@
 import { http } from '@/services/http';
 import { endpoints } from '@/services/endpoints';
 import type {
+  AyahSearchHit,
   QuranAudioItem,
   QuranBookmark,
   QuranProgress,
@@ -18,6 +19,13 @@ export async function fetchSurahs(q?: string): Promise<SurahSummary[]> {
 
 export async function fetchSurah(number: number): Promise<SurahDetail> {
   const { data } = await http.get<{ data: SurahDetail }>(endpoints.quran.surah(number));
+  return data.data;
+}
+
+export async function searchAyahs(q: string, limit = 20): Promise<AyahSearchHit[]> {
+  const { data } = await http.get<{ data: AyahSearchHit[] }>(endpoints.quran.search, {
+    params: { q, limit },
+  });
   return data.data;
 }
 

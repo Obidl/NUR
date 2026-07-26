@@ -1,8 +1,16 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search } from 'lucide-react';
-import { fetchQuranProgress, fetchSurahs } from '@/features/quran/api/quranApi';
-import type { QuranProgress, SurahSummary } from '@/features/quran/types/quran.types';
+import {
+  fetchQuranProgress,
+  fetchSurahs,
+  searchAyahs,
+} from '@/features/quran/api/quranApi';
+import type {
+  AyahSearchHit,
+  QuranProgress,
+  SurahSummary,
+} from '@/features/quran/types/quran.types';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { PageShell } from '@/shared/components/PageShell';
@@ -10,11 +18,15 @@ import { ErrorState, ListSkeleton } from '@/shared/components/Skeleton';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { cx } from '@/shared/lib/cx';
 
+type SearchMode = 'surahs' | 'ayahs';
+
 export function SurahListPage() {
   const accessToken = useAuthStore((s) => s.accessToken);
+  const [mode, setMode] = useState<SearchMode>('surahs');
   const [query, setQuery] = useState('');
   const deferredQuery = useDeferredValue(query);
   const [surahs, setSurahs] = useState<SurahSummary[]>([]);
+  const [ayahHits, setAyahHits] = useState<AyahSearchHit[]>([]);
   const [progress, setProgress] = useState<QuranProgress | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,10 +39,36 @@ export function SurahListPage() {
       setLoading(true);
       setError(null);
       try {
-        const data = await fetchSurahs(deferredQuery || undefined);
-        if (!cancelled) setSurahs(data);
+        if (mode === 'surahs') {
+          const data = await fetchSurahs(deferredQuery || undefined);
+          if (!cancelled) {
+            setSurahs(data);
+            setAyahHits([]);
+          }
+        } else {
+          const trimmed = deferredQuery.trim();
+          if (trimmed.length < 2) {
+            if (!cancelled) {
+              setAyahHits([]);
+              setSurahs([]);
+            }
+          } else {
+            const hits = await searchAyahs(trimmed, 30);
+            if (!cancelled) {
+              setAyahHits(hits);
+              setSurahs([]);
+            }
+          }
+        }
       } catch (err) {
-        if (!cancelled) setError(getErrorMessage(err, 'Surahlar yuklanmadi'));
+        if (!cancelled) {
+          setError(
+            getErrorMessage(
+              err,
+              mode === 'surahs' ? 'Surahlar yuklanmadi' : 'Oyat qidiruvi muvaffaqiyatsiz',
+            ),
+          );
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -40,7 +78,7 @@ export function SurahListPage() {
     return () => {
       cancelled = true;
     };
-  }, [deferredQuery, reloadKey]);
+  }, [deferredQuery, reloadKey, mode]);
 
   useEffect(() => {
     if (!accessToken) {
@@ -69,6 +107,11 @@ export function SurahListPage() {
     return `/quran/${progress.surahNumber}?ayah=${progress.ayahNumber}`;
   }, [progress]);
 
+  const modes: Array<{ id: SearchMode; label: string }> = [
+    { id: 'surahs', label: 'Surahlar' },
+    { id: 'ayahs', label: 'Oyatlar' },
+  ];
+
   return (
     <PageShell
       title="Qur’on"
@@ -96,6 +139,33 @@ export function SurahListPage() {
         </Link>
       ) : null}
 
+      <div
+        className="mb-4 flex gap-1 rounded-[var(--radius-l)] border border-nur-line bg-nur-elevated p-1"
+        role="tablist"
+        aria-label="Qur’on qidiruv turi"
+      >
+        {modes.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            role="tab"
+            aria-selected={mode === item.id}
+            onClick={() => {
+              setMode(item.id);
+              setError(null);
+            }}
+            className={cx(
+              'flex-1 rounded-[var(--radius-m)] px-3 py-2 text-sm font-medium transition-colors',
+              mode === item.id
+                ? 'bg-nur-sunken text-nur-ink shadow-[var(--shadow-xs)]'
+                : 'text-nur-muted hover:text-nur-ink',
+            )}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+
       <label className="relative mb-6 block">
         <Search
           size={16}
@@ -106,11 +176,19 @@ export function SurahListPage() {
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Surah nomi yoki raqami…"
+          placeholder={
+            mode === 'surahs'
+              ? 'Surah nomi yoki raqami…'
+              : 'Oyat matni (arabcha yoki kirill tarjima)…'
+          }
           className="nur-input pl-10"
-          aria-label="Surah qidiruv"
+          aria-label={mode === 'surahs' ? 'Surah qidiruv' : 'Oyat qidiruv'}
         />
       </label>
+
+      {mode === 'ayahs' && query.trim().length > 0 && query.trim().length < 2 ? (
+        <p className="mb-4 text-xs text-nur-faint">Kamida 2 belgi kiriting.</p>
+      ) : null}
 
       {error ? (
         <div className="mb-6">
@@ -120,14 +198,25 @@ export function SurahListPage() {
 
       {loading ? <ListSkeleton rows={8} /> : null}
 
-      {!loading && !error && surahs.length === 0 ? (
+      {!loading && !error && mode === 'surahs' && surahs.length === 0 ? (
         <EmptyState
           title="Surah topilmadi"
           description="Qidiruvni o‘zgartiring yoki API’da Qur’on import qilinganini tekshiring."
         />
       ) : null}
 
-      {!loading && surahs.length > 0 ? (
+      {!loading &&
+      !error &&
+      mode === 'ayahs' &&
+      query.trim().length >= 2 &&
+      ayahHits.length === 0 ? (
+        <EmptyState
+          title="Oyat topilmadi"
+          description="Arabcha so‘z yoki kirill tarjima bilan qidirib ko‘ring."
+        />
+      ) : null}
+
+      {!loading && mode === 'surahs' && surahs.length > 0 ? (
         <ul className="nur-list">
           {surahs.map((surah) => (
             <li key={surah.number}>
@@ -152,6 +241,40 @@ export function SurahListPage() {
                     {surah.ayahCount} oyat ·{' '}
                     {surah.revelationType === 'meccan' ? 'Makkiy' : 'Madaniy'}
                   </p>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
+      {!loading && mode === 'ayahs' && ayahHits.length > 0 ? (
+        <ul className="nur-list">
+          {ayahHits.map((hit) => (
+            <li key={`${hit.surahNumber}-${hit.ayahNumber}`}>
+              <Link
+                to={`/quran/${hit.surahNumber}?ayah=${hit.ayahNumber}`}
+                className="nur-list-row items-start"
+              >
+                <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/50 text-xs font-medium text-nur-muted">
+                  {hit.surahNumber}:{hit.ayahNumber}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-nur-lamp">
+                    {hit.surahName ?? `Surah ${hit.surahNumber}`} · {hit.ayahNumber}-oyat
+                  </p>
+                  <p
+                    className="font-quran mt-1 text-right text-base leading-8 text-nur-ink"
+                    dir="rtl"
+                    lang="ar"
+                  >
+                    {hit.textArabic}
+                  </p>
+                  {hit.textUz ? (
+                    <p className="mt-1 line-clamp-2 text-sm text-nur-muted" lang="uz-Cyrl">
+                      {hit.textUz}
+                    </p>
+                  ) : null}
                 </div>
               </Link>
             </li>

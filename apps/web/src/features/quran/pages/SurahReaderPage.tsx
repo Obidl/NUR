@@ -22,6 +22,7 @@ import type {
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { Button } from '@/shared/components/Button';
 import { getErrorMessage } from '@/shared/lib/errors';
+import { cx } from '@/shared/lib/cx';
 
 export function SurahReaderPage() {
   const params = useParams();
@@ -37,8 +38,10 @@ export function SurahReaderPage() {
 
   const fontSize = useQuranSettingsStore((s) => s.fontSize);
   const showTranslation = useQuranSettingsStore((s) => s.showTranslation);
+  const readerTheme = useQuranSettingsStore((s) => s.readerTheme);
   const setFontSize = useQuranSettingsStore((s) => s.setFontSize);
   const setShowTranslation = useQuranSettingsStore((s) => s.setShowTranslation);
+  const setReaderTheme = useQuranSettingsStore((s) => s.setReaderTheme);
   const hydrateFromUserPreference = useQuranSettingsStore((s) => s.hydrateFromUserPreference);
 
   const setReciter = useQuranPlayerStore((s) => s.setReciter);
@@ -215,7 +218,10 @@ export function SurahReaderPage() {
   const translatorName = detail.ayahs.find((ayah) => ayah.translation)?.translation?.translatorName;
 
   return (
-    <div className="bg-[var(--nur-quran-bg)] text-[var(--nur-quran-ink)]">
+    <div
+      className="bg-[var(--nur-quran-bg)] text-[var(--nur-quran-ink)]"
+      data-quran-theme={readerTheme}
+    >
       <motion.section
         initial={reduceMotion ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -275,6 +281,32 @@ export function SurahReaderPage() {
               O‘zbek tarjimasini ko‘rsatish
               <span className="text-nur-faint"> (kirill)</span>
             </label>
+            <fieldset className="block text-sm">
+              <legend className="mb-2 text-nur-muted">O‘qish foni</legend>
+              <div className="grid grid-cols-3 gap-2">
+                {(
+                  [
+                    { id: 'parchment', label: 'Pergament' },
+                    { id: 'mist', label: 'Tuman' },
+                    { id: 'night', label: 'Tun' },
+                  ] as const
+                ).map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setReaderTheme(item.id)}
+                    className={cx(
+                      'rounded-[var(--radius-s)] border px-2 py-2 text-xs font-medium',
+                      readerTheme === item.id
+                        ? 'border-nur-lamp bg-nur-lamp-soft text-nur-lamp-ink'
+                        : 'border-nur-line text-nur-muted',
+                    )}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
             <label className="block text-sm">
               <span className="mb-1 block text-nur-muted">Qori</span>
               <select

@@ -30,6 +30,7 @@
   --nur-quran-bg: #f7f1e8;
   --nur-quran-ink: #101820;
   --nur-quran-ornament: #b8923a;
+  --nur-quran-muted: #5b6775;
 
   /* Overlay */
   --nur-overlay: rgba(12, 18, 28, 0.48);
@@ -103,6 +104,7 @@
   --nur-quran-bg: #121820;
   --nur-quran-ink: #eef3f7;
   --nur-quran-ornament: #d7a34a;
+  --nur-quran-muted: #9aa6b2;
 
   --nur-overlay: rgba(0, 0, 0, 0.64);
 
@@ -111,6 +113,28 @@
   --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.36), 0 2px 8px rgba(0, 0, 0, 0.24);
 
   color-scheme: dark;
+}
+
+/* Qur’an reader themes (scoped to reader shell) */
+[data-quran-theme='parchment'] {
+  --nur-quran-bg: #f7f1e8;
+  --nur-quran-ink: #101820;
+  --nur-quran-ornament: #b8923a;
+  --nur-quran-muted: #5b6775;
+}
+
+[data-quran-theme='mist'] {
+  --nur-quran-bg: #eef3f6;
+  --nur-quran-ink: #15202b;
+  --nur-quran-ornament: #1f6f78;
+  --nur-quran-muted: #5b6775;
+}
+
+[data-quran-theme='night'] {
+  --nur-quran-bg: #0f161d;
+  --nur-quran-ink: #e8eef4;
+  --nur-quran-ornament: #d7a34a;
+  --nur-quran-muted: #9aa6b2;
 }
 
 @media (prefers-reduced-motion: reduce) {

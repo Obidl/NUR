@@ -7,6 +7,14 @@ export type SurahSummary = {
   revelationType: 'meccan' | 'medinan' | string;
 };
 
+export type AyahSearchHit = {
+  surahNumber: number;
+  ayahNumber: number;
+  textArabic: string;
+  textUz: string | null;
+  surahName?: string;
+};
+
 export type Ayah = {
   surahNumber: number;
   ayahNumber: number;
