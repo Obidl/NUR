@@ -3,6 +3,7 @@ import { endpoints } from '@/services/endpoints';
 import type {
   VideoEpisodeDetail,
   VideoEpisodeSummary,
+  VideoProgressItem,
   VideoSeriesCard,
 } from '@/features/videos/types/video.types';
 
@@ -28,4 +29,16 @@ export async function fetchVideoSeriesDetail(slug: string) {
 export async function fetchVideoEpisode(id: string) {
   const { data } = await http.get<{ data: VideoEpisodeDetail }>(endpoints.videos.episode(id));
   return data.data;
+}
+
+export async function fetchVideoProgress(): Promise<VideoProgressItem[]> {
+  const { data } = await http.get<{ data: VideoProgressItem[] }>(endpoints.videos.progress);
+  return data.data;
+}
+
+export async function saveVideoProgress(input: {
+  episodeId: string;
+  completed?: boolean;
+}): Promise<void> {
+  await http.put(endpoints.videos.progress, input);
 }

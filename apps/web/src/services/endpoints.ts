@@ -32,6 +32,7 @@ export const endpoints = {
     series: '/api/v1/videos/series',
     seriesDetail: (slug: string) => `/api/v1/videos/series/${slug}`,
     episode: (id: string) => `/api/v1/videos/episodes/${id}`,
+    progress: '/api/v1/videos/progress',
   },
   books: {
     list: '/api/v1/books',

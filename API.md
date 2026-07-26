@@ -424,6 +424,20 @@ Siyrat-first catalog. Stream stays on YouTube; NUR serves metadata + `youtube.co
 **Auth:** none  
 **Response:** published episode detail for curriculum deep-links.
 
+### Video progress
+
+#### `GET /api/v1/videos/progress`
+
+**Auth:** required  
+**Query:** optional `episodeId`  
+**Response:** recent watch rows (`episodeId`, series fields, `completed`, `updatedAt`). Position is not tracked (YouTube embed).
+
+#### `PUT /api/v1/videos/progress`
+
+**Auth:** required  
+**Body:** `{ episodeId: string, completed?: boolean }`  
+**Notes:** Opening an episode upserts/touches progress; omit `completed` to keep prior flag. Set `completed: true` when the learner finishes or advances.
+
 ---
 
 ## 6. Books
@@ -528,6 +542,18 @@ Siyrat-first catalog. Stream stays on YouTube; NUR serves metadata + `youtube.co
         "title": "...",
         "positionSeconds": 760,
         "durationSeconds": 1800,
+        "updatedAt": "..."
+      }
+    ],
+    "videos": [
+      {
+        "episodeId": "...",
+        "seriesSlug": "...",
+        "seriesTitle": "...",
+        "title": "...",
+        "episodeNumber": 1,
+        "coverUrl": null,
+        "completed": false,
         "updatedAt": "..."
       }
     ],

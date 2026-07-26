@@ -29,3 +29,15 @@ export type VideoEpisodeSummary = {
 export type VideoEpisodeDetail = VideoEpisodeSummary & {
   series: VideoSeriesCard;
 };
+
+export type VideoProgressItem = {
+  episodeId: string;
+  title: string;
+  episodeNumber: number | null;
+  seriesSlug: string;
+  seriesTitle: string;
+  hostOrScholar: string;
+  coverUrl: string | null;
+  completed: boolean;
+  updatedAt: string;
+};

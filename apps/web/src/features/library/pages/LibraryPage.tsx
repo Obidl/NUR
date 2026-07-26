@@ -144,6 +144,29 @@ export function LibraryPage() {
             ))}
           </Section>
 
+          <Section
+            title="Videolar"
+            empty="Video progressi yo‘q."
+            count={continueData.videos?.length ?? 0}
+          >
+            {(continueData.videos ?? []).map((item) => (
+              <li key={item.episodeId}>
+                <Link
+                  to={`/videos/${item.seriesSlug}?episode=${item.episodeId}`}
+                  className="nur-list-row"
+                >
+                  <span className="min-w-0">
+                    <span className="block font-semibold">{item.title}</span>
+                    <span className="mt-0.5 block text-xs text-nur-muted">
+                      {item.seriesTitle}
+                      {item.episodeNumber != null ? ` · ${item.episodeNumber}-son` : ''}
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </Section>
+
           <Section title="Kitoblar" empty="Kitob progressi yo‘q." count={continueData.books.length}>
             {continueData.books.map((item) => (
               <li key={`${item.bookSlug}-${item.chapterSlug}`}>

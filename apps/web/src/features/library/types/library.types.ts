@@ -16,6 +16,17 @@ export type LibraryContinue = {
     coverUrl: string | null;
     updatedAt: string;
   }>;
+  videos: Array<{
+    episodeId: string;
+    seriesSlug: string;
+    seriesTitle: string;
+    title: string;
+    episodeNumber: number | null;
+    hostOrScholar: string;
+    coverUrl: string | null;
+    completed: boolean;
+    updatedAt: string;
+  }>;
   books: Array<{
     bookSlug: string;
     chapterSlug: string;
@@ -78,4 +89,5 @@ export type LibraryBookmarks = {
 export type PrimaryContinue =
   | { kind: 'quran'; href: string; label: string; detail: string; updatedAt: string }
   | { kind: 'podcast'; href: string; label: string; detail: string; updatedAt: string }
+  | { kind: 'video'; href: string; label: string; detail: string; updatedAt: string }
   | { kind: 'book'; href: string; label: string; detail: string; updatedAt: string };

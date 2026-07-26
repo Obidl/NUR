@@ -43,6 +43,15 @@ export function pickPrimaryContinue(data: LibraryContinue): PrimaryContinue | nu
       updatedAt: item.updatedAt,
     });
   }
+  for (const item of data.videos ?? []) {
+    candidates.push({
+      kind: 'video',
+      href: `/videos/${item.seriesSlug}?episode=${item.episodeId}`,
+      label: 'Videoni davom ettirish',
+      detail: item.title,
+      updatedAt: item.updatedAt,
+    });
+  }
   for (const item of data.books) {
     candidates.push({
       kind: 'book',

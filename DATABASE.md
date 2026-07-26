@@ -97,6 +97,7 @@ Query helper for public content:
 | `podcast_favorites` | User favorites |
 | `video_series` | YouTube embed series (siyrat-first) |
 | `video_episodes` | Episodes with `youtubeVideoId` (no rehost) |
+| `video_progress` | User last-watched / completed flags (no position) |
 | `books` | Book catalog |
 | `book_chapters` | Chapters |
 | `book_progress` | User reading progress |
@@ -497,6 +498,28 @@ VideoEpisode {
 
 ---
 
+### 4.12c `video_progress`
+
+YouTube embed has no reliable in-app position — store last-watched + completed only.
+
+```ts
+VideoProgress {
+  _id: ObjectId
+  userId: ObjectId
+  episodeId: ObjectId
+  completed: boolean
+  updatedAt: Date
+  createdAt: Date
+}
+```
+
+**Indexes**
+
+- unique: `{ userId: 1, episodeId: 1 }`
+- `{ userId: 1, updatedAt: -1 }`
+
+---
+
 ### 4.13 `books`
 
 ```ts
@@ -695,6 +718,7 @@ reciters ── quran_audio → (surahNumber, ayahNumber?)
 
 podcast_series ── podcast_episodes
 video_series ── video_episodes   // youtubeVideoId → embed only
+              └─ video_progress  // completed / last-watched (no position)
 books ── book_chapters
 research_articles (standalone + sources[])
 ```

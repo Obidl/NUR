@@ -4,11 +4,13 @@ import { publicContentFilter, slugify, type ContentStatus } from '../../shared/u
 import { assertEditorialStatusTransition } from '../../shared/utils/contentStatus.js';
 import { VideoSeriesModel } from './videoSeries.model.js';
 import { VideoEpisodeModel } from './videoEpisode.model.js';
+import { VideoProgressModel } from './videoProgress.model.js';
 import type {
   CreateEpisodeBody,
   CreateSeriesBody,
   UpdateEpisodeBody,
   UpdateSeriesBody,
+  UpsertVideoProgressBody,
 } from './video.validation.js';
 import type { SetStatusBody } from '../admin/admin.validation.js';
 
@@ -503,4 +505,80 @@ export async function adminDeleteEpisode(userId: string, id: string) {
   row.updatedBy = new Types.ObjectId(userId);
   await row.save();
   return { success: true };
+}
+
+export async function getProgress(userId: string, episodeId?: string) {
+  const filter: Record<string, unknown> = { userId };
+  if (episodeId) {
+    if (!Types.ObjectId.isValid(episodeId)) {
+      throw new AppError('VALIDATION_ERROR', 'Invalid episodeId', 422);
+    }
+    filter.episodeId = episodeId;
+  }
+
+  const rows = await VideoProgressModel.find(filter).sort({ updatedAt: -1 }).lean();
+  const episodeIds = rows.map((row) => row.episodeId);
+  const episodes = await VideoEpisodeModel.find({
+    _id: { $in: episodeIds },
+    ...publicContentFilter(),
+  }).lean();
+  const episodeMap = new Map(episodes.map((ep) => [ep._id.toString(), ep]));
+
+  const seriesIds = [...new Set(episodes.map((ep) => ep.seriesId.toString()))];
+  const seriesRows = await VideoSeriesModel.find({
+    _id: { $in: seriesIds },
+    ...publicContentFilter(),
+  }).lean();
+  const seriesMap = new Map(seriesRows.map((s) => [s._id.toString(), s]));
+
+  return rows
+    .map((row) => {
+      const episode = episodeMap.get(row.episodeId.toString());
+      if (!episode) return null;
+      const series = seriesMap.get(episode.seriesId.toString());
+      if (!series) return null;
+      return {
+        episodeId: episode._id.toString(),
+        title: episode.title,
+        episodeNumber: episode.episodeNumber ?? null,
+        seriesSlug: series.slug,
+        seriesTitle: series.title,
+        hostOrScholar: series.hostOrScholar,
+        coverUrl: episode.coverUrl ?? series.coverUrl,
+        completed: row.completed,
+        updatedAt: row.updatedAt,
+      };
+    })
+    .filter(Boolean);
+}
+
+export async function upsertProgress(userId: string, input: UpsertVideoProgressBody) {
+  if (!Types.ObjectId.isValid(input.episodeId)) {
+    throw new AppError('VALIDATION_ERROR', 'Invalid episodeId', 422);
+  }
+
+  const episode = await VideoEpisodeModel.findOne({
+    _id: input.episodeId,
+    ...publicContentFilter(),
+  }).lean();
+  if (!episode) throw new AppError('NOT_FOUND', 'Episode not found', 404);
+
+  const row = await VideoProgressModel.findOneAndUpdate(
+    { userId, episodeId: input.episodeId },
+    {
+      $set: {
+        userId,
+        episodeId: input.episodeId,
+        ...(input.completed !== undefined ? { completed: input.completed } : {}),
+      },
+      $setOnInsert: { completed: false },
+    },
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
+  );
+
+  return {
+    episodeId: input.episodeId,
+    completed: row!.completed,
+    updatedAt: row!.updatedAt,
+  };
 }

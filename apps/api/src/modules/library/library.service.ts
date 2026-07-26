@@ -8,6 +8,7 @@ import {
 } from '../podcasts/podcast.service.js';
 import { PodcastSeriesModel } from '../podcasts/podcastSeries.model.js';
 import { PodcastEpisodeModel } from '../podcasts/podcastEpisode.model.js';
+import { getProgress as getVideoProgress } from '../videos/video.service.js';
 import {
   getBookProgress,
   listBookBookmarks,
@@ -23,9 +24,10 @@ function asDate(value: Date | string): number {
 }
 
 export async function getLibraryContinue(userId: string) {
-  const [quranRows, podcastRows, bookRows] = await Promise.all([
+  const [quranRows, podcastRows, videoRows, bookRows] = await Promise.all([
     getQuranProgress(userId),
     getPodcastProgress(userId),
+    getVideoProgress(userId),
     getBookProgress(userId),
   ]);
 
@@ -62,6 +64,31 @@ export async function getLibraryContinue(userId: string) {
       updatedAt: row.updatedAt,
     }));
 
+  // One continue row per series — newest unfinished (or last watched if all completed)
+  const videosBySeries = new Map<
+    string,
+    NonNullable<(typeof videoRows)[number]>
+  >();
+  for (const row of videoRows) {
+    if (!row) continue;
+    if (!videosBySeries.has(row.seriesSlug)) {
+      videosBySeries.set(row.seriesSlug, row);
+    }
+  }
+  const videos = [...videosBySeries.values()]
+    .slice(0, CONTINUE_LIMIT)
+    .map((row) => ({
+      episodeId: row.episodeId,
+      seriesSlug: row.seriesSlug,
+      seriesTitle: row.seriesTitle,
+      title: row.title,
+      episodeNumber: row.episodeNumber,
+      hostOrScholar: row.hostOrScholar,
+      coverUrl: row.coverUrl,
+      completed: row.completed,
+      updatedAt: row.updatedAt,
+    }));
+
   const books = bookRows
     .filter((row): row is NonNullable<(typeof bookRows)[number]> => Boolean(row))
     .slice(0, CONTINUE_LIMIT)
@@ -74,7 +101,7 @@ export async function getLibraryContinue(userId: string) {
       updatedAt: row.updatedAt,
     }));
 
-  return { quran, podcasts, books };
+  return { quran, podcasts, videos, books };
 }
 
 export async function getLibraryFavorites(userId: string) {

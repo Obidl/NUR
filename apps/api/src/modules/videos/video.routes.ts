@@ -14,6 +14,7 @@ import {
   listSeriesQuerySchema,
   updateEpisodeBodySchema,
   updateSeriesBodySchema,
+  upsertVideoProgressBodySchema,
 } from './video.validation.js';
 import { setStatusBodySchema } from '../admin/admin.validation.js';
 
@@ -30,6 +31,13 @@ videosRouter.get(
   '/episodes/:id',
   validateParams(z.object({ id: z.string().min(1) })),
   videoController.getEpisode,
+);
+videosRouter.get('/progress', authenticate, videoController.getProgress);
+videosRouter.put(
+  '/progress',
+  authenticate,
+  validateBody(upsertVideoProgressBodySchema),
+  videoController.upsertProgress,
 );
 
 const editorGuard = [authenticate, authorize('editor', 'admin')] as const;

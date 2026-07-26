@@ -5,6 +5,7 @@ import type {
   CreateSeriesBody,
   UpdateEpisodeBody,
   UpdateSeriesBody,
+  UpsertVideoProgressBody,
 } from './video.validation.js';
 
 export async function listSeries(req: Request, res: Response, next: NextFunction) {
@@ -36,6 +37,29 @@ export async function getEpisode(req: Request, res: Response, next: NextFunction
   try {
     const params = (req.validatedParams ?? req.params) as { id: string };
     const data = await videoService.getPublishedEpisodeById(String(params.id));
+    res.status(200).json({ data });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getProgress(req: Request, res: Response, next: NextFunction) {
+  try {
+    const episodeId =
+      typeof req.query.episodeId === 'string' ? req.query.episodeId : undefined;
+    const data = await videoService.getProgress(req.user!.id, episodeId);
+    res.status(200).json({ data });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function upsertProgress(req: Request, res: Response, next: NextFunction) {
+  try {
+    const data = await videoService.upsertProgress(
+      req.user!.id,
+      req.body as UpsertVideoProgressBody,
+    );
     res.status(200).json({ data });
   } catch (error) {
     next(error);

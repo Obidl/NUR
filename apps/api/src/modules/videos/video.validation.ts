@@ -73,7 +73,13 @@ export const adminListQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 });
 
+export const upsertVideoProgressBodySchema = z.object({
+  episodeId: z.string().min(1),
+  completed: z.boolean().optional(),
+});
+
 export type CreateSeriesBody = z.infer<typeof createSeriesBodySchema>;
 export type UpdateSeriesBody = z.infer<typeof updateSeriesBodySchema>;
 export type CreateEpisodeBody = z.infer<typeof createEpisodeBodySchema>;
 export type UpdateEpisodeBody = z.infer<typeof updateEpisodeBodySchema>;
+export type UpsertVideoProgressBody = z.infer<typeof upsertVideoProgressBodySchema>;
