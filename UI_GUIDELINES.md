@@ -75,10 +75,12 @@ Do not place detached labels, floating badges, promo stickers, info chips, or ca
 
 **Default: no cards.**
 
-Cards are allowed only when they are the container for a **user interaction** (e.g., tappable series row that needs a hit target grouping).  
+Cards are allowed only when they are the container for a **user interaction** (e.g., tappable series row that needs a hit target grouping, admin form panels, empty/error surfaces).  
 If removing border/shadow/background/radius does not hurt interaction or understanding, it should not be a card.
 
-Never use cards in the hero.
+Never use cards in the hero. Prefer `.nur-list` / `.nur-list-row` for catalogs.
+
+**Calm craft:** avoid nested card-in-card. One surface per interactive job; lists inside a page shell without wrapping every row in its own card.
 
 ### 3.7 One job per section
 

@@ -128,14 +128,18 @@ export function HomePage() {
 
   if (!path || !today) {
     return (
-      <section className="nur-atmosphere mx-auto max-w-lg px-4 py-16">
-        <p className="font-display text-4xl tracking-[0.2em]">NUR</p>
-        <h1 className="mt-6 text-2xl font-medium">Assalomu alaykum</h1>
-        <p className="mt-3 text-nur-muted">Hali o‘quv yo‘li yo‘q.</p>
-        <Button to="/quran" className="mt-6">
+      <section className="nur-atmosphere mx-auto max-w-lg px-4 py-20">
+        <p className="font-display text-4xl tracking-[0.22em]">NUR</p>
+        <h1 className="mt-8 font-display text-2xl font-medium tracking-[-0.02em]">
+          Assalomu alaykum
+        </h1>
+        <p className="mt-3 max-w-sm text-sm leading-relaxed text-nur-muted">
+          Hali o‘quv yo‘li yo‘q.
+        </p>
+        <Button to="/quran" className="mt-8">
           Qur’onga o‘tish
         </Button>
-        {error ? <p className="mt-4 text-sm text-[var(--nur-danger)]">{error}</p> : null}
+        {error ? <p className="mt-5 text-sm text-[var(--nur-danger)]">{error}</p> : null}
       </section>
     );
   }
@@ -149,7 +153,7 @@ export function HomePage() {
         animate={{ opacity: 1 }}
         transition={{ duration: reduceMotion ? 0 : 0.6 }}
       >
-        <div className="absolute left-1/2 top-[-8%] h-[40vmax] w-[70vmax] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,var(--nur-lamp-soft)_0%,transparent_70%)] opacity-70" />
+        <div className="absolute left-1/2 top-[-8%] h-[40vmax] w-[70vmax] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,var(--nur-lamp-glow)_0%,transparent_72%)] opacity-80" />
       </motion.div>
 
       <motion.div

@@ -226,24 +226,24 @@ export function SurahReaderPage() {
         initial={reduceMotion ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
-        className="mx-auto max-w-3xl px-4 pt-6 pb-28 md:px-6"
+        className="mx-auto max-w-3xl px-4 pt-8 pb-32 md:px-6"
       >
-        <div className="mb-6 flex items-start justify-between gap-3">
+        <div className="mb-8 flex items-start justify-between gap-4">
           <div>
             <Link
               to="/quran"
-              className="mb-3 inline-flex items-center gap-1 text-sm text-nur-muted hover:text-nur-ink"
+              className="mb-4 inline-flex items-center gap-1.5 text-sm text-nur-muted transition-colors hover:text-nur-ink"
             >
               <ArrowLeft size={16} />
               Surahlar
             </Link>
-            <h1 className="text-xl font-medium md:text-2xl">
+            <h1 className="font-display text-xl font-medium tracking-[-0.02em] md:text-2xl">
               {detail.surah.number}. {detail.surah.nameUz ?? detail.surah.nameLatin}
             </h1>
-            <p className="mt-1 font-quran text-2xl" dir="rtl" lang="ar">
+            <p className="mt-2 font-quran text-2xl leading-relaxed" dir="rtl" lang="ar">
               {detail.surah.nameArabic}
             </p>
-            <p className="mt-2 text-xs text-nur-muted">
+            <p className="mt-3 text-xs leading-relaxed text-[var(--nur-quran-muted)]">
               {detail.surah.ayahCount} oyat
               {translatorName
                 ? ` · Tarjima: ${translatorName} (kirill, uz.sodik)`
@@ -252,7 +252,7 @@ export function SurahReaderPage() {
           </div>
           <button
             type="button"
-            className="rounded-[var(--radius-s)] border border-nur-line px-3 py-2 text-sm text-nur-muted"
+            className="rounded-[var(--radius-m)] px-3 py-2 text-sm text-[var(--nur-quran-muted)] transition-colors hover:bg-black/5"
             onClick={() => setSettingsOpen((open) => !open)}
           >
             Sozlama
@@ -260,29 +260,30 @@ export function SurahReaderPage() {
         </div>
 
         {settingsOpen ? (
-          <div className="mb-6 space-y-4 border border-nur-line bg-nur-elevated/70 p-4">
+          <div className="mb-8 space-y-5 rounded-[var(--radius-l)] border border-nur-line/70 bg-nur-elevated/80 p-5">
             <label className="block text-sm">
-              <span className="mb-1 block text-nur-muted">Shrift: {fontSize}px</span>
+              <span className="mb-2 block text-nur-muted">Shrift: {fontSize}px</span>
               <input
                 type="range"
                 min={16}
                 max={40}
                 value={fontSize}
                 onChange={(event) => setFontSize(Number(event.target.value))}
-                className="w-full"
+                className="w-full accent-[var(--nur-lamp)]"
               />
             </label>
-            <label className="flex items-center gap-2 text-sm text-nur-muted">
+            <label className="flex items-center gap-2.5 text-sm text-nur-muted">
               <input
                 type="checkbox"
                 checked={showTranslation}
                 onChange={(event) => setShowTranslation(event.target.checked)}
+                className="rounded border-nur-line"
               />
               O‘zbek tarjimasini ko‘rsatish
               <span className="text-nur-faint"> (kirill)</span>
             </label>
             <fieldset className="block text-sm">
-              <legend className="mb-2 text-nur-muted">O‘qish foni</legend>
+              <legend className="mb-2.5 text-nur-muted">O‘qish foni</legend>
               <div className="grid grid-cols-3 gap-2">
                 {(
                   [
@@ -296,10 +297,10 @@ export function SurahReaderPage() {
                     type="button"
                     onClick={() => setReaderTheme(item.id)}
                     className={cx(
-                      'rounded-[var(--radius-s)] border px-2 py-2 text-xs font-medium',
+                      'rounded-[var(--radius-m)] border px-2 py-2.5 text-xs font-medium transition-colors',
                       readerTheme === item.id
                         ? 'border-nur-lamp bg-nur-lamp-soft text-nur-lamp-ink'
-                        : 'border-nur-line text-nur-muted',
+                        : 'border-nur-line text-nur-muted hover:bg-nur-sunken/50',
                     )}
                   >
                     {item.label}
@@ -308,11 +309,11 @@ export function SurahReaderPage() {
               </div>
             </fieldset>
             <label className="block text-sm">
-              <span className="mb-1 block text-nur-muted">Qori</span>
+              <span className="mb-2 block text-nur-muted">Qori</span>
               <select
                 value={selectedReciterId}
                 onChange={(event) => onReciterChange(event.target.value)}
-                className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-bg px-3 py-2"
+                className="nur-input"
               >
                 {reciters.map((reciter) => (
                   <option key={reciter.id} value={reciter.id}>
@@ -322,9 +323,9 @@ export function SurahReaderPage() {
               </select>
             </label>
             {!accessToken ? (
-              <p className="text-xs text-nur-muted">
+              <p className="text-xs leading-relaxed text-nur-muted">
                 Progress va xatcho‘plar uchun{' '}
-                <Link to="/login" className="text-nur-accent">
+                <Link to="/login" className="nur-link">
                   kiring
                 </Link>
                 .
@@ -335,7 +336,7 @@ export function SurahReaderPage() {
 
         {error ? <p className="mb-4 text-sm text-[var(--nur-danger)]">{error}</p> : null}
 
-        <div className="mb-4 flex flex-wrap gap-2">
+        <div className="mb-6 flex flex-wrap gap-2">
           <Button
             type="button"
             variant="secondary"

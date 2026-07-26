@@ -198,19 +198,19 @@ export function BookChapterReaderPage() {
   if (!detail) return null;
 
   return (
-    <section className="mx-auto max-w-2xl px-4 py-8 nur-fade-in md:px-6 md:py-12">
-      <div className="mb-8 flex items-start justify-between gap-3">
+    <section className="mx-auto max-w-2xl px-4 py-10 nur-fade-in md:px-6 md:py-14">
+      <div className="mb-10 flex items-start justify-between gap-3">
         <div>
           <DetailBackLink to={`/books/${detail.book.slug}`}>{detail.book.title}</DetailBackLink>
-          <h1 className="mt-4 text-2xl font-semibold tracking-[-0.02em] md:text-[1.75rem]">
+          <h1 className="mt-5 font-display text-2xl font-medium tracking-[-0.025em] md:text-[1.75rem]">
             {detail.chapter.title}
           </h1>
-          <p className="mt-2 text-xs text-nur-muted">
+          <p className="mt-2.5 text-xs leading-relaxed text-nur-muted">
             {detail.book.authors.join(', ')}
             {detail.book.translator ? ` · tarj. ${detail.book.translator}` : ''}
           </p>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           <button
             type="button"
             className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-m)] text-nur-lamp transition-colors duration-200 hover:bg-nur-lamp-soft"
@@ -238,12 +238,10 @@ export function BookChapterReaderPage() {
       ) : null}
 
       {selection ? (
-        <div className="nur-surface mb-6 px-4 py-4">
-          <p className="text-[11px] font-medium uppercase tracking-wide text-nur-muted">
-            Tanlangan matn
-          </p>
-          <p className="mt-2 font-reading text-sm leading-7 text-nur-ink">“{selection}”</p>
-          <label className="mt-3 block text-sm font-medium text-nur-ink" htmlFor="highlight-note">
+        <div className="nur-surface mb-8 px-5 py-5">
+          <p className="nur-section-label">Tanlangan matn</p>
+          <p className="mt-2.5 font-reading text-sm leading-7 text-nur-ink">“{selection}”</p>
+          <label className="mt-4 block text-sm font-medium text-nur-ink" htmlFor="highlight-note">
             Shaxsiy eslatma (ixtiyoriy)
           </label>
           <textarea
@@ -278,23 +276,23 @@ export function BookChapterReaderPage() {
 
       <article
         ref={articleRef}
-        className="font-reading text-base leading-8 text-nur-ink md:text-[1.125rem] md:leading-9"
+        className="font-reading max-w-prose text-[1.0625rem] leading-9 text-nur-ink md:text-[1.125rem] md:leading-[1.85]"
         dangerouslySetInnerHTML={{ __html: safeHtml }}
         onMouseUp={captureSelection}
         onTouchEnd={captureSelection}
       />
 
       {accessToken ? (
-        <div className="mt-12 border-t border-nur-line pt-8">
+        <div className="mt-14 border-t border-nur-line/70 pt-10">
           <h2 className="text-sm font-semibold tracking-[-0.01em] text-nur-ink">Highlightlar</h2>
           {highlights.length === 0 ? (
-            <p className="mt-2 text-sm text-nur-muted">
+            <p className="mt-3 text-sm leading-relaxed text-nur-muted">
               Matndan belgilang yoki Highlighter tugmasini bosing.
             </p>
           ) : (
-            <ul className="mt-4 space-y-4">
+            <ul className="mt-5 space-y-3">
               {highlights.map((row) => (
-                <li key={row.id} className="rounded-[var(--radius-l)] bg-nur-lamp-soft/40 px-4 py-3">
+                <li key={row.id} className="rounded-[var(--radius-l)] bg-nur-lamp-soft/30 px-4 py-3.5">
                   <p className="font-reading text-sm leading-7 text-nur-ink">“{row.selectedText}”</p>
                   {editingId === row.id ? (
                     <div className="mt-2">

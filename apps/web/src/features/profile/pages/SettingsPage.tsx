@@ -58,7 +58,7 @@ export function SettingsPage() {
 
   return (
     <PageShell title="Profil" description={currentUser.email} className="pb-24 md:pb-8">
-      <div className="nur-surface max-w-md space-y-5 px-5 py-6 md:px-6">
+      <div className="nur-surface max-w-md space-y-6 px-5 py-7 md:px-6">
         <Field label="Ism">
           <Input
             value={displayName}

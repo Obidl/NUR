@@ -120,7 +120,7 @@ export function SurahListPage() {
       {continueHref && progress ? (
         <Link
           to={continueHref}
-          className="nur-surface mb-6 flex items-center justify-between gap-3 px-4 py-3.5 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-sm)]"
+          className="nur-surface mb-8 flex items-center justify-between gap-3 px-5 py-4 transition-colors hover:bg-nur-sunken/30"
         >
           <span className="text-sm text-nur-muted">Davom etish</span>
           <span className="min-w-0 text-right text-sm font-semibold text-nur-accent">
@@ -140,7 +140,7 @@ export function SurahListPage() {
       ) : null}
 
       <div
-        className="mb-4 flex gap-1 rounded-[var(--radius-l)] border border-nur-line bg-nur-elevated p-1"
+        className="mb-5 flex gap-1 rounded-[var(--radius-l)] bg-nur-sunken/60 p-1"
         role="tablist"
         aria-label="Qur’on qidiruv turi"
       >
@@ -155,9 +155,9 @@ export function SurahListPage() {
               setError(null);
             }}
             className={cx(
-              'flex-1 rounded-[var(--radius-m)] px-3 py-2 text-sm font-medium transition-colors',
+              'flex-1 rounded-[var(--radius-m)] px-3 py-2.5 text-sm font-medium transition-colors',
               mode === item.id
-                ? 'bg-nur-sunken text-nur-ink shadow-[var(--shadow-xs)]'
+                ? 'bg-nur-elevated text-nur-ink'
                 : 'text-nur-muted hover:text-nur-ink',
             )}
           >

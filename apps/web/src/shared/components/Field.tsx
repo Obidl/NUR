@@ -12,11 +12,13 @@ type FieldProps = {
 export function Field({ label, hint, error, className, children }: FieldProps) {
   return (
     <label className={cx('block', className)}>
-      <span className="mb-2 block text-sm font-medium text-nur-ink">{label}</span>
+      <span className="mb-2 block text-sm font-medium leading-snug text-nur-ink">{label}</span>
       {children}
-      {hint && !error ? <span className="mt-1.5 block text-xs text-nur-faint">{hint}</span> : null}
+      {hint && !error ? (
+        <span className="mt-2 block text-xs leading-relaxed text-nur-faint">{hint}</span>
+      ) : null}
       {error ? (
-        <span className="mt-1.5 block text-sm text-[var(--nur-danger)]" role="alert">
+        <span className="mt-2 block text-sm leading-relaxed text-[var(--nur-danger)]" role="alert">
           {error}
         </span>
       ) : null}
@@ -31,7 +33,7 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & {
 export function Input({ className, invalid, ...props }: InputProps) {
   return (
     <input
-      className={cx('nur-input', invalid && 'border-[var(--nur-danger)]', className)}
+      className={cx('nur-input', className)}
       aria-invalid={invalid || undefined}
       {...props}
     />
@@ -45,7 +47,7 @@ type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
 export function TextArea({ className, invalid, ...props }: TextAreaProps) {
   return (
     <textarea
-      className={cx('nur-input', invalid && 'border-[var(--nur-danger)]', className)}
+      className={cx('nur-input', className)}
       aria-invalid={invalid || undefined}
       {...props}
     />

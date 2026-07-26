@@ -170,57 +170,54 @@ export function TodayMission({
   }
 
   return (
-    <div className="mx-auto w-full max-w-lg space-y-10">
+    <div className="mx-auto w-full max-w-lg space-y-12">
       <header className="relative pr-12">
         <Link
           to="/settings"
-          className="absolute right-0 top-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-nur-line bg-nur-elevated text-nur-muted"
+          className="absolute right-0 top-0 inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-m)] text-nur-muted transition-colors hover:bg-nur-sunken hover:text-nur-ink"
           aria-label="Sozlamalar"
         >
           <Settings size={18} strokeWidth={1.75} />
         </Link>
         <p className="text-xs text-nur-lamp">{dates.hijri ? `${dates.hijri}` : ''}</p>
-        <p className="mt-0.5 text-sm text-nur-muted">{dates.gregorian}</p>
-        <p className="mt-2 font-display text-sm tracking-[0.2em] text-nur-faint">NUR</p>
-        <h1 className="mt-3 text-3xl font-medium text-nur-ink">
+        <p className="mt-1 text-sm leading-relaxed text-nur-muted">{dates.gregorian}</p>
+        <p className="mt-4 font-display text-sm tracking-[0.22em] text-nur-ink">NUR</p>
+        <h1 className="mt-4 font-display text-3xl font-medium tracking-[-0.02em] text-nur-ink md:text-[2rem]">
           Assalomu alaykum{greetingName ? `, ${greetingName}` : ''}
         </h1>
-        <p className="mt-2 text-sm text-nur-muted">
+        <p className="mt-3 max-w-sm text-sm leading-relaxed text-nur-muted">
           Bugungi yo‘l Bomdoddan keyin boshlanadi.
           {dayLabel ? ` Mavzu: ${dayLabel}.` : ''}
         </p>
       </header>
 
-      <section
-        aria-labelledby="mission-heading"
-        className="rounded-[var(--radius-l)] border border-nur-line bg-nur-elevated px-5 py-6"
-      >
-        <h2 id="mission-heading" className="text-center text-sm font-medium text-nur-muted">
+      <section aria-labelledby="mission-heading" className="nur-surface px-5 py-7 md:px-6">
+        <h2 id="mission-heading" className="nur-section-label text-center">
           Bugungi vazifa
         </h2>
-        <div className="mt-4">
+        <div className="mt-5">
           <ProgressRing percent={percent} label="bugun" />
         </div>
-        <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs text-nur-faint">
+        <div className="mt-6 grid grid-cols-3 gap-3 text-center text-xs text-nur-faint">
           <div>
             <p className="text-sm font-medium tabular-nums text-nur-ink">
               Kun {dayIndex}/{dayTotal}
             </p>
-            <p>Yo‘l</p>
+            <p className="mt-0.5">Yo‘l</p>
           </div>
           <div>
             <p className="text-sm font-medium tabular-nums text-nur-ink">~{minutes || '—'}m</p>
-            <p>Bugun</p>
+            <p className="mt-0.5">Bugun</p>
           </div>
           <div>
             <p className="text-sm font-medium tabular-nums text-nur-ink">
               {lessons.filter((l) => completedIds.has(l.id)).length}/{lessons.length}
             </p>
-            <p>Qadam</p>
+            <p className="mt-0.5">Qadam</p>
           </div>
         </div>
 
-        <ul className="mt-6 space-y-2">
+        <ul className="mt-7 space-y-1">
           {lessons.map((lesson) => {
             const done = completedIds.has(lesson.id);
             const Icon = lessonIcon(lesson.targetType);
@@ -231,13 +228,13 @@ export function TodayMission({
               <li key={lesson.id}>
                 <div
                   className={cx(
-                    'flex w-full items-center gap-2 rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/50 px-2 py-2',
-                    done && 'opacity-70',
+                    'flex w-full items-center gap-1 rounded-[var(--radius-m)] px-1 py-1.5',
+                    done && 'opacity-65',
                   )}
                 >
                   <button
                     type="button"
-                    className="flex min-w-0 flex-1 items-center gap-3 px-1 py-1 text-left"
+                    className="flex min-w-0 flex-1 items-center gap-3 rounded-[var(--radius-m)] px-2 py-2 text-left transition-colors hover:bg-nur-sunken/60"
                     onClick={() => scrollToSection(targetSection)}
                   >
                     <Icon
@@ -247,11 +244,11 @@ export function TodayMission({
                       aria-hidden
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs uppercase tracking-wide text-nur-faint">{slot}</p>
-                      <p className="truncate text-sm font-medium text-nur-ink">
+                      <p className="text-xs text-nur-faint">{slot}</p>
+                      <p className="truncate text-sm font-medium tracking-[-0.01em] text-nur-ink">
                         {displayTitle(lesson.title)}
                       </p>
-                      <p className="truncate text-xs text-nur-faint">
+                      <p className="truncate text-xs leading-relaxed text-nur-faint">
                         {lesson.targetLabel
                           ? displayTitle(lesson.targetLabel)
                           : LESSON_KIND_LABEL[lesson.targetType]}
@@ -278,9 +275,9 @@ export function TodayMission({
           })}
         </ul>
         {requireLogin ? (
-          <p className="mt-3 text-center text-xs text-nur-faint">
+          <p className="mt-4 text-center text-xs leading-relaxed text-nur-faint">
             Belgilash uchun{' '}
-            <Link to="/login" className="text-nur-accent">
+            <Link to="/login" className="nur-link">
               kirish
             </Link>{' '}
             kerak.
@@ -385,15 +382,15 @@ export function TodayMission({
       ) : null}
 
       <section id="routine-progress" className="pb-4">
-        <h2 className="text-xl font-medium text-nur-ink">Progress</h2>
-        <div className="mt-4 rounded-[var(--radius-l)] border border-nur-line bg-nur-elevated px-5 py-6">
+        <h2 className="font-display text-xl font-medium tracking-[-0.02em] text-nur-ink">Progress</h2>
+        <div className="mt-5 nur-surface px-5 py-7">
           <ProgressRing percent={pathPercent} label="15 kun" />
-          <p className="mt-4 text-center text-sm text-nur-muted">
+          <p className="mt-5 text-center text-sm leading-relaxed text-nur-muted">
             Kun {dayIndex}/{dayTotal}
             {dayLabel ? ` · ${dayLabel}` : ''}
           </p>
-          <div className="mt-4">
-            <div className="mb-1 flex justify-between text-xs text-nur-faint">
+          <div className="mt-5">
+            <div className="mb-1.5 flex justify-between text-xs text-nur-faint">
               <span>Yo‘l bo‘yicha</span>
               <span>{pathPercent}%</span>
             </div>
@@ -404,8 +401,8 @@ export function TodayMission({
               />
             </div>
           </div>
-          <p className="mt-6 text-center">
-            <Link to={`/curriculum/${pathSlug}`} className="text-sm text-nur-muted">
+          <p className="mt-7 text-center">
+            <Link to={`/curriculum/${pathSlug}`} className="nur-link text-sm">
               Butun yo‘lni ko‘rish →
             </Link>
           </p>
@@ -446,10 +443,10 @@ function RoutineBlock({
 }) {
   return (
     <section id={id} className="scroll-mt-24">
-      <h2 className="text-xl font-medium text-nur-ink">{title}</h2>
-      <div className="mt-4 rounded-[var(--radius-l)] border border-nur-line bg-nur-elevated px-5 py-5">
+      <h2 className="font-display text-xl font-medium tracking-[-0.02em] text-nur-ink">{title}</h2>
+      <div className="mt-5 nur-surface px-5 py-6">
         {children}
-        <div className="mt-6 flex flex-col gap-2">
+        <div className="mt-7 flex flex-col gap-2.5">
           {onPrimaryAction ? (
             <Button
               type="button"

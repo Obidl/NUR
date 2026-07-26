@@ -6,12 +6,12 @@ type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 const variantClass: Record<Variant, string> = {
   primary:
-    'bg-nur-lamp text-nur-lamp-ink shadow-[var(--shadow-sm)] hover:brightness-[0.97] hover:shadow-[var(--shadow-md)] active:scale-[0.98]',
+    'bg-nur-lamp text-nur-lamp-ink shadow-[var(--shadow-xs)] hover:brightness-[0.97] hover:shadow-[var(--shadow-sm)] active:scale-[0.98]',
   secondary:
-    'bg-nur-elevated text-nur-ink border border-nur-line shadow-[var(--shadow-xs)] hover:bg-nur-sunken hover:border-[var(--nur-line-strong)] active:scale-[0.98]',
-  ghost: 'bg-transparent text-nur-ink hover:bg-nur-sunken active:scale-[0.98]',
+    'bg-nur-elevated text-nur-ink border border-nur-line hover:bg-nur-sunken hover:border-[var(--nur-line-strong)] active:scale-[0.98]',
+  ghost: 'bg-transparent text-nur-ink hover:bg-nur-sunken/80 active:scale-[0.98]',
   danger:
-    'bg-[var(--nur-danger)] text-white shadow-[var(--shadow-sm)] hover:brightness-95 active:scale-[0.98]',
+    'bg-[var(--nur-danger)] text-white shadow-[var(--shadow-xs)] hover:brightness-95 active:scale-[0.98]',
 };
 
 const baseClass =

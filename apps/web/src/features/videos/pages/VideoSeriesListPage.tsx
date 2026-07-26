@@ -46,7 +46,7 @@ function SeriesRow({ series }: { series: VideoSeriesCard }) {
       <Link to={`/videos/${series.slug}`} className="nur-list-row">
         <CoverImage
           src={series.coverUrl}
-          className="h-14 w-24 shrink-0 rounded-[var(--radius-m)] object-cover shadow-[var(--shadow-xs)]"
+          className="h-14 w-24 shrink-0 rounded-[var(--radius-m)] object-cover "
         />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold tracking-[-0.01em]">{series.title}</p>
@@ -113,7 +113,7 @@ export function VideoSeriesListPage() {
           >
             <CoverImage
               src={continueItem.coverUrl}
-              className="h-16 w-28 shrink-0 rounded-[var(--radius-m)] object-cover shadow-[var(--shadow-xs)]"
+              className="h-16 w-28 shrink-0 rounded-[var(--radius-m)] object-cover "
             />
             <div className="min-w-0">
               <p className="text-xs uppercase tracking-wide text-nur-lamp">Oxirgi ko‘rilgan</p>

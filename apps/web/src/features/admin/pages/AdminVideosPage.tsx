@@ -175,7 +175,7 @@ export function AdminVideosPage() {
   return (
     <section className="space-y-8">
       <header>
-        <h1 className="text-xl font-medium">Videolar CMS</h1>
+        <h1 className="nur-page-title !text-xl">Videolar CMS</h1>
         <p className="mt-1 text-sm text-nur-muted">
           YouTube video ID / URL. Embed — qayta host yo‘q.
         </p>
@@ -271,7 +271,7 @@ export function AdminVideosPage() {
                 {expandedId === item.id ? 'Epizodlarni yopish' : 'Epizodlar'}
               </Button>
               {expandedId === item.id ? (
-                <div className="space-y-5 rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/40 p-3">
+                <div className="space-y-5 nur-surface bg-nur-sunken/30 p-4">
                   <ul className="space-y-4">
                     {episodes.map((ep) => (
                       <li

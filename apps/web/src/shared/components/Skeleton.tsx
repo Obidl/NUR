@@ -32,7 +32,7 @@ type ErrorStateProps = {
 export function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
     <div
-      className="nur-surface flex flex-col items-start gap-4 px-5 py-5 md:flex-row md:items-center md:justify-between"
+      className="nur-error flex flex-col items-start gap-4 px-5 py-5 md:flex-row md:items-center md:justify-between md:px-6"
       role="alert"
     >
       <p className="text-sm leading-relaxed text-[var(--nur-danger)]">{message}</p>
@@ -40,7 +40,7 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
         <button
           type="button"
           onClick={onRetry}
-          className="shrink-0 rounded-[var(--radius-m)] border border-nur-line bg-nur-elevated px-4 py-2 text-sm font-medium text-nur-ink transition-[background-color,transform] duration-200 hover:bg-nur-sunken active:scale-[0.98]"
+          className="shrink-0 rounded-[var(--radius-m)] border border-nur-line bg-transparent px-4 py-2.5 text-sm font-medium text-nur-ink transition-[background-color,transform] duration-200 hover:bg-nur-sunken/80 active:scale-[0.98]"
         >
           Qayta urinish
         </button>

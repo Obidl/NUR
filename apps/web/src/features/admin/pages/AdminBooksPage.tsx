@@ -175,7 +175,7 @@ export function AdminBooksPage() {
   return (
     <section className="space-y-8">
       <header>
-        <h1 className="text-xl font-medium">Kitoblar CMS</h1>
+        <h1 className="nur-page-title !text-xl">Kitoblar CMS</h1>
         <p className="mt-1 text-sm text-nur-muted">
           Kitob + bob yaratish, HTML matn, publish. Faqat litsenziyalangan matn.
         </p>
@@ -193,14 +193,14 @@ export function AdminBooksPage() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Sarlavha"
-          className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+          className="nur-input"
         />
         <input
           required
           value={authors}
           onChange={(e) => setAuthors(e.target.value)}
           placeholder="Mualliflar (vergul bilan)"
-          className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+          className="nur-input"
         />
         <textarea
           required
@@ -208,14 +208,14 @@ export function AdminBooksPage() {
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Tavsif (kamida 10 belgi)"
           rows={3}
-          className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+          className="nur-input"
         />
         <input
           required
           value={coverUrl}
           onChange={(e) => setCoverUrl(e.target.value)}
           placeholder="Cover URL"
-          className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+          className="nur-input"
         />
         <Button type="submit" disabled={busy}>
           Draft yaratish
@@ -267,7 +267,7 @@ export function AdminBooksPage() {
                 </Button>
               </div>
               {expandedId === item.id ? (
-                <div className="space-y-5 rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/40 p-3">
+                <div className="space-y-5 nur-surface bg-nur-sunken/30 p-4">
                   <ul className="space-y-4">
                     {chapters.map((ch) => {
                       const isStub = ch.body.includes(STUB_HINT) || ch.body.trim().length < 40;
@@ -294,7 +294,7 @@ export function AdminBooksPage() {
                             }
                             rows={4}
                             placeholder="HTML matn (litsenziyalangan)"
-                            className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 font-mono text-xs"
+                            className="nur-input font-mono text-xs"
                           />
                           <div className="flex flex-wrap gap-2">
                             <Button
@@ -338,7 +338,7 @@ export function AdminBooksPage() {
                       value={chTitle}
                       onChange={(e) => setChTitle(e.target.value)}
                       placeholder="Bob sarlavhasi"
-                      className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+                      className="nur-input"
                     />
                     <input
                       required
@@ -355,7 +355,7 @@ export function AdminBooksPage() {
                       onChange={(e) => setChBody(e.target.value)}
                       placeholder="HTML matn"
                       rows={3}
-                      className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 font-mono text-xs"
+                      className="nur-input font-mono text-xs"
                     />
                     <Button type="submit" disabled={busy}>
                       {item.status === 'published'

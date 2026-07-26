@@ -124,7 +124,7 @@ export function PodcastSeriesListPage() {
               <Link to={`/podcasts/${series.slug}`} className="nur-list-row">
                 <CoverImage
                   src={series.coverUrl}
-                  className="h-14 w-14 shrink-0 rounded-[var(--radius-m)] object-cover shadow-[var(--shadow-xs)]"
+                  className="h-14 w-14 shrink-0 rounded-[var(--radius-m)] object-cover "
                 />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold tracking-[-0.01em]">{series.title}</p>

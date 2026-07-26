@@ -39,9 +39,9 @@ export function LoginPage() {
   }
 
   return (
-    <div className="nur-surface px-6 py-8 shadow-[var(--shadow-sm)] md:px-8 md:py-10">
-      <p className="font-display text-2xl font-semibold tracking-[0.18em]">NUR</p>
-      <h1 className="mt-5 text-xl font-semibold tracking-[-0.02em]">Kirish</h1>
+    <div className="nur-surface px-6 py-9 md:px-8 md:py-11">
+      <p className="font-display text-2xl font-semibold tracking-[0.2em]">NUR</p>
+      <h1 className="mt-6 text-lg font-medium tracking-[-0.02em] text-nur-muted">Kirish</h1>
       <p className="mt-2 text-sm leading-relaxed text-nur-muted">
         Hisobingizga kiring va bugungi yo‘lni davom ettiring.
       </p>

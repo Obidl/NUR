@@ -1,25 +1,26 @@
 :root {
-  /* Atmosphere */
-  --nur-bg: #f3f6f8;
+  /* Atmosphere — cooler, quieter base */
+  --nur-bg: #f4f7f9;
   --nur-bg-elevated: #ffffff;
-  --nur-bg-sunken: #e8eef2;
+  --nur-bg-sunken: #e9eef2;
   --nur-ink: #121820;
-  --nur-ink-muted: #5b6775;
+  --nur-ink-muted: #5e6a78;
   --nur-ink-faint: #9aa6b2;
 
-  /* Brand / lamp */
+  /* Brand / lamp — CTA signal, not wallpaper */
   --nur-lamp: #c58b2d;
-  --nur-lamp-soft: #f0dfc0;
+  --nur-lamp-soft: #f5ebda;
   --nur-lamp-ink: #3a2a10;
+  --nur-lamp-glow: color-mix(in srgb, var(--nur-lamp-soft) 55%, transparent);
 
   /* Interactive */
   --nur-accent: #1f6f78;
-  --nur-accent-soft: #d5ecee;
+  --nur-accent-soft: #e2f0f1;
   --nur-focus: #1f6f78;
 
-  /* Lines */
-  --nur-line: #d5dde4;
-  --nur-line-strong: #b7c2cc;
+  /* Lines — softer edges */
+  --nur-line: #dde4ea;
+  --nur-line-strong: #c0cad4;
 
   /* Feedback */
   --nur-success: #2f6d4f;
@@ -45,6 +46,24 @@
   --space-7: 48px;
   --space-8: 64px;
 
+  /* Type scale */
+  --text-display: 2.5rem;
+  --text-display-lh: 1.15;
+  --text-h1: 2rem;
+  --text-h1-lh: 1.2;
+  --text-h2: 1.5rem;
+  --text-h2-lh: 1.3;
+  --text-h3: 1.25rem;
+  --text-h3-lh: 1.35;
+  --text-body: 1rem;
+  --text-body-lh: 1.75;
+  --text-body-sm: 0.9375rem;
+  --text-body-sm-lh: 1.65;
+  --text-meta: 0.8125rem;
+  --text-meta-lh: 1.5;
+  --text-label: 0.75rem;
+  --text-label-lh: 1.4;
+
   /* Motion */
   --motion-fast: 150ms;
   --motion-mid: 200ms;
@@ -52,23 +71,24 @@
   --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Radius */
+  /* Radius — avoid pill overuse */
   --radius-s: 8px;
   --radius-m: 12px;
   --radius-l: 16px;
   --radius-xl: 20px;
 
-  /* Elevation */
-  --shadow-xs: 0 1px 2px rgba(12, 18, 28, 0.04);
-  --shadow-sm: 0 1px 3px rgba(12, 18, 28, 0.06), 0 1px 2px rgba(12, 18, 28, 0.04);
-  --shadow-md: 0 8px 24px rgba(12, 18, 28, 0.08), 0 2px 6px rgba(12, 18, 28, 0.04);
+  /* Elevation — prefer xs/sm; md for players/modals only */
+  --shadow-xs: 0 1px 2px rgba(12, 18, 28, 0.03);
+  --shadow-sm: 0 1px 2px rgba(12, 18, 28, 0.04), 0 1px 3px rgba(12, 18, 28, 0.03);
+  --shadow-md: 0 6px 20px rgba(12, 18, 28, 0.07), 0 2px 6px rgba(12, 18, 28, 0.04);
 
   /* Qur’an user preference */
   --quran-font-size: 28px;
 
   color-scheme: light;
   font-family: Manrope, system-ui, sans-serif;
-  line-height: 1.55;
+  font-size: var(--text-body);
+  line-height: var(--text-body-lh);
   font-weight: 400;
   color: var(--nur-ink);
   background-color: var(--nur-bg);
@@ -87,8 +107,9 @@
   --nur-ink-faint: #6d7a86;
 
   --nur-lamp: #d7a34a;
-  --nur-lamp-soft: #3a2f1c;
+  --nur-lamp-soft: #2e281c;
   --nur-lamp-ink: #1a140a;
+  --nur-lamp-glow: color-mix(in srgb, var(--nur-lamp-soft) 70%, transparent);
 
   --nur-accent: #5fb4bc;
   --nur-accent-soft: #163036;
@@ -108,9 +129,9 @@
 
   --nur-overlay: rgba(0, 0, 0, 0.64);
 
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.24);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.28), 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.36), 0 2px 8px rgba(0, 0, 0, 0.24);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.24), 0 1px 2px rgba(0, 0, 0, 0.16);
+  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.32), 0 2px 8px rgba(0, 0, 0, 0.2);
 
   color-scheme: dark;
 }

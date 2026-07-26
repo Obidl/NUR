@@ -60,7 +60,7 @@ export function BookDetailPage() {
         <img
           src={book.coverUrl}
           alt=""
-          className="h-36 w-24 rounded-[var(--radius-xl)] object-cover shadow-[var(--shadow-sm)]"
+          className="h-36 w-24 rounded-[var(--radius-xl)] object-cover"
         />
         <div className="min-w-0">
           <h1 className="nur-page-title !text-[1.5rem] md:!text-[1.75rem]">{book.title}</h1>

@@ -106,7 +106,7 @@ export function SearchPage() {
         </label>
       </form>
 
-      <div className="mb-8 flex flex-wrap gap-2" role="group" aria-label="Tur filteri">
+      <div className="mb-8 flex flex-wrap gap-1.5" role="group" aria-label="Tur filteri">
         {FILTERS.map((filter) => (
           <button
             key={filter.id || 'all'}
@@ -118,8 +118,8 @@ export function SearchPage() {
             className={cx(
               'rounded-[var(--radius-m)] px-3 py-2 text-xs font-medium transition-colors duration-200',
               types === filter.id
-                ? 'bg-nur-sunken text-nur-ink shadow-[var(--shadow-xs)]'
-                : 'text-nur-muted hover:bg-nur-sunken/60 hover:text-nur-ink',
+                ? 'bg-nur-sunken text-nur-ink'
+                : 'text-nur-muted hover:bg-nur-sunken/50 hover:text-nur-ink',
             )}
           >
             {filter.label}
@@ -159,11 +159,9 @@ export function SearchPage() {
             <li key={`${hit.type}-${hit.href}-${hit.title}`}>
               <Link to={hit.href} className="nur-list-row !items-start">
                 <div className="min-w-0">
-                  <p className="text-[11px] font-medium uppercase tracking-wide text-nur-faint">
-                    {TYPE_LABEL[hit.type]}
-                  </p>
+                  <p className="nur-section-label">{TYPE_LABEL[hit.type]}</p>
                   <p className="mt-1 text-sm font-semibold tracking-[-0.01em]">{hit.title}</p>
-                  <p className="mt-1 text-sm text-nur-muted">{hit.snippet}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-nur-muted">{hit.snippet}</p>
                 </div>
               </Link>
             </li>

@@ -29,19 +29,19 @@ export function AyahRow({
     <article
       id={`ayah-${ayah.ayahNumber}`}
       className={cx(
-        'border-b border-nur-line/70 py-6 transition-colors',
-        isActive && 'bg-nur-lamp-soft/40',
+        'border-b border-nur-line/40 py-7 transition-colors md:py-8',
+        isActive && 'bg-nur-lamp-soft/30',
       )}
       onClick={onFocus}
     >
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full border border-nur-line px-2 text-xs text-nur-muted">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full border border-nur-line/60 px-2 text-xs text-[var(--nur-quran-muted)]">
           {ayah.ayahNumber}
         </span>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           <button
             type="button"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-s)] text-nur-accent hover:bg-nur-accent-soft"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-m)] text-nur-accent transition-colors hover:bg-nur-accent-soft"
             aria-label={`${ayah.ayahNumber}-oyatni tinglash`}
             onClick={(event) => {
               event.stopPropagation();
@@ -53,7 +53,7 @@ export function AyahRow({
           {canBookmark ? (
             <button
               type="button"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-s)] text-nur-lamp hover:bg-nur-lamp-soft"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-m)] text-nur-lamp transition-colors hover:bg-nur-lamp-soft"
               aria-label={isBookmarked ? 'Xatcho‘pni olib tashlash' : 'Xatcho‘p qo‘shish'}
               onClick={(event) => {
                 event.stopPropagation();
@@ -67,7 +67,7 @@ export function AyahRow({
       </div>
 
       <p
-        className="font-quran text-right leading-[1.9] text-[var(--nur-quran-ink)]"
+        className="font-quran text-right leading-[2] text-[var(--nur-quran-ink)]"
         dir="rtl"
         lang="ar"
         style={{ fontSize: `${fontSize}px` }}
@@ -77,7 +77,7 @@ export function AyahRow({
 
       {showTranslation && ayah.textUz ? (
         <p
-          className="mt-3 text-sm leading-7 text-nur-muted md:text-base"
+          className="mt-4 max-w-prose text-sm leading-8 text-[var(--nur-quran-muted)] md:text-[0.9375rem]"
           lang="uz-Cyrl"
         >
           {ayah.textUz}

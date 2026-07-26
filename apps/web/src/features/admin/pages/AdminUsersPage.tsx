@@ -39,7 +39,7 @@ export function AdminUsersPage() {
   return (
     <section className="space-y-6">
       <header>
-        <h1 className="text-xl font-medium">Foydalanuvchilar</h1>
+        <h1 className="nur-page-title !text-xl">Foydalanuvchilar</h1>
         <p className="mt-1 text-sm text-nur-muted">Rol va faollik — faqat admin.</p>
       </header>
 

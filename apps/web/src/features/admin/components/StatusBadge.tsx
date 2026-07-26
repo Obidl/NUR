@@ -11,11 +11,11 @@ export function StatusBadge({ status }: { status: string }) {
   return (
     <span
       className={cx(
-        'inline-block rounded-[var(--radius-s)] px-2 py-0.5 text-xs',
-        status === 'published' && 'bg-nur-lamp-soft text-nur-lamp-ink',
-        status === 'in_review' && 'bg-nur-accent-soft text-nur-ink',
+        'inline-block rounded-[var(--radius-s)] px-2 py-0.5 text-[11px] font-medium tracking-wide',
+        status === 'published' && 'bg-nur-accent-soft text-nur-accent',
+        status === 'in_review' && 'bg-nur-sunken text-nur-ink',
         status === 'draft' && 'bg-nur-sunken text-nur-muted',
-        status === 'archived' && 'bg-nur-line text-nur-faint',
+        status === 'archived' && 'bg-transparent text-nur-faint ring-1 ring-nur-line',
       )}
     >
       {LABELS[status] ?? status}

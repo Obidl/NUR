@@ -17,10 +17,10 @@ export function AdminLayout() {
 
   return (
     <div className="min-h-dvh bg-nur-bg text-nur-ink">
-      <header className="sticky top-0 z-30 border-b border-nur-line/80 bg-nur-elevated/80 shadow-[var(--shadow-xs)] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-3.5 md:px-6">
-          <p className="font-display text-sm font-semibold tracking-[0.16em]">NUR Admin</p>
-          <nav className="flex flex-wrap items-center gap-1 text-sm text-nur-muted">
+      <header className="sticky top-0 z-30 border-b border-nur-line/50 bg-nur-elevated/85 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-2.5 md:px-6">
+          <p className="font-display text-sm font-semibold tracking-[0.18em]">NUR Admin</p>
+          <nav className="flex flex-wrap items-center gap-0.5 text-sm text-nur-muted">
             {links.map((item) => (
               <NavLink
                 key={item.to}
@@ -30,8 +30,8 @@ export function AdminLayout() {
                   cx(
                     'rounded-[var(--radius-m)] px-3 py-2 transition-colors duration-200',
                     isActive
-                      ? 'bg-nur-sunken font-medium text-nur-ink'
-                      : 'hover:bg-nur-sunken/70 hover:text-nur-ink',
+                      ? 'bg-nur-sunken/80 font-medium text-nur-ink'
+                      : 'hover:bg-nur-sunken/50 hover:text-nur-ink',
                   )
                 }
               >

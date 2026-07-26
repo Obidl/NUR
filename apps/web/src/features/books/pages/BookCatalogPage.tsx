@@ -118,7 +118,7 @@ export function BookCatalogPage() {
               <Link to={`/books/${book.slug}`} className="nur-list-row">
                 <CoverImage
                   src={book.coverUrl}
-                  className="h-[4.5rem] w-12 shrink-0 rounded-[var(--radius-m)] object-cover shadow-[var(--shadow-xs)]"
+                  className="h-[4.5rem] w-12 shrink-0 rounded-[var(--radius-m)] object-cover "
                 />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold tracking-[-0.01em]">{book.title}</p>

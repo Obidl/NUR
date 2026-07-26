@@ -32,8 +32,8 @@ export function ForgotPasswordPage() {
   }
 
   return (
-    <div className="nur-surface px-6 py-8 shadow-[var(--shadow-sm)] md:px-8 md:py-10">
-      <p className="font-display text-2xl font-semibold tracking-[0.18em]">NUR</p>
+    <div className="nur-surface px-6 py-9 md:px-8 md:py-11">
+      <p className="font-display text-2xl font-semibold tracking-[0.2em]">NUR</p>
       <h1 className="mt-5 text-xl font-semibold tracking-[-0.02em]">Parolni tiklash</h1>
       <p className="mt-2 text-sm leading-relaxed text-nur-muted">Emailingizni kiriting.</p>
 

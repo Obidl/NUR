@@ -187,7 +187,7 @@ export function AdminResearchPage() {
   return (
     <section className="space-y-10">
       <header>
-        <h1 className="text-xl font-medium">Tadqiqot CMS</h1>
+        <h1 className="nur-page-title !text-xl">Tadqiqot CMS</h1>
         <p className="mt-1 text-sm text-nur-muted">
           Nashr uchun kamida bitta manba, muallif va aniq licenseStatus talab qilinadi.
         </p>
@@ -206,7 +206,7 @@ export function AdminResearchPage() {
           value={form.title}
           onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
           placeholder="Sarlavha"
-          className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+          className="nur-input"
         />
         <textarea
           required
@@ -214,7 +214,7 @@ export function AdminResearchPage() {
           onChange={(e) => setForm((f) => ({ ...f, summary: e.target.value }))}
           placeholder="Qisqa xulosa"
           rows={2}
-          className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+          className="nur-input"
         />
         <textarea
           required
@@ -271,7 +271,7 @@ export function AdminResearchPage() {
               setForm((f) => ({ ...f, source: { ...f.source, title: e.target.value } }))
             }
             placeholder="Manba sarlavhasi"
-            className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+            className="nur-input"
           />
           <select
             value={form.source.type}
@@ -284,7 +284,7 @@ export function AdminResearchPage() {
                 },
               }))
             }
-            className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+            className="nur-input"
           >
             <option value="book">book</option>
             <option value="article">article</option>
@@ -300,7 +300,7 @@ export function AdminResearchPage() {
             }
             placeholder="Iqtibos / citation"
             rows={2}
-            className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+            className="nur-input"
           />
         </fieldset>
 

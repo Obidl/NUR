@@ -70,7 +70,7 @@ export function PodcastPlayerBar() {
   if (!audioUrl) return null;
 
   return (
-    <div className="sticky bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-30 border-t border-nur-line/80 bg-nur-elevated/90 px-4 py-3.5 shadow-[0_-8px_24px_rgba(12,18,28,0.06)] backdrop-blur-xl md:bottom-0">
+    <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 border-t border-nur-line/60 bg-nur-elevated/95 px-4 py-3 backdrop-blur-xl md:bottom-0">
       <audio
         ref={audioRef}
         preload="metadata"
@@ -112,7 +112,7 @@ export function PodcastPlayerBar() {
             </select>
             <button
               type="button"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-m)] bg-nur-lamp text-nur-lamp-ink shadow-[var(--shadow-sm)] transition-[transform,filter] duration-200 hover:brightness-[0.97] active:scale-[0.98]"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-m)] bg-nur-lamp text-nur-lamp-ink transition-[transform,filter] duration-200 hover:brightness-[0.97] active:scale-[0.98]"
               aria-label={isPlaying ? 'Pauza' : 'Ijro'}
               onClick={() => setPlaying(!isPlaying)}
             >

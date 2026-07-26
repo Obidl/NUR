@@ -159,7 +159,7 @@ export function PodcastSeriesDetailPage() {
         <img
           src={series.coverUrl}
           alt=""
-          className="h-28 w-28 rounded-[var(--radius-xl)] object-cover shadow-[var(--shadow-sm)]"
+          className="h-28 w-28 rounded-[var(--radius-xl)] object-cover"
         />
         <div className="min-w-0">
           <h1 className="nur-page-title !text-[1.5rem] md:!text-[1.75rem]">{series.title}</h1>
@@ -210,7 +210,7 @@ export function PodcastSeriesDetailPage() {
                 </div>
                 <button
                   type="button"
-                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-m)] bg-nur-lamp text-nur-lamp-ink shadow-[var(--shadow-sm)] transition-[transform,filter] duration-200 hover:brightness-[0.97] active:scale-[0.98]"
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-m)] bg-nur-lamp text-nur-lamp-ink  transition-[transform,filter] duration-200 hover:brightness-[0.97] active:scale-[0.98]"
                   aria-label={`${episode.title} ni tinglash`}
                   onClick={() => void playEpisode(episode.id)}
                 >

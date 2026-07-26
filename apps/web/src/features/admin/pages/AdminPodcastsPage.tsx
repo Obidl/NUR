@@ -181,7 +181,7 @@ export function AdminPodcastsPage() {
   return (
     <section className="space-y-8">
       <header>
-        <h1 className="text-xl font-medium">Podcast CMS</h1>
+        <h1 className="nur-page-title !text-xl">Podcast CMS</h1>
         <p className="mt-1 text-sm text-nur-muted">
           Seriya + epizod yaratish, audio URL, publish. Faqat litsenziyalangan manbalar.
         </p>
@@ -199,14 +199,14 @@ export function AdminPodcastsPage() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Sarlavha"
-          className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+          className="nur-input"
         />
         <input
           required
           value={host}
           onChange={(e) => setHost(e.target.value)}
           placeholder="Host / olim"
-          className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+          className="nur-input"
         />
         <textarea
           required
@@ -214,14 +214,14 @@ export function AdminPodcastsPage() {
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Tavsif (kamida 10 belgi)"
           rows={3}
-          className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+          className="nur-input"
         />
         <input
           required
           value={coverUrl}
           onChange={(e) => setCoverUrl(e.target.value)}
           placeholder="Cover URL"
-          className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+          className="nur-input"
         />
         <Button type="submit" disabled={busy}>
           Draft yaratish
@@ -273,7 +273,7 @@ export function AdminPodcastsPage() {
                 </Button>
               </div>
               {expandedId === item.id ? (
-                <div className="space-y-5 rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/40 p-3">
+                <div className="space-y-5 nur-surface bg-nur-sunken/30 p-4">
                   <ul className="space-y-4">
                     {episodes.map((ep) => (
                       <li key={ep.id} className="space-y-2 border-b border-nur-line/60 pb-4 last:border-0 last:pb-0">
@@ -340,7 +340,7 @@ export function AdminPodcastsPage() {
                       value={epTitle}
                       onChange={(e) => setEpTitle(e.target.value)}
                       placeholder="Epizod sarlavhasi"
-                      className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+                      className="nur-input"
                     />
                     <textarea
                       required
@@ -348,14 +348,14 @@ export function AdminPodcastsPage() {
                       onChange={(e) => setEpDescription(e.target.value)}
                       placeholder="Tavsif (kamida 10 belgi)"
                       rows={2}
-                      className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+                      className="nur-input"
                     />
                     <input
                       required
                       value={epAudioUrl}
                       onChange={(e) => setEpAudioUrl(e.target.value)}
                       placeholder="Audio URL (https://…)"
-                      className="w-full rounded-[var(--radius-s)] border border-nur-line bg-nur-elevated px-3 py-2 text-sm"
+                      className="nur-input"
                     />
                     <div className="flex flex-wrap gap-2">
                       <input

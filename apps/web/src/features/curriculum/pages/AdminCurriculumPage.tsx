@@ -171,7 +171,7 @@ export function AdminCurriculumPage() {
   return (
     <section className="space-y-8">
       <header>
-        <h1 className="text-xl font-medium">O‘quv yo‘llari</h1>
+        <h1 className="nur-page-title !text-xl">O‘quv yo‘llari</h1>
         <p className="mt-1 text-sm text-nur-muted">
           Darslar faqat mavjud published kontentga bog‘lanadi (CU-01).
         </p>

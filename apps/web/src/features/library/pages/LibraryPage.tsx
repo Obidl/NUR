@@ -72,7 +72,7 @@ export function LibraryPage() {
       className="pb-24 md:pb-8"
     >
       <div
-        className="mb-8 flex gap-1 rounded-[var(--radius-l)] border border-nur-line bg-nur-elevated p-1 shadow-[var(--shadow-xs)]"
+        className="mb-8 flex gap-1 rounded-[var(--radius-l)] bg-nur-sunken/60 p-1"
         role="tablist"
       >
         {tabs.map((item) => (
@@ -85,7 +85,7 @@ export function LibraryPage() {
             className={cx(
               'flex-1 rounded-[var(--radius-m)] px-3 py-2.5 text-sm font-medium transition-colors duration-200',
               tab === item.id
-                ? 'bg-nur-sunken text-nur-ink shadow-[var(--shadow-xs)]'
+                ? 'bg-nur-elevated text-nur-ink'
                 : 'text-nur-muted hover:text-nur-ink',
             )}
           >

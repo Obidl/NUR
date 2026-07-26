@@ -208,7 +208,7 @@ export function VideoSeriesDetailPage() {
       {activeEpisode ? (
         <div
           id="video-player"
-          className="mt-8 scroll-mt-24 overflow-hidden rounded-[var(--radius-xl)] border border-nur-line bg-nur-sunken shadow-[var(--shadow-sm)]"
+          className="mt-8 scroll-mt-24 overflow-hidden rounded-[var(--radius-l)] border border-nur-line/80 bg-nur-sunken"
         >
           <div className="relative aspect-video w-full bg-black">
             <iframe

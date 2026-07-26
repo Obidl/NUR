@@ -60,13 +60,13 @@
     width: 100%;
     max-width: 48rem;
     padding-inline: var(--space-4);
-    padding-block: var(--space-6);
+    padding-block: var(--space-6) var(--space-7);
   }
 
   @media (min-width: 768px) {
     .nur-page {
       padding-inline: var(--space-6);
-      padding-block: var(--space-7);
+      padding-block: var(--space-7) var(--space-8);
     }
   }
 
@@ -76,62 +76,76 @@
 
   .nur-page-title {
     font-family: var(--font-display);
-    font-size: 1.75rem;
+    font-size: 1.875rem;
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     line-height: 1.2;
     color: var(--nur-ink);
   }
 
   @media (min-width: 768px) {
     .nur-page-title {
-      font-size: 2rem;
+      font-size: var(--text-h1);
+      line-height: var(--text-h1-lh);
     }
   }
 
   .nur-page-lede {
-    margin-top: var(--space-2);
-    max-width: 36rem;
-    font-size: 0.9375rem;
-    line-height: 1.6;
+    margin-top: var(--space-3);
+    max-width: 34rem;
+    font-size: var(--text-body-sm);
+    line-height: var(--text-body-sm-lh);
     color: var(--nur-ink-muted);
   }
 
+  .nur-section-label {
+    font-size: var(--text-meta);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: var(--text-meta-lh);
+    color: var(--nur-ink-muted);
+    text-transform: none;
+  }
+
+  /* Legacy alias */
   .nur-section-title {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    font-size: var(--text-meta);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: var(--text-meta-lh);
     color: var(--nur-ink-muted);
   }
 
   .nur-surface {
-    border: 1px solid var(--nur-line);
-    border-radius: var(--radius-xl);
+    border: 1px solid color-mix(in srgb, var(--nur-line) 85%, transparent);
+    border-radius: var(--radius-l);
     background: var(--nur-bg-elevated);
     box-shadow: var(--shadow-xs);
   }
 
   .nur-surface-interactive {
-    border: 1px solid var(--nur-line);
-    border-radius: var(--radius-xl);
+    border: 1px solid color-mix(in srgb, var(--nur-line) 85%, transparent);
+    border-radius: var(--radius-l);
     background: var(--nur-bg-elevated);
     box-shadow: var(--shadow-xs);
     transition:
-      transform var(--motion-mid) var(--ease-out),
-      box-shadow var(--motion-mid) var(--ease-out),
-      border-color var(--motion-mid) var(--ease-standard);
+      background-color var(--motion-mid) var(--ease-standard),
+      border-color var(--motion-mid) var(--ease-standard),
+      box-shadow var(--motion-mid) var(--ease-out);
   }
 
   .nur-surface-interactive:hover {
-    transform: translateY(-2px);
     border-color: var(--nur-line-strong);
-    box-shadow: var(--shadow-md);
+    background: color-mix(in srgb, var(--nur-bg-elevated) 92%, var(--nur-bg-sunken));
+    box-shadow: var(--shadow-sm);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .nur-surface-interactive:hover {
-      transform: none;
-    }
+  .nur-card {
+    border: 1px solid color-mix(in srgb, var(--nur-line) 85%, transparent);
+    border-radius: var(--radius-l);
+    background: var(--nur-bg-elevated);
+    box-shadow: var(--shadow-xs);
+    padding: var(--space-5);
   }
 
   .nur-input {
@@ -139,10 +153,10 @@
     min-height: 2.75rem;
     border-radius: var(--radius-m);
     border: 1px solid var(--nur-line);
-    background: var(--nur-bg);
+    background: var(--nur-bg-elevated);
     padding: 0.625rem 0.875rem;
-    font-size: 0.9375rem;
-    line-height: 1.4;
+    font-size: var(--text-body-sm);
+    line-height: 1.45;
     color: var(--nur-ink);
     transition:
       border-color var(--motion-mid) var(--ease-standard),
@@ -161,7 +175,7 @@
   .nur-input:focus {
     outline: none;
     border-color: var(--nur-focus);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--nur-focus) 22%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--nur-focus) 18%, transparent);
     background: var(--nur-bg-elevated);
   }
 
@@ -170,8 +184,17 @@
     cursor: not-allowed;
   }
 
+  .nur-input[aria-invalid='true'] {
+    border-color: var(--nur-danger);
+    box-shadow: none;
+  }
+
+  .nur-input[aria-invalid='true']:focus {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--nur-danger) 16%, transparent);
+  }
+
   textarea.nur-input {
-    min-height: 6rem;
+    min-height: 6.5rem;
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
     resize: vertical;
@@ -179,8 +202,8 @@
 
   .nur-list {
     overflow: hidden;
-    border: 1px solid var(--nur-line);
-    border-radius: var(--radius-xl);
+    border: 1px solid color-mix(in srgb, var(--nur-line) 85%, transparent);
+    border-radius: var(--radius-l);
     background: var(--nur-bg-elevated);
     box-shadow: var(--shadow-xs);
   }
@@ -189,17 +212,26 @@
     display: flex;
     align-items: center;
     gap: var(--space-4);
-    padding: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    min-height: 3.5rem;
     transition: background-color var(--motion-mid) var(--ease-standard);
   }
 
   .nur-list-row:hover {
-    background: color-mix(in srgb, var(--nur-bg-sunken) 55%, transparent);
+    background: color-mix(in srgb, var(--nur-bg-sunken) 45%, transparent);
   }
 
   .nur-list > li + li,
   .nur-list > * + * {
-    border-top: 1px solid var(--nur-line);
+    border-top: 1px solid color-mix(in srgb, var(--nur-line) 80%, transparent);
+  }
+
+  .nur-empty,
+  .nur-error {
+    border: 1px solid color-mix(in srgb, var(--nur-line) 85%, transparent);
+    border-radius: var(--radius-l);
+    background: var(--nur-bg-elevated);
+    box-shadow: var(--shadow-xs);
   }
 
   .nur-skeleton {
@@ -217,13 +249,23 @@
   .nur-fade-in {
     animation: nur-fade-in var(--motion-slow) var(--ease-out) both;
   }
+
+  .nur-link {
+    color: var(--nur-accent);
+    text-decoration: none;
+    transition: color var(--motion-fast) var(--ease-standard);
+  }
+
+  .nur-link:hover {
+    color: color-mix(in srgb, var(--nur-accent) 80%, var(--nur-ink));
+  }
 }
 
 @layer utilities {
   .nur-atmosphere {
     background:
-      radial-gradient(1200px 600px at 50% -10%, var(--nur-lamp-soft), transparent 70%),
-      radial-gradient(900px 500px at 100% 0%, var(--nur-accent-soft), transparent 60%),
+      radial-gradient(1100px 520px at 50% -12%, var(--nur-lamp-glow), transparent 72%),
+      radial-gradient(800px 440px at 100% 0%, color-mix(in srgb, var(--nur-accent-soft) 70%, transparent), transparent 62%),
       var(--nur-bg);
   }
 
@@ -275,7 +317,7 @@
 @keyframes nur-fade-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;

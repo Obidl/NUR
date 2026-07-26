@@ -214,6 +214,18 @@ The word **NUR**:
 | `--space-7` | 48px |
 | `--space-8` | 64px |
 
+### Craft density (calm UI)
+
+Prefer **Linear/Notion-quality air**: more title→content gap, quieter ledes, softer list dividers. Do not pack competing headlines in one viewport.
+
+- Page title → body: at least `--space-5` / `--space-6`
+- Section gaps on Home/catalogs: prefer `--space-6`–`--space-7` over stacking tight card stacks
+- Body line-height ≈ 1.65–1.75 for UI copy; reading surfaces higher
+
+### Lamp restraint
+
+Lamp amber is a **CTA / progress signal**, not fill for large surfaces. Soft lamp tokens (`--nur-lamp-soft`, `--nur-lamp-glow`) stay low-saturation so yellow does not fatigue. Prefer teal (`--nur-accent`) for links and focus rings.
+
 ### Layout
 
 - Page horizontal padding: 16px mobile, 24–32px desktop
@@ -224,12 +236,13 @@ Radius scale (modest; not pill-obsessed):
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `--radius-s` | 6px | Inputs, small controls |
-| `--radius-m` | 10px | Interactive containers when needed |
-| `--radius-l` | 16px | Sheets / player surface |
+| `--radius-s` | 8px | Inputs, small controls |
+| `--radius-m` | 12px | Interactive containers when needed |
+| `--radius-l` | 16px | Surfaces / lists |
+| `--radius-xl` | 20px | Rare large sheets |
 | `--radius-full` | 9999px | **Avoid** except true circular icon buttons |
 
-Shadows: prefer 1 soft elevation max. No multi-layer neon shadows.
+Shadows: prefer `--shadow-xs` / `--shadow-sm`. Reserve `--shadow-md` for players and modals only. No multi-layer neon shadows.
 
 ---
 
