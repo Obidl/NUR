@@ -83,7 +83,7 @@ export const useQuranPlayerStore = create<QuranPlayerState>((set, get) => ({
   },
 
   playNextAyah: async () => {
-    const { surahNumber, ayahNumber, ayahCount, autoAdvance } = get();
+    const { surahNumber, ayahNumber, ayahCount, autoAdvance, scope } = get();
     if (!autoAdvance || !surahNumber || !ayahNumber || !ayahCount) return null;
     if (ayahNumber >= ayahCount) {
       set({ isPlaying: false });
@@ -91,6 +91,7 @@ export const useQuranPlayerStore = create<QuranPlayerState>((set, get) => ({
     }
     const next = ayahNumber + 1;
     await get().playAyah(surahNumber, next, { ayahCount, autoAdvance: true });
+    if (scope === 'surah') set({ scope: 'surah' });
     return next;
   },
 

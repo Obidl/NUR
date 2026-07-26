@@ -308,6 +308,9 @@ Editors/admins may use `/admin` routes to see drafts.
 #### `GET /api/v1/quran/progress`
 
 **Auth:** required  
+**Response:** rows include `surahName` (nameUz or nameLatin) and optional `nameArabic`.
+
+**Auth:** required  
 **Response:** current user progress by mode.
 
 #### `PUT /api/v1/quran/progress`
