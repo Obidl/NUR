@@ -232,14 +232,16 @@ export function SurahReaderPage() {
               Surahlar
             </Link>
             <h1 className="text-xl font-medium md:text-2xl">
-              {detail.surah.number}. {detail.surah.nameLatin}
+              {detail.surah.number}. {detail.surah.nameUz ?? detail.surah.nameLatin}
             </h1>
             <p className="mt-1 font-quran text-2xl" dir="rtl" lang="ar">
               {detail.surah.nameArabic}
             </p>
             <p className="mt-2 text-xs text-nur-muted">
               {detail.surah.ayahCount} oyat
-              {translatorName ? ` · Tarjima: ${translatorName}` : ''}
+              {translatorName
+                ? ` · Tarjima: ${translatorName} (kirill, uz.sodik)`
+                : ''}
             </p>
           </div>
           <button
@@ -271,6 +273,7 @@ export function SurahReaderPage() {
                 onChange={(event) => setShowTranslation(event.target.checked)}
               />
               O‘zbek tarjimasini ko‘rsatish
+              <span className="text-nur-faint"> (kirill)</span>
             </label>
             <label className="block text-sm">
               <span className="mb-1 block text-nur-muted">Qori</span>

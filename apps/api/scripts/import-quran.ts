@@ -6,7 +6,7 @@
  *   (Uthmani orthography; distributed via islamic-network / AlQuran Cloud)
  * - Uzbek translation: AlQuran Cloud edition `uz.sodik`
  *   Translator: Muhammad Sodik Muhammad Yusuf
- * - Audio: islamic-network CDN for edition `ar.alafasy` (Mishary Rashed Alafasy)
+ * - Audio: islamic-network CDN editions `ar.alafasy`, `ar.husary`, `ar.mahermuaiqly`
  *
  * This script never invents Qur’anic text. Re-run replaces reference data
  * in a controlled way and records datasetVersion + checksum.
@@ -14,6 +14,7 @@
  * Usage:
  *   cd apps/api && cp .env.example .env  # fill MONGODB_URI
  *   npm run import:quran
+ *   npm run upsert:quran-reciters   # optional: extra reciters only
  */
 
 import { createHash } from 'node:crypto';
@@ -150,6 +151,7 @@ async function main() {
   await AyahModel.insertMany(ayahDocs, { ordered: false });
 
   console.info('[import:quran] upserting default reciter + surah audio…');
+  // Keep single default reciter here; run `npm run upsert:quran-reciters` for more.
   const reciter = await ReciterModel.findOneAndUpdate(
     { slug: 'mishary-alafasy' },
     {

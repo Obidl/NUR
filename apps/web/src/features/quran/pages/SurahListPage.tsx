@@ -72,7 +72,7 @@ export function SurahListPage() {
   return (
     <PageShell
       title="Qur’on"
-      description="Matn: quran-uthmani · Tarjima: Muhammad Sodik Muhammad Yusuf (uz.sodik)"
+      description="Matn: quran-uthmani · Tarjima: Muhammad Sodiq Muhammad Yusuf (uz.sodik, kirill)"
     >
       {continueHref && progress ? (
         <Link
@@ -142,7 +142,7 @@ export function SurahListPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-3">
                     <p className="truncate text-sm font-semibold tracking-[-0.01em] text-nur-ink">
-                      {surah.nameLatin}
+                      {surah.nameUz ?? surah.nameLatin}
                     </p>
                     <p className="font-quran shrink-0 text-lg text-nur-ink" dir="rtl" lang="ar">
                       {surah.nameArabic}

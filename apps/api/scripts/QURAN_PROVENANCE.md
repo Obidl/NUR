@@ -17,10 +17,15 @@
 
 ## Audio
 
-- **Reciter (default):** Mishary Rashed Alafasy
-- **Edition:** `ar.alafasy`
+- **Reciters:** Mishary Rashed Alafasy (`ar.alafasy`), Mahmoud Khalil Al-Husary (`ar.husary`), Maher Al Muaiqly (`ar.mahermuaiqly`)
 - **CDN:** `https://cdn.islamic.network/quran/audio/...` and `.../audio-surah/...`
 - **Rights field:** `licensed` with CDN notes. Confirm CDN terms for production.
+- **Upsert without re-importing text:** `npm run upsert:quran-reciters`
+
+## Uzbek translation script note
+
+- `uz.sodik` text is **Cyrillic** Uzbek. UI is Latin Uzbek; the app labels this explicitly until a licensed Latin edition is chosen.
+- `nameUz` (114 surah names in Latin) is not invented — fill only from an owner-approved list.
 
 ## Import command
 

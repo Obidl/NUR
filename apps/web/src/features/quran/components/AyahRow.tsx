@@ -76,7 +76,12 @@ export function AyahRow({
       </p>
 
       {showTranslation && ayah.textUz ? (
-        <p className="mt-3 text-sm leading-7 text-nur-muted md:text-base">{ayah.textUz}</p>
+        <p
+          className="mt-3 text-sm leading-7 text-nur-muted md:text-base"
+          lang="uz-Cyrl"
+        >
+          {ayah.textUz}
+        </p>
       ) : null}
     </article>
   );
