@@ -31,8 +31,8 @@ export function AyahRow({
     <article
       id={`ayah-${ayah.ayahNumber}`}
       className={cx(
-        'nur-ayah-card group scroll-mt-28 transition-[box-shadow,border-color,transform] duration-250',
-        isActive && 'border-nur-accent/35 shadow-[var(--shadow-sm)] ring-1 ring-nur-accent/15',
+        'nur-ayah-card group scroll-mt-28 transition-[box-shadow,border-color] duration-250',
+        isActive && 'border-[color-mix(in_srgb,var(--nur-quran-ornament)_28%,transparent)]',
       )}
       onClick={onFocus}
     >
@@ -47,7 +47,7 @@ export function AyahRow({
         <div className="flex items-center gap-1">
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-nur-muted transition-colors hover:bg-nur-accent-soft hover:text-nur-accent"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-[var(--nur-quran-muted)] transition-colors hover:bg-[var(--nur-quran-translation-plane)] hover:text-[var(--nur-quran-ornament)]"
             aria-label={`${ayah.ayahNumber}-oyatni tinglash`}
             onClick={(event) => {
               event.stopPropagation();
@@ -60,8 +60,8 @@ export function AyahRow({
             <button
               type="button"
               className={cx(
-                'inline-flex h-10 w-10 items-center justify-center rounded-full text-nur-muted transition-colors hover:bg-nur-accent-soft hover:text-nur-accent',
-                isBookmarked && 'text-nur-accent',
+                'inline-flex h-10 w-10 items-center justify-center rounded-full text-[var(--nur-quran-muted)] transition-colors hover:bg-[var(--nur-quran-translation-plane)] hover:text-[var(--nur-quran-ornament)]',
+                isBookmarked && 'text-[var(--nur-quran-ornament)]',
               )}
               aria-label={isBookmarked ? 'Xatcho‘pni olib tashlash' : 'Xatcho‘p qo‘shish'}
               onClick={(event) => {
@@ -79,8 +79,7 @@ export function AyahRow({
         </div>
       </div>
 
-      {/* Arabic on cream sacred plane — high contrast dark ink */}
-      <div className="rounded-[var(--radius-l)] bg-[var(--nur-quran-bg)] px-4 py-6 md:px-6 md:py-7">
+      <div className="nur-ayah-arabic-plane">
         <p
           className="nur-ayah-arabic"
           dir="rtl"
@@ -92,9 +91,10 @@ export function AyahRow({
       </div>
 
       {showTranslation && ayah.textUz ? (
-        <p className="nur-ayah-translation" lang="uz-Cyrl">
-          {ayah.textUz}
-        </p>
+        <div className="nur-ayah-translation">
+          <span className="nur-ayah-translation-label">Tarjima</span>
+          <p lang="uz-Cyrl">{ayah.textUz}</p>
+        </div>
       ) : null}
     </article>
   );

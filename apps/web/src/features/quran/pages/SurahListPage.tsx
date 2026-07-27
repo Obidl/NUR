@@ -116,13 +116,25 @@ export function SurahListPage() {
     <PageShell
       title="Qur’on"
       description="Matn: quran-uthmani · Tarjima: Muhammad Sodiq Muhammad Yusuf (uz.sodik, kirill)"
+      className="!bg-transparent"
     >
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 -z-10"
+        style={{
+          background:
+            'radial-gradient(85% 45% at 50% -8%, color-mix(in srgb, #c4b89a 12%, transparent), transparent 70%), var(--nur-quran-bg)',
+        }}
+      />
+
       {continueHref && progress ? (
         <Link
           to={continueHref}
-          className="nur-surface mb-8 flex items-center justify-between gap-3 px-5 py-4 transition-[transform,box-shadow] duration-150 hover:shadow-[var(--shadow-sm)] active:scale-[0.99]"
+          className="mb-8 flex items-center justify-between gap-3 rounded-[var(--radius-xl)] border-l-2 border-l-[var(--nur-quran-ornament)] bg-[var(--nur-quran-panel)] px-5 py-4 transition-transform duration-150 active:scale-[0.99]"
         >
-          <span className="nur-section-label">Davom etish</span>
+          <span className="text-[0.6875rem] font-semibold tracking-[0.06em] text-[var(--nur-quran-ornament)] uppercase">
+            Davom etish
+          </span>
           <span className="min-w-0 text-right text-sm font-semibold text-nur-ink">
             <span className="block truncate">
               {progress.surahName ?? `Surah ${progress.surahNumber}`}
@@ -140,7 +152,7 @@ export function SurahListPage() {
       ) : null}
 
       <div
-        className="mb-5 flex gap-1 rounded-[var(--radius-l)] bg-nur-sunken/60 p-1"
+        className="mb-5 flex gap-1 rounded-[var(--radius-l)] bg-[var(--nur-quran-translation-plane)] p-1"
         role="tablist"
         aria-label="Qur’on qidiruv turi"
       >
@@ -157,7 +169,7 @@ export function SurahListPage() {
             className={cx(
               'flex-1 rounded-[var(--radius-m)] px-3 py-2.5 text-sm font-medium transition-colors',
               mode === item.id
-                ? 'bg-nur-elevated text-nur-ink'
+                ? 'bg-[var(--nur-quran-panel)] text-nur-ink shadow-[var(--shadow-xs)]'
                 : 'text-nur-muted hover:text-nur-ink',
             )}
           >
@@ -217,14 +229,14 @@ export function SurahListPage() {
       ) : null}
 
       {!loading && mode === 'surahs' && surahs.length > 0 ? (
-        <ul className="space-y-2">
+        <ul className="space-y-2.5">
           {surahs.map((surah) => (
             <li key={surah.number}>
               <Link
                 to={`/quran/${surah.number}`}
-                className="nur-surface-interactive flex items-center gap-4 px-4 py-4"
+                className="flex items-center gap-4 rounded-[var(--radius-xl)] border border-[color-mix(in_srgb,var(--nur-quran-ornament)_16%,var(--nur-line))] bg-[var(--nur-quran-panel)] px-4 py-4 transition-transform duration-150 active:scale-[0.99]"
               >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-nur-accent font-display text-sm font-medium text-[var(--nur-accent-ink)]">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--nur-quran-translation-plane)] font-display text-sm font-medium text-[var(--nur-quran-ornament)] ring-1 ring-[color-mix(in_srgb,var(--nur-quran-ornament)_22%,transparent)]">
                   {surah.number}
                 </span>
                 <div className="min-w-0 flex-1">
@@ -252,33 +264,31 @@ export function SurahListPage() {
       ) : null}
 
       {!loading && mode === 'ayahs' && ayahHits.length > 0 ? (
-        <ul className="nur-list">
+        <ul className="space-y-2.5">
           {ayahHits.map((hit) => (
             <li key={`${hit.surahNumber}-${hit.ayahNumber}`}>
               <Link
                 to={`/quran/${hit.surahNumber}?ayah=${hit.ayahNumber}`}
-                className="nur-list-row items-start"
+                className="block rounded-[var(--radius-xl)] border border-[color-mix(in_srgb,var(--nur-quran-ornament)_16%,var(--nur-line))] bg-[var(--nur-quran-panel)] px-4 py-4"
               >
-                <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/50 text-xs font-medium text-nur-muted">
-                  {hit.surahNumber}:{hit.ayahNumber}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-nur-muted">
-                    {hit.surahName ?? `Surah ${hit.surahNumber}`} · {hit.ayahNumber}-oyat
-                  </p>
+                <p className="text-[0.6875rem] font-semibold tracking-[0.06em] text-[var(--nur-quran-ornament)] uppercase">
+                  {hit.surahName ?? `Surah ${hit.surahNumber}`} · {hit.ayahNumber}-oyat
+                </p>
+                <p
+                  className="font-quran mt-3 rounded-[var(--radius-m)] border-r-2 border-r-[var(--nur-quran-ornament)] bg-[var(--nur-quran-arabic-plane)] px-3 py-3 text-right text-base leading-8 text-[var(--nur-quran-ink)]"
+                  dir="rtl"
+                  lang="ar"
+                >
+                  {hit.textArabic}
+                </p>
+                {hit.textUz ? (
                   <p
-                    className="font-quran mt-1 text-right text-base leading-8 text-nur-ink"
-                    dir="rtl"
-                    lang="ar"
+                    className="mt-3 line-clamp-2 border-l-2 border-l-[var(--nur-quran-ornament)] bg-[var(--nur-quran-translation-plane)] px-3 py-2.5 text-sm font-medium leading-relaxed text-[var(--nur-quran-ink)]"
+                    lang="uz-Cyrl"
                   >
-                    {hit.textArabic}
+                    {hit.textUz}
                   </p>
-                  {hit.textUz ? (
-                    <p className="mt-1 line-clamp-2 text-sm text-nur-muted" lang="uz-Cyrl">
-                      {hit.textUz}
-                    </p>
-                  ) : null}
-                </div>
+                ) : null}
               </Link>
             </li>
           ))}

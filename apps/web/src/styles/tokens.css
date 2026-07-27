@@ -28,11 +28,14 @@
   --nur-warning: #a87c0e;
   --nur-danger: #a84832;
 
-  /* Sacred / Qur’an surface — dark ink on cream-gold */
-  --nur-quran-bg: #fbf6e8;
-  --nur-quran-ink: #1f1e1b;
-  --nur-quran-ornament: #a87c0e;
-  --nur-quran-muted: #54514a;
+  /* Sacred / Qur’an — warm ivory (Sokin) */
+  --nur-quran-bg: #f3efe6;
+  --nur-quran-ink: #2c2924;
+  --nur-quran-ornament: #5a6b62;
+  --nur-quran-muted: #5c574e;
+  --nur-quran-panel: #fffcf7;
+  --nur-quran-arabic-plane: #f8f4ea;
+  --nur-quran-translation-plane: #efe9dc;
 
   --nur-overlay: rgba(31, 30, 27, 0.45);
 
@@ -123,10 +126,13 @@
   --nur-warning: #c9a227;
   --nur-danger: #d0705a;
 
-  --nur-quran-bg: #1a1c20;
-  --nur-quran-ink: #f2f1ee;
-  --nur-quran-ornament: #c9a227;
-  --nur-quran-muted: #c4c0b8;
+  --nur-quran-bg: #1c1b18;
+  --nur-quran-ink: #e8e4da;
+  --nur-quran-ornament: #8a9a90;
+  --nur-quran-muted: #a8a297;
+  --nur-quran-panel: #24221e;
+  --nur-quran-arabic-plane: #2a2722;
+  --nur-quran-translation-plane: #211f1b;
 
   --nur-overlay: rgba(0, 0, 0, 0.56);
 
@@ -138,24 +144,36 @@
 }
 
 [data-quran-theme='parchment'] {
-  --nur-quran-bg: #fbf6e8;
-  --nur-quran-ink: #1f1e1b;
-  --nur-quran-ornament: #a87c0e;
-  --nur-quran-muted: #54514a;
+  /* Default “Sokin”: warm ivory */
+  --nur-quran-bg: #f3efe6;
+  --nur-quran-ink: #2c2924;
+  --nur-quran-ornament: #5a6b62;
+  --nur-quran-muted: #5c574e;
+  --nur-quran-panel: #fffcf7;
+  --nur-quran-arabic-plane: #f8f4ea;
+  --nur-quran-translation-plane: #efe9dc;
 }
 
 [data-quran-theme='mist'] {
-  --nur-quran-bg: #f7f7f5;
-  --nur-quran-ink: #1f1e1b;
-  --nur-quran-ornament: #16342c;
-  --nur-quran-muted: #54514a;
+  /* Soft cool grey */
+  --nur-quran-bg: #f0efec;
+  --nur-quran-ink: #2c2924;
+  --nur-quran-ornament: #6a6e68;
+  --nur-quran-muted: #5c574e;
+  --nur-quran-panel: #fafaf8;
+  --nur-quran-arabic-plane: #f5f4f0;
+  --nur-quran-translation-plane: #ebeae5;
 }
 
 [data-quran-theme='night'] {
-  --nur-quran-bg: #14161a;
-  --nur-quran-ink: #f2f1ee;
-  --nur-quran-ornament: #c9a227;
-  --nur-quran-muted: #c4c0b8;
+  /* Soft charcoal night */
+  --nur-quran-bg: #1c1b18;
+  --nur-quran-ink: #e8e4da;
+  --nur-quran-ornament: #8a9a90;
+  --nur-quran-muted: #a8a297;
+  --nur-quran-panel: #24221e;
+  --nur-quran-arabic-plane: #2a2722;
+  --nur-quran-translation-plane: #211f1b;
 }
 
 @media (prefers-reduced-motion: reduce) {

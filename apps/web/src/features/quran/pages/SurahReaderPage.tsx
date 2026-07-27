@@ -214,35 +214,22 @@ export function SurahReaderPage() {
     ?.translatorName;
 
   return (
-    <div
-      className="min-h-dvh bg-[var(--nur-quran-bg)] text-[var(--nur-quran-ink)]"
-      data-quran-theme={readerTheme}
-    >
-      {/* Soft dawn wash — reading atmosphere, not chrome */}
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-x-0 top-0 h-[40vh]"
-        style={{
-          background:
-            'radial-gradient(80% 60% at 50% 0%, color-mix(in srgb, var(--nur-lamp) 8%, transparent), transparent 70%)',
-        }}
-      />
-
-      <header className="sticky top-0 z-20 border-b border-nur-line/80 bg-white/90 backdrop-blur-xl">
+    <div className="nur-quran-shell" data-quran-theme={readerTheme}>
+      <header className="sticky top-0 z-20 border-b border-[color-mix(in_srgb,var(--nur-quran-ornament)_14%,var(--nur-line))] bg-[color-mix(in_srgb,var(--nur-quran-panel)_92%,transparent)] backdrop-blur-xl">
         <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3 md:px-6">
           <Link
             to="/quran"
-            className="inline-flex items-center gap-1.5 text-sm text-nur-muted transition-colors hover:text-nur-ink"
+            className="inline-flex items-center gap-1.5 text-sm text-[var(--nur-quran-muted)] transition-colors hover:text-[var(--nur-quran-ink)]"
           >
             <ArrowLeft size={16} strokeWidth={1.75} />
             Surahlar
           </Link>
-          <p className="min-w-0 truncate text-center font-display text-sm font-medium tracking-[-0.01em] text-nur-ink">
+          <p className="min-w-0 truncate text-center font-display text-sm font-medium tracking-[-0.01em] text-[var(--nur-quran-ink)]">
             {detail.surah.number}. {detail.surah.nameUz ?? detail.surah.nameLatin}
           </p>
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-nur-muted transition-colors hover:bg-nur-sunken hover:text-nur-ink"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-[var(--nur-quran-muted)] transition-colors hover:bg-[var(--nur-quran-translation-plane)] hover:text-[var(--nur-quran-ink)]"
             aria-label="O‘qish sozlamalari"
             aria-expanded={settingsOpen}
             onClick={() => setSettingsOpen((open) => !open)}
@@ -258,18 +245,18 @@ export function SurahReaderPage() {
         transition={{ duration: reduceMotion ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
         className="relative mx-auto max-w-2xl space-y-4 px-4 pt-8 pb-36 md:px-6"
       >
-        <header className="mb-8 rounded-[var(--radius-xl)] bg-white px-5 py-8 text-center shadow-[var(--shadow-xs)] ring-1 ring-nur-line/80 md:px-8 md:py-10">
+        <header className="nur-quran-surah-hero mb-8">
           <p
-            className="font-quran text-[1.75rem] font-medium leading-[1.9] text-nur-ink md:text-[2.15rem]"
+            className="font-quran text-[1.75rem] font-medium leading-[1.9] text-[var(--nur-quran-ink)] md:text-[2.15rem]"
             dir="rtl"
             lang="ar"
           >
             {detail.surah.nameArabic}
           </p>
-          <h1 className="mt-3 font-display text-xl font-medium tracking-[-0.02em] text-nur-ink md:text-2xl">
+          <h1 className="mt-3 font-display text-xl font-medium tracking-[-0.02em] text-[var(--nur-quran-ink)] md:text-2xl">
             {detail.surah.nameUz ?? detail.surah.nameLatin}
           </h1>
-          <p className="mt-2 text-sm leading-relaxed text-nur-muted">
+          <p className="mt-2 text-sm leading-relaxed text-[var(--nur-quran-muted)]">
             {detail.surah.ayahCount} oyat
             {detail.surah.revelationType === 'meccan' ? ' · Makkiy' : ' · Madaniy'}
             {translatorName ? ` · ${translatorName}` : ''}
@@ -294,9 +281,9 @@ export function SurahReaderPage() {
         </header>
 
         {settingsOpen ? (
-          <div className="mb-2 space-y-5 rounded-[var(--radius-xl)] border border-nur-line bg-white p-5 shadow-[var(--shadow-xs)]">
+          <div className="mb-2 space-y-5 rounded-[var(--radius-xl)] border border-[color-mix(in_srgb,var(--nur-quran-ornament)_14%,var(--nur-line))] bg-[var(--nur-quran-panel)] p-5">
             <label className="block text-sm">
-              <span className="mb-2 block text-nur-muted">Arab shrifti: {fontSize}px</span>
+              <span className="mb-2 block text-[var(--nur-quran-muted)]">Arab shrifti: {fontSize}px</span>
               <input
                 type="range"
                 min={26}
@@ -314,15 +301,15 @@ export function SurahReaderPage() {
                 className="rounded border-nur-line"
               />
               Tarjimani ko‘rsatish
-              <span className="text-nur-faint">(kirill)</span>
+              <span className="opacity-70">(kirill)</span>
             </label>
             <fieldset className="block text-sm">
               <legend className="mb-2.5 text-[var(--nur-quran-muted)]">Fon</legend>
               <div className="grid grid-cols-3 gap-2">
                 {(
                   [
-                    { id: 'parchment', label: 'Pergament' },
-                    { id: 'mist', label: 'Tuman' },
+                    { id: 'parchment', label: 'Sokin' },
+                    { id: 'mist', label: 'Kulrang' },
                     { id: 'night', label: 'Tun' },
                   ] as const
                 ).map((item) => (
@@ -347,7 +334,7 @@ export function SurahReaderPage() {
               <select
                 value={selectedReciterId}
                 onChange={(event) => onReciterChange(event.target.value)}
-                className="nur-input !bg-white/70"
+                className="nur-input"
               >
                 {reciters.map((reciter) => (
                   <option key={reciter.id} value={reciter.id}>

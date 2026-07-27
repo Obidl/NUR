@@ -49,7 +49,7 @@ export function QuranAudioBar({ onAyahBoundary }: QuranAudioBarProps) {
   }
 
   return (
-    <div className="sticky bottom-0 z-20 border-t border-nur-line/60 bg-nur-elevated/95 px-4 py-3 backdrop-blur-xl">
+    <div className="sticky bottom-0 z-20 border-t border-[color-mix(in_srgb,var(--nur-quran-ornament)_14%,var(--nur-line))] bg-[color-mix(in_srgb,var(--nur-quran-panel)_94%,transparent)] px-4 py-3 backdrop-blur-xl">
       <audio
         ref={audioRef}
         preload="metadata"
@@ -66,13 +66,13 @@ export function QuranAudioBar({ onAyahBoundary }: QuranAudioBarProps) {
         }}
       />
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
-        <div className="min-w-0">
-          <p className="truncate text-sm font-medium tracking-[-0.01em] text-nur-ink">
+        <div className="min-w-0 border-l-2 border-l-[var(--nur-quran-ornament)] pl-3">
+          <p className="truncate text-sm font-medium tracking-[-0.01em] text-[var(--nur-quran-ink)]">
             Surah {surahNumber}
             {ayahNumber ? ` · oyat ${ayahNumber}` : ''}
             {ayahCount ? ` / ${ayahCount}` : ''}
           </p>
-          <p className="truncate text-xs leading-relaxed text-nur-muted">
+          <p className="truncate text-xs leading-relaxed text-[var(--nur-quran-muted)]">
             {reciterName ?? 'Qori'}
             {scope === 'surah' ? ' · surah ketma-ket' : ' · oyat'}
           </p>
@@ -81,7 +81,7 @@ export function QuranAudioBar({ onAyahBoundary }: QuranAudioBarProps) {
         <div className="flex items-center gap-2">
           <button
             type="button"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-nur-accent text-[var(--nur-accent-ink)] transition-[transform,filter] duration-150 hover:brightness-110 active:scale-[0.98]"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-nur-accent text-[var(--nur-accent-ink)] transition-[transform,filter] duration-150 hover:brightness-110 active:scale-[0.98]"
             aria-label={isPlaying ? 'Pauza' : 'Ijro'}
             onClick={() => {
               if (!audioUrl) return;
@@ -103,7 +103,7 @@ export function QuranAudioBar({ onAyahBoundary }: QuranAudioBarProps) {
           </button>
           <button
             type="button"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-m)] border border-nur-line text-nur-muted transition-colors duration-200 hover:bg-nur-sunken hover:text-nur-ink"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-m)] border border-nur-line text-[var(--nur-quran-muted)] transition-colors duration-200 hover:bg-[var(--nur-quran-translation-plane)] hover:text-[var(--nur-quran-ink)]"
             aria-label="Yopish"
             onClick={() => stop()}
           >
