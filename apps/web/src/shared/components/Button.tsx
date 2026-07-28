@@ -21,6 +21,7 @@ type ButtonProps = PropsWithChildren<{
   variant?: Variant;
   className?: string;
   to?: string;
+  state?: unknown;
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
   disabled?: boolean;
   onClick?: ButtonHTMLAttributes<HTMLButtonElement>['onClick'];
@@ -32,6 +33,7 @@ export function Button({
   className,
   children,
   to,
+  state,
   type = 'button',
   disabled,
   onClick,
@@ -43,6 +45,7 @@ export function Button({
     return (
       <Link
         to={to}
+        state={state}
         className={classes}
         aria-disabled={disabled || undefined}
         aria-label={ariaLabel}

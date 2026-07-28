@@ -94,14 +94,7 @@ export const router = createBrowserRouter([
       { path: 'curriculum', element: <CurriculumListPage /> },
       { path: 'curriculum/:slug', element: <CurriculumDetailPage /> },
       { path: 'search', element: <SearchPage /> },
-      {
-        path: 'library',
-        element: (
-          <ProtectedRoute>
-            <LibraryPage />
-          </ProtectedRoute>
-        ),
-      },
+      { path: 'library', element: <LibraryPage /> },
       {
         path: 'settings',
         element: (
