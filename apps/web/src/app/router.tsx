@@ -28,6 +28,7 @@ import { VideoSeriesDetailPage } from '@/features/videos/pages/VideoSeriesDetail
 import { RoleRoute } from '@/features/auth/components/RoleRoute';
 import { LibraryPage } from '@/features/library/pages/LibraryPage';
 import { SearchPage } from '@/features/search/pages/SearchPage';
+import { LoadingScreen } from '@/shared/components/LoadingScreen';
 
 const AdminHomePage = lazy(() =>
   import('@/features/admin/pages/AdminHomePage').then((m) => ({ default: m.AdminHomePage })),
@@ -61,15 +62,7 @@ const AdminCurriculumPage = lazy(() =>
 
 function AdminSuspense({ children }: { children: ReactNode }) {
   return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-[40vh] items-center justify-center text-sm text-nur-muted">
-          Yuklanmoqda…
-        </div>
-      }
-    >
-      {children}
-    </Suspense>
+    <Suspense fallback={<LoadingScreen message="Admin yuklanmoqda…" />}>{children}</Suspense>
   );
 }
 

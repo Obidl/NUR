@@ -1,8 +1,10 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/Button';
 import { Field, Input } from '@/shared/components/Field';
+import { LoadingOverlay } from '@/shared/components/LoadingScreen';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { warmApi } from '@/services/warmApi';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { useToast } from '@/shared/components/Toast';
 
@@ -16,6 +18,20 @@ export function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [slowHint, setSlowHint] = useState(false);
+
+  useEffect(() => {
+    warmApi();
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setSlowHint(false);
+      return;
+    }
+    const id = window.setTimeout(() => setSlowHint(true), 8000);
+    return () => window.clearTimeout(id);
+  }, [isLoading]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -31,12 +47,23 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="nur-surface px-6 py-9 md:px-8 md:py-11">
+    <div className="nur-surface relative overflow-hidden px-6 py-9 md:px-8 md:py-11">
+      {isLoading ? (
+        <LoadingOverlay
+          message={slowHint ? 'Server uyg‘onyapti…' : 'Hisob yaratilmoqda…'}
+          hint={
+            slowHint
+              ? 'Birinchi ochilish 20–40 soniya olishi mumkin. Sahifani yopmang.'
+              : null
+          }
+        />
+      ) : null}
+
       <p className="font-display text-2xl font-semibold tracking-[0.2em]">NUR</p>
       <h1 className="mt-6 text-lg font-medium tracking-[-0.02em] text-nur-muted">Ro‘yxatdan o‘tish</h1>
       <p className="mt-2 text-sm leading-relaxed text-nur-muted">NUR hisobini yarating.</p>
 
-      <form className="mt-8 space-y-5" onSubmit={onSubmit}>
+      <form className="mt-8 space-y-5" onSubmit={onSubmit} aria-busy={isLoading}>
         <Field label="Ism">
           <Input
             type="text"
@@ -46,6 +73,7 @@ export function RegisterPage() {
             minLength={2}
             value={displayName}
             onChange={(event) => setDisplayName(event.target.value)}
+            disabled={isLoading}
           />
         </Field>
         <Field label="Email">
@@ -56,6 +84,7 @@ export function RegisterPage() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
+            disabled={isLoading}
           />
         </Field>
         <Field label="Parol" hint="Kamida 8 belgi">
@@ -67,6 +96,7 @@ export function RegisterPage() {
             minLength={8}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
+            disabled={isLoading}
           />
         </Field>
 
@@ -77,7 +107,7 @@ export function RegisterPage() {
         ) : null}
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Kutilmoqda…' : 'Ro‘yxatdan o‘tish'}
+          Ro‘yxatdan o‘tish
         </Button>
       </form>
 

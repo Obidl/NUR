@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/Button';
 import { Field, Input } from '@/shared/components/Field';
+import { LoadingOverlay } from '@/shared/components/LoadingScreen';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { warmApi } from '@/services/warmApi';
 import { getErrorMessage } from '@/shared/lib/errors';
@@ -54,14 +55,25 @@ export function LoginPage() {
   }
 
   return (
-    <div className="nur-surface px-6 py-9 md:px-8 md:py-11">
+    <div className="nur-surface relative overflow-hidden px-6 py-9 md:px-8 md:py-11">
+      {isLoading ? (
+        <LoadingOverlay
+          message={slowHint ? 'Server uyg‘onyapti…' : 'Kirish amalga oshirilmoqda…'}
+          hint={
+            slowHint
+              ? 'Birinchi ochilish 20–40 soniya olishi mumkin. Sahifani yopmang.'
+              : null
+          }
+        />
+      ) : null}
+
       <p className="font-display text-2xl font-semibold tracking-[0.2em]">NUR</p>
       <h1 className="mt-6 text-lg font-medium tracking-[-0.02em] text-nur-muted">Kirish</h1>
       <p className="mt-2 text-sm leading-relaxed text-nur-muted">
         Hisobingizga kiring va bugungi yo‘lni davom ettiring.
       </p>
 
-      <form className="mt-8 space-y-5" onSubmit={onSubmit}>
+      <form className="mt-8 space-y-5" onSubmit={onSubmit} aria-busy={isLoading}>
         <Field label="Email">
           <Input
             type="email"
@@ -71,6 +83,7 @@ export function LoginPage() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             invalid={Boolean(error)}
+            disabled={isLoading}
           />
         </Field>
         <Field label="Parol">
@@ -83,6 +96,7 @@ export function LoginPage() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             invalid={Boolean(error)}
+            disabled={isLoading}
           />
         </Field>
 
@@ -92,14 +106,8 @@ export function LoginPage() {
           </p>
         ) : null}
 
-        {isLoading && slowHint ? (
-          <p className="text-sm text-nur-muted" role="status">
-            Server uyg‘onyapti — biroz kuting…
-          </p>
-        ) : null}
-
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? (slowHint ? 'Uyg‘onmoqda…' : 'Kutilmoqda…') : 'Kirish'}
+          Kirish
         </Button>
       </form>
 

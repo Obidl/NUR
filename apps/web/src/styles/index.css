@@ -453,10 +453,21 @@
   }
 }
 
+@keyframes nur-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.nur-spinner {
+  animation: nur-spin 0.85s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nur-skeleton,
   .nur-fade-in,
-  .nur-breath {
+  .nur-breath,
+  .nur-spinner {
     animation: none;
   }
 }

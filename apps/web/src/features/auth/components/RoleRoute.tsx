@@ -2,6 +2,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import type { PropsWithChildren } from 'react';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import type { UserRole } from '@/features/auth/types/auth.types';
+import { LoadingScreen } from '@/shared/components/LoadingScreen';
 
 type RoleRouteProps = PropsWithChildren<{
   roles: UserRole[];
@@ -14,11 +15,7 @@ export function RoleRoute({ children, roles }: RoleRouteProps) {
   const user = useAuthStore((state) => state.user);
 
   if (!isHydrated) {
-    return (
-      <div className="flex min-h-[40vh] items-center justify-center text-sm text-nur-muted">
-        Yuklanmoqda…
-      </div>
-    );
+    return <LoadingScreen message="Hisob tekshirilmoqda…" />;
   }
 
   if (!accessToken) {
