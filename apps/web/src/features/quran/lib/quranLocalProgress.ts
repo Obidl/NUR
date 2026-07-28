@@ -1,4 +1,5 @@
 import type { QuranProgress } from '@/features/quran/types/quran.types';
+import { fetchQuranProgress, saveQuranProgress } from '@/features/quran/api/quranApi';
 
 const STORAGE_KEY = 'nur_quran_local_progress';
 
@@ -44,4 +45,31 @@ export function writeLocalQuranProgress(input: {
     updatedAt: new Date().toISOString(),
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+}
+
+/** Push device progress to the server when it is newer or server has none. */
+export async function syncLocalQuranProgressToServer(): Promise<void> {
+  const local = readLocalQuranProgress();
+  if (!local) return;
+
+  try {
+    const rows = await fetchQuranProgress();
+    const server = rows.find((row) => row.mode === local.mode) ?? rows[0] ?? null;
+    const localTime = Date.parse(local.updatedAt);
+    const serverTime = server ? Date.parse(server.updatedAt) : 0;
+    const shouldUpload =
+      !server ||
+      !Number.isFinite(serverTime) ||
+      (Number.isFinite(localTime) && localTime > serverTime);
+
+    if (!shouldUpload) return;
+
+    await saveQuranProgress({
+      mode: local.mode,
+      surahNumber: local.surahNumber,
+      ayahNumber: local.ayahNumber,
+    });
+  } catch {
+    // Non-blocking — guest progress stays local.
+  }
 }

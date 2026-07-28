@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/Button';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import {
@@ -19,6 +19,10 @@ import {
   pathProgressPercent,
   pickTodayModule,
 } from '@/features/home/lib/todayPath';
+import {
+  readLocalQuranProgress,
+  type LocalQuranProgress,
+} from '@/features/quran/lib/quranLocalProgress';
 import { getErrorMessage } from '@/shared/lib/errors';
 
 const FALLBACK_SLUGS = ['siyrat-15-kun', 'example-demo-path'] as const;
@@ -32,9 +36,14 @@ export function HomePage() {
 
   const [path, setPath] = useState<PathDetail | null>(null);
   const [progress, setProgress] = useState<PathProgressItem | null>(null);
+  const [quranContinue, setQuranContinue] = useState<LocalQuranProgress | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setQuranContinue(readLocalQuranProgress());
+  }, [accessToken, path]);
 
   useEffect(() => {
     let cancelled = false;
@@ -136,9 +145,18 @@ export function HomePage() {
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-nur-muted">
           Hali o‘quv yo‘li yo‘q.
         </p>
-        <Button to="/quran" className="mt-8">
-          Qur’onga o‘tish
-        </Button>
+        {quranContinue ? (
+          <Button
+            to={`/quran/${quranContinue.surahNumber}?ayah=${quranContinue.ayahNumber}`}
+            className="mt-8"
+          >
+            Qur’onni davom ettirish
+          </Button>
+        ) : (
+          <Button to="/quran" className="mt-8">
+            Qur’onga o‘tish
+          </Button>
+        )}
         {error ? <p className="mt-5 text-sm text-[var(--nur-danger)]">{error}</p> : null}
       </section>
     );
@@ -153,6 +171,24 @@ export function HomePage() {
         transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
         {error ? <p className="mb-4 text-center text-sm text-[var(--nur-danger)]">{error}</p> : null}
+        {quranContinue ? (
+          <Link
+            to={`/quran/${quranContinue.surahNumber}?ayah=${quranContinue.ayahNumber}`}
+            className="mx-auto mb-8 flex max-w-lg items-center justify-between gap-3 rounded-[var(--radius-xl)] border border-nur-line bg-nur-elevated px-5 py-4 transition-opacity hover:opacity-90"
+          >
+            <span className="text-[0.6875rem] font-semibold tracking-[0.06em] text-nur-accent uppercase">
+              Qur’on · Davom
+            </span>
+            <span className="min-w-0 text-right text-sm font-semibold text-nur-ink">
+              <span className="block truncate">
+                {quranContinue.surahName ?? `Surah ${quranContinue.surahNumber}`}
+              </span>
+              <span className="mt-0.5 block text-xs font-normal text-nur-muted">
+                {quranContinue.ayahNumber}-oyat
+              </span>
+            </span>
+          </Link>
+        ) : null}
         <TodayMission
           greetingName={user?.displayName}
           dates={dates}

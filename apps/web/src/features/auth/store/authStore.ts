@@ -9,6 +9,7 @@ import {
   type RegisterInput,
 } from '@/features/auth/api/authApi';
 import type { PublicUser } from '@/features/auth/types/auth.types';
+import { syncLocalQuranProgressToServer } from '@/features/quran/lib/quranLocalProgress';
 
 const ACCESS_KEY = 'nur_access_token';
 const REFRESH_KEY = 'nur_refresh_token';
@@ -32,6 +33,10 @@ function persistTokens(accessToken: string | null, refreshToken: string | null) 
   else localStorage.removeItem(ACCESS_KEY);
   if (refreshToken) localStorage.setItem(REFRESH_KEY, refreshToken);
   else localStorage.removeItem(REFRESH_KEY);
+}
+
+async function afterAuthSuccess() {
+  await syncLocalQuranProgressToServer();
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -61,6 +66,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const user = await fetchMeRequest();
       set({ user, isHydrated: true });
+      void afterAuthSuccess();
     } catch {
       if (refreshToken) {
         try {
@@ -72,6 +78,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           });
           const user = await fetchMeRequest();
           set({ user, isHydrated: true });
+          void afterAuthSuccess();
           return;
         } catch {
           clear();
@@ -94,6 +101,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         refreshToken: result.tokens.refreshToken,
         user,
       });
+      await afterAuthSuccess();
     } finally {
       set({ isLoading: false });
     }
@@ -110,6 +118,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
       const user = await fetchMeRequest();
       set({ user });
+      await afterAuthSuccess();
     } finally {
       set({ isLoading: false });
     }
