@@ -159,18 +159,12 @@
   .nur-quran-shell {
     min-height: 100dvh;
     color: var(--nur-quran-ink);
-    background:
-      radial-gradient(
-        85% 45% at 50% -8%,
-        color-mix(in srgb, #c4b89a 12%, transparent),
-        transparent 70%
-      ),
-      var(--nur-quran-bg);
+    background: var(--nur-quran-bg);
   }
 
   .nur-ayah-card {
-    border: 1px solid color-mix(in srgb, var(--nur-quran-ornament) 14%, var(--nur-line));
-    border-radius: var(--radius-xl);
+    border: 1px solid var(--nur-line);
+    border-radius: var(--radius-l);
     background: var(--nur-quran-panel);
     box-shadow: none;
     padding: var(--space-5);
@@ -183,16 +177,10 @@
   }
 
   .nur-ayah-arabic-plane {
-    border-radius: var(--radius-l);
-    border-right: 2px solid color-mix(in srgb, var(--nur-quran-ornament) 55%, transparent);
-    background: var(--nur-quran-arabic-plane);
-    padding: var(--space-5) var(--space-4);
-  }
-
-  @media (min-width: 768px) {
-    .nur-ayah-arabic-plane {
-      padding: var(--space-6) var(--space-5);
-    }
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    padding: 0.25rem 0;
   }
 
   .nur-ayah-arabic {
@@ -200,64 +188,60 @@
     font-weight: 500;
     text-align: right;
     direction: rtl;
-    line-height: 2.35;
+    line-height: 2.4;
     letter-spacing: 0.01em;
     color: var(--nur-quran-ink);
-    word-spacing: 0.12em;
+    word-spacing: 0.1em;
   }
 
   .nur-ayah-number {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 2.25rem;
-    height: 2.25rem;
+    min-width: 2rem;
+    height: 2rem;
     border-radius: 9999px;
-    font-family: var(--font-display);
-    font-size: 0.8125rem;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     color: var(--nur-quran-ornament);
-    background: var(--nur-quran-translation-plane);
-    border: 1px solid color-mix(in srgb, var(--nur-quran-ornament) 22%, transparent);
+    background: transparent;
+    border: 1.5px solid var(--nur-quran-ornament);
   }
 
   .nur-ayah-number-active {
-    color: #fffcf7;
+    color: #ffffff;
     background: var(--nur-quran-ornament);
     border-color: var(--nur-quran-ornament);
   }
 
   .nur-ayah-translation {
-    margin-top: var(--space-5);
-    padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
-    border-radius: var(--radius-l);
-    border-left: 2px solid color-mix(in srgb, var(--nur-quran-ornament) 55%, transparent);
-    background: var(--nur-quran-translation-plane);
+    margin-top: var(--space-4);
+    padding: var(--space-4) 0 0;
+    border: none;
+    border-top: 1px solid var(--nur-line);
+    border-radius: 0;
+    background: transparent;
     font-family: var(--font-sans);
     font-size: 1.0625rem;
-    font-weight: 500;
-    line-height: 1.8;
-    letter-spacing: -0.01em;
+    font-weight: 400;
+    line-height: 1.75;
+    letter-spacing: 0;
     color: var(--nur-quran-ink);
   }
 
   .nur-ayah-translation-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--nur-quran-ornament);
+    display: none;
   }
 
   .nur-quran-surah-hero {
-    border-radius: var(--radius-xl);
-    border-left: 2px solid color-mix(in srgb, var(--nur-quran-ornament) 55%, transparent);
+    border: none;
+    border-radius: var(--radius-l);
     background: var(--nur-quran-panel);
     padding: var(--space-7) var(--space-5);
     text-align: center;
+    box-shadow: none;
   }
 
   @media (min-width: 768px) {
@@ -271,7 +255,7 @@
     min-height: 2.75rem;
     border-radius: var(--radius-m);
     border: 1px solid var(--nur-line);
-    background: #ffffff;
+    background: var(--nur-bg-elevated);
     padding: 0.625rem 0.875rem;
     font-size: 1rem;
     line-height: 1.45;

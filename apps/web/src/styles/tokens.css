@@ -28,14 +28,14 @@
   --nur-warning: #a87c0e;
   --nur-danger: #a84832;
 
-  /* Sacred / Qur’an — warm ivory (Sokin) */
-  --nur-quran-bg: #f3efe6;
-  --nur-quran-ink: #2c2924;
-  --nur-quran-ornament: #5a6b62;
-  --nur-quran-muted: #5c574e;
-  --nur-quran-panel: #fffcf7;
-  --nur-quran-arabic-plane: #f8f4ea;
-  --nur-quran-translation-plane: #efe9dc;
+  /* Sacred / Qur’an — Oddiy light (Quran.com-like) */
+  --nur-quran-bg: #f3f4f6;
+  --nur-quran-ink: #111827;
+  --nur-quran-ornament: #0d7a5f;
+  --nur-quran-muted: #6b7280;
+  --nur-quran-panel: #ffffff;
+  --nur-quran-arabic-plane: #ffffff;
+  --nur-quran-translation-plane: #f9fafb;
 
   --nur-overlay: rgba(31, 30, 27, 0.45);
 
@@ -102,78 +102,92 @@
 }
 
 [data-theme='dark'] {
-  --nur-bg: #14161a;
-  --nur-bg-elevated: #1d2027;
-  --nur-bg-sunken: #121418;
-  --nur-ink: #f2f1ee;
-  --nur-ink-muted: #c4c0b8;
-  --nur-ink-faint: #c4c0b8;
+  /* Standard dark — neutral charcoal (not brown/sepia) */
+  --nur-bg: #0f1115;
+  --nur-bg-elevated: #1a1d24;
+  --nur-bg-sunken: #0a0c10;
+  --nur-ink: #f0f1f3;
+  --nur-ink-muted: #9aa0a8;
+  --nur-ink-faint: #7a808a;
 
-  --nur-lamp: #c9a227;
-  --nur-lamp-soft: #3a3420;
-  --nur-lamp-ink: #1a1608;
-  --nur-lamp-glow: color-mix(in srgb, var(--nur-lamp) 18%, transparent);
+  --nur-lamp: #d4a84b;
+  --nur-lamp-soft: #2a2418;
+  --nur-lamp-ink: #0f1115;
+  --nur-lamp-glow: color-mix(in srgb, var(--nur-lamp) 14%, transparent);
 
-  --nur-accent: #2e5c4f;
-  --nur-accent-soft: #1a2e28;
+  --nur-accent: #3d9a7f;
+  --nur-accent-soft: #1a2f2a;
   --nur-accent-ink: #ffffff;
-  --nur-focus: #2e5c4f;
+  --nur-focus: #3d9a7f;
 
   --nur-line: #2a2e36;
   --nur-line-strong: #3a404c;
 
-  --nur-success: #2e5c4f;
-  --nur-warning: #c9a227;
-  --nur-danger: #d0705a;
+  --nur-success: #3d9a7f;
+  --nur-warning: #d4a84b;
+  --nur-danger: #e07060;
 
-  --nur-quran-bg: #1c1b18;
-  --nur-quran-ink: #e8e4da;
-  --nur-quran-ornament: #8a9a90;
-  --nur-quran-muted: #a8a297;
-  --nur-quran-panel: #24221e;
-  --nur-quran-arabic-plane: #2a2722;
-  --nur-quran-translation-plane: #211f1b;
+  /* Qur’an inherits clean night when app is dark */
+  --nur-quran-bg: #0f1115;
+  --nur-quran-ink: #eceef2;
+  --nur-quran-ornament: #3d9a7f;
+  --nur-quran-muted: #9aa0a8;
+  --nur-quran-panel: #1a1d24;
+  --nur-quran-arabic-plane: #1a1d24;
+  --nur-quran-translation-plane: #15181e;
 
-  --nur-overlay: rgba(0, 0, 0, 0.56);
+  --nur-overlay: rgba(0, 0, 0, 0.6);
 
-  --shadow-xs: 0 2px 8px rgba(0, 0, 0, 0.24);
-  --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.32);
-  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.4);
+  --shadow-xs: 0 2px 8px rgba(0, 0, 0, 0.28);
+  --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.36);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.44);
 
   color-scheme: dark;
 }
 
 [data-quran-theme='parchment'] {
-  /* Default “Sokin”: warm ivory */
-  --nur-quran-bg: #f3efe6;
-  --nur-quran-ink: #2c2924;
-  --nur-quran-ornament: #5a6b62;
-  --nur-quran-muted: #5c574e;
-  --nur-quran-panel: #fffcf7;
-  --nur-quran-arabic-plane: #f8f4ea;
-  --nur-quran-translation-plane: #efe9dc;
+  /* Oddiy — Quran.com-like light */
+  --nur-quran-bg: #f3f4f6;
+  --nur-quran-ink: #111827;
+  --nur-quran-ornament: #0d7a5f;
+  --nur-quran-muted: #6b7280;
+  --nur-quran-panel: #ffffff;
+  --nur-quran-arabic-plane: #ffffff;
+  --nur-quran-translation-plane: #f9fafb;
 }
 
 [data-quran-theme='mist'] {
-  /* Soft cool grey */
-  --nur-quran-bg: #f0efec;
-  --nur-quran-ink: #2c2924;
-  --nur-quran-ornament: #6a6e68;
-  --nur-quran-muted: #5c574e;
-  --nur-quran-panel: #fafaf8;
-  --nur-quran-arabic-plane: #f5f4f0;
-  --nur-quran-translation-plane: #ebeae5;
+  /* Sepia — classic soft paper */
+  --nur-quran-bg: #f0ebe3;
+  --nur-quran-ink: #2c2416;
+  --nur-quran-ornament: #7a6548;
+  --nur-quran-muted: #6b5e4e;
+  --nur-quran-panel: #faf7f2;
+  --nur-quran-arabic-plane: #faf7f2;
+  --nur-quran-translation-plane: #f3eee6;
 }
 
 [data-quran-theme='night'] {
-  /* Soft charcoal night */
-  --nur-quran-bg: #1c1b18;
-  --nur-quran-ink: #e8e4da;
-  --nur-quran-ornament: #8a9a90;
-  --nur-quran-muted: #a8a297;
-  --nur-quran-panel: #24221e;
-  --nur-quran-arabic-plane: #2a2722;
-  --nur-quran-translation-plane: #211f1b;
+  /* Tun — mainstream dark reader */
+  --nur-quran-bg: #0f1115;
+  --nur-quran-ink: #eceef2;
+  --nur-quran-ornament: #3d9a7f;
+  --nur-quran-muted: #9aa0a8;
+  --nur-quran-panel: #1a1d24;
+  --nur-quran-arabic-plane: #1a1d24;
+  --nur-quran-translation-plane: #15181e;
+}
+
+/* App dark + light reader themes → force night surfaces (no cream flash) */
+[data-theme='dark'] [data-quran-theme='parchment'],
+[data-theme='dark'] [data-quran-theme='mist'] {
+  --nur-quran-bg: #0f1115;
+  --nur-quran-ink: #eceef2;
+  --nur-quran-ornament: #3d9a7f;
+  --nur-quran-muted: #9aa0a8;
+  --nur-quran-panel: #1a1d24;
+  --nur-quran-arabic-plane: #1a1d24;
+  --nur-quran-translation-plane: #15181e;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -80,7 +80,7 @@ export function SettingsPage() {
           <Input
             value={displayName}
             onChange={(event) => setDisplayName(event.target.value)}
-            className="!bg-white"
+            className="nur-input"
           />
         </div>
 
@@ -91,7 +91,7 @@ export function SettingsPage() {
           <select
             value={theme}
             onChange={(event) => setTheme(event.target.value as PublicUser['preferences']['theme'])}
-            className="nur-input !bg-white"
+            className="nur-input"
           >
             <option value="system">Sistema</option>
             <option value="light">Yorug‘</option>

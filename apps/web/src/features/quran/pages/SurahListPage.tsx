@@ -120,11 +120,7 @@ export function SurahListPage() {
     >
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 -z-10"
-        style={{
-          background:
-            'radial-gradient(85% 45% at 50% -8%, color-mix(in srgb, #c4b89a 12%, transparent), transparent 70%), var(--nur-quran-bg)',
-        }}
+        className="pointer-events-none fixed inset-0 -z-10 bg-[var(--nur-quran-bg)]"
       />
 
       {continueHref && progress ? (

@@ -30,7 +30,7 @@ export function MorePage() {
           return (
             <li key={item.to}>
               <Link to={item.to} className="nur-list-row">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-m)] bg-white text-nur-accent ring-1 ring-nur-line">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-m)] bg-nur-elevated text-nur-accent ring-1 ring-nur-line">
                   <Icon size={18} strokeWidth={1.75} aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
@@ -43,7 +43,7 @@ export function MorePage() {
         })}
         <li>
           <Link to={accessToken ? '/settings' : '/login'} className="nur-list-row">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-m)] bg-white text-nur-accent ring-1 ring-nur-line">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-m)] bg-nur-elevated text-nur-accent ring-1 ring-nur-line">
               <Settings size={18} strokeWidth={1.75} aria-hidden />
             </span>
             <div className="min-w-0 flex-1">

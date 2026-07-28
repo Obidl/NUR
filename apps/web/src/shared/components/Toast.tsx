@@ -58,7 +58,7 @@ export function ToastProvider({ children }: PropsWithChildren) {
               exit={{ opacity: 0, y: 8, scale: 0.98 }}
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
               className={cx(
-                'pointer-events-auto flex max-w-md items-center gap-3 rounded-[var(--radius-pill)] border border-nur-line bg-white px-4 py-3 text-nur-ink shadow-[var(--shadow-sm)]',
+                'pointer-events-auto flex max-w-md items-center gap-3 rounded-[var(--radius-pill)] border border-nur-line bg-nur-elevated px-4 py-3 text-nur-ink shadow-[var(--shadow-sm)]',
                 item.tone === 'success' && 'border-nur-accent/20',
                 item.tone === 'error' && 'border-[var(--nur-danger)]/35',
               )}

@@ -209,7 +209,7 @@ export function TodayMission({
               <li key={lesson.id}>
                 <div
                   className={cx(
-                    'flex w-full items-center gap-1 rounded-[var(--radius-l)] bg-white/60 px-1 py-1 ring-1 ring-nur-line/80',
+                    'flex w-full items-center gap-1 rounded-[var(--radius-l)] bg-nur-elevated/80 px-1 py-1 ring-1 ring-nur-line/80',
                     done && 'opacity-70',
                   )}
                 >

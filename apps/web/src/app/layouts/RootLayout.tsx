@@ -115,7 +115,7 @@ export function RootLayout() {
               {accessToken ? (
                 <NavLink
                   to="/settings"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-nur-muted shadow-[var(--shadow-xs)] ring-1 ring-nur-line"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-nur-elevated text-nur-muted shadow-[var(--shadow-xs)] ring-1 ring-nur-line"
                   aria-label="Sozlamalar"
                 >
                   {user?.displayName?.charAt(0)?.toUpperCase() ?? 'N'}

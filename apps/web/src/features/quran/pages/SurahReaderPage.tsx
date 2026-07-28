@@ -336,8 +336,8 @@ export function SurahReaderPage() {
               <div className="grid grid-cols-3 gap-2">
                 {(
                   [
-                    { id: 'parchment', label: 'Sokin' },
-                    { id: 'mist', label: 'Kulrang' },
+                    { id: 'parchment', label: 'Oddiy' },
+                    { id: 'mist', label: 'Sepia' },
                     { id: 'night', label: 'Tun' },
                   ] as const
                 ).map((item) => (
