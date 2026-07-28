@@ -36,7 +36,12 @@ export function createApp(env: Env) {
   const app = express();
 
   app.set('trust proxy', 1);
-  app.use(helmet());
+  // cross-origin: SPA on Vercel must read API responses (Helmet default same-origin blocks).
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
   app.use(cors(createCorsOptions(env)));
   app.use(express.json({ limit: '1mb' }));
   app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
