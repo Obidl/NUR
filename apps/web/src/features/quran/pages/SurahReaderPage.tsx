@@ -11,6 +11,7 @@ import {
   saveQuranProgress,
 } from '@/features/quran/api/quranApi';
 import { AyahRow } from '@/features/quran/components/AyahRow';
+import { writeLocalQuranProgress } from '@/features/quran/lib/quranLocalProgress';
 import { useQuranPlayerStore } from '@/features/quran/store/quranPlayerStore';
 import { useQuranSettingsStore } from '@/features/quran/store/quranSettingsStore';
 import type {
@@ -133,6 +134,13 @@ export function SurahReaderPage() {
 
   const persistReadProgress = useCallback(
     async (ayahNumber: number) => {
+      writeLocalQuranProgress({
+        mode: 'read',
+        surahNumber,
+        ayahNumber,
+        surahName: detail?.surah.nameUz ?? detail?.surah.nameLatin,
+        nameArabic: detail?.surah.nameArabic,
+      });
       if (!accessToken) return;
       try {
         await saveQuranProgress({
@@ -144,7 +152,7 @@ export function SurahReaderPage() {
         // non-blocking
       }
     },
-    [accessToken, surahNumber],
+    [accessToken, detail?.surah.nameArabic, detail?.surah.nameLatin, detail?.surah.nameUz, surahNumber],
   );
 
   useEffect(() => {
@@ -159,6 +167,13 @@ export function SurahReaderPage() {
     const onBoundary = (ayahNumber: number) => {
       setFocusedAyah(ayahNumber);
       void persistReadProgress(ayahNumber);
+      writeLocalQuranProgress({
+        mode: 'listen',
+        surahNumber,
+        ayahNumber,
+        surahName: detail?.surah.nameUz ?? detail?.surah.nameLatin,
+        nameArabic: detail?.surah.nameArabic,
+      });
       window.setTimeout(() => {
         document.getElementById(`ayah-${ayahNumber}`)?.scrollIntoView({
           behavior: reduceMotion ? 'auto' : 'smooth',
@@ -177,6 +192,9 @@ export function SurahReaderPage() {
     return () => setOnAyahBoundary(null);
   }, [
     accessToken,
+    detail?.surah.nameArabic,
+    detail?.surah.nameLatin,
+    detail?.surah.nameUz,
     persistReadProgress,
     reduceMotion,
     setOnAyahBoundary,

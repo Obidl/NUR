@@ -12,6 +12,7 @@ import type {
   SurahSummary,
 } from '@/features/quran/types/quran.types';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { readLocalQuranProgress } from '@/features/quran/lib/quranLocalProgress';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { PageShell } from '@/shared/components/PageShell';
 import { ErrorState, ListSkeleton } from '@/shared/components/Skeleton';
@@ -81,20 +82,21 @@ export function SurahListPage() {
   }, [deferredQuery, reloadKey, mode]);
 
   useEffect(() => {
+    let cancelled = false;
+
     if (!accessToken) {
-      setProgress(null);
+      setProgress(readLocalQuranProgress());
       return;
     }
 
-    let cancelled = false;
     void fetchQuranProgress()
       .then((rows) => {
         if (cancelled) return;
         const read = rows.find((row) => row.mode === 'read') ?? rows[0] ?? null;
-        setProgress(read);
+        setProgress(read ?? readLocalQuranProgress());
       })
       .catch(() => {
-        if (!cancelled) setProgress(null);
+        if (!cancelled) setProgress(readLocalQuranProgress());
       });
 
     return () => {
