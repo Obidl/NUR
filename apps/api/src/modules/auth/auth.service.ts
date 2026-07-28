@@ -27,6 +27,44 @@ import { getEnv } from '../../config/env.js';
 const BCRYPT_ROUNDS = 12;
 const RESET_TTL_MS = 60 * 60 * 1000;
 
+async function sendPasswordResetEmail(email: string, rawToken: string): Promise<boolean> {
+  const env = getEnv();
+  const apiKey = env.RESEND_API_KEY;
+  const from = env.EMAIL_FROM;
+  const webUrl = env.WEB_APP_URL;
+  if (!apiKey || !from || !webUrl) {
+    console.warn(
+      '[auth] password reset email skipped — set RESEND_API_KEY, EMAIL_FROM, WEB_APP_URL',
+    );
+    return false;
+  }
+
+  const link = `${webUrl.replace(/\/$/, '')}/reset-password?token=${encodeURIComponent(rawToken)}`;
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from,
+        to: [email],
+        subject: 'NUR — parolni tiklash',
+        html: `<p>Assalomu alaykum,</p><p>Parolingizni tiklash uchun quyidagi havolani oching (1 soat amal qiladi):</p><p><a href="${link}">${link}</a></p><p>Agar so‘rovni siz qilmagan bo‘lsangiz, bu xatni e’tiborsiz qoldiring.</p>`,
+      }),
+    });
+    if (!response.ok) {
+      console.error('[auth] Resend failed', response.status, await response.text());
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error('[auth] Resend request error', error);
+    return false;
+  }
+}
+
 type SessionMeta = {
   userAgent?: string;
   ip?: string;
@@ -206,12 +244,12 @@ export async function requestPasswordReset(
 
   const env = getEnv();
   if (env.NODE_ENV !== 'production') {
-    // No email provider in v1 — expose token only outside production for testing.
+    // No email required in local/test — expose token for manual confirm.
     console.info(`[auth] password reset token for ${email}: ${rawToken}`);
     return { ...generic, devResetToken: rawToken };
   }
 
-  // Production: wire email provider later; never return the raw token.
+  await sendPasswordResetEmail(email, rawToken);
   return generic;
 }
 

@@ -108,6 +108,8 @@ export function BookCatalogPage() {
           icon={<BookOpen className="h-5 w-5" strokeWidth={1.75} />}
           title="Hali kitob yo‘q"
           description="Nashr qilingan kitob bo‘sh. Admin orqali litsenziyalangan matn qo‘shiladi."
+          actionLabel="Bugunga"
+          actionTo="/"
         />
       ) : null}
 

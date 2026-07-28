@@ -21,7 +21,9 @@ export function ForgotPasswordPage() {
     try {
       const data = await requestPasswordReset(email);
       setMessage(
-        'Agar shu email bilan hisob bo‘lsa, tiklash ko‘rsatmasi tayyor. Email xizmati keyinroq ulanadi.',
+        data.devResetToken
+          ? 'Dev rejim: quyidagi havola orqali parolni yangilang.'
+          : 'Agar shu email bilan hisob bo‘lsa va email xizmati sozlangan bo‘lsa, tiklash havolasi yuboriladi.',
       );
       if (data.devResetToken) setDevToken(data.devResetToken);
     } catch (err) {

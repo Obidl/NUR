@@ -16,6 +16,19 @@ const envSchema = z
       (value) => (value === '' || value === undefined || value === null ? undefined : value),
       z.string().url().optional(),
     ),
+    /** Optional Resend — password reset emails in production. */
+    RESEND_API_KEY: z.preprocess(
+      (value) => (value === '' || value === undefined || value === null ? undefined : value),
+      z.string().min(1).optional(),
+    ),
+    EMAIL_FROM: z.preprocess(
+      (value) => (value === '' || value === undefined || value === null ? undefined : value),
+      z.string().email().optional(),
+    ),
+    WEB_APP_URL: z.preprocess(
+      (value) => (value === '' || value === undefined || value === null ? undefined : value),
+      z.string().url().optional(),
+    ),
   })
   .superRefine((data, ctx) => {
     const origins = data.CORS_ORIGIN.split(',').map((o) => o.trim());

@@ -63,6 +63,8 @@ export function ResearchListPage() {
           icon={<FileText className="h-5 w-5" strokeWidth={1.75} />}
           title="Hali maqola yo‘q"
           description="Nashr qilingan tadqiqot bo‘sh. Manbali kontent admin orqali qo‘shiladi."
+          actionLabel="Bugunga"
+          actionTo="/"
         />
       ) : null}
 

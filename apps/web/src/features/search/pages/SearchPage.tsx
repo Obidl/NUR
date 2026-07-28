@@ -143,6 +143,8 @@ export function SearchPage() {
           icon={<Search className="h-5 w-5" strokeWidth={1.75} />}
           title="Nimani qidiramiz?"
           description="Surah, podcast, kitob yoki tadqiqot nomini yozing."
+          actionLabel="Bugunga"
+          actionTo="/"
         />
       ) : null}
 
@@ -150,6 +152,8 @@ export function SearchPage() {
         <EmptyState
           title="Natija topilmadi"
           description="Boshqa so‘z yoki filtr bilan urinib ko‘ring. Uydirma kontent qo‘shilmaydi."
+          actionLabel="Bugunga"
+          actionTo="/"
         />
       ) : null}
 

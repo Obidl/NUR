@@ -210,6 +210,9 @@ export function SurahListPage() {
         <EmptyState
           title="Surah topilmadi"
           description="Qidiruvni o‘zgartiring yoki API’da Qur’on import qilinganini tekshiring."
+          actionLabel={query ? 'Qidiruvni tozalash' : 'Bugunga'}
+          actionTo={query ? undefined : '/'}
+          onAction={query ? () => setQuery('') : undefined}
         />
       ) : null}
 
@@ -221,24 +224,49 @@ export function SurahListPage() {
         <EmptyState
           title="Oyat topilmadi"
           description="Arabcha so‘z yoki kirill tarjima bilan qidirib ko‘ring."
+          actionLabel="Qidiruvni tozalash"
+          onAction={() => setQuery('')}
         />
       ) : null}
 
       {!loading && mode === 'surahs' && surahs.length > 0 ? (
         <ul className="space-y-2.5">
-          {surahs.map((surah) => (
+          {surahs.map((surah) => {
+            const isContinue = progress?.surahNumber === surah.number;
+            return (
             <li key={surah.number}>
               <Link
-                to={`/quran/${surah.number}`}
-                className="flex items-center gap-4 rounded-[var(--radius-xl)] border border-[color-mix(in_srgb,var(--nur-quran-ornament)_16%,var(--nur-line))] bg-[var(--nur-quran-panel)] px-4 py-4 transition-transform duration-150 active:scale-[0.99]"
+                to={
+                  isContinue && progress
+                    ? `/quran/${surah.number}?ayah=${progress.ayahNumber}`
+                    : `/quran/${surah.number}`
+                }
+                className={cx(
+                  'flex items-center gap-4 rounded-[var(--radius-xl)] border bg-[var(--nur-quran-panel)] px-4 py-4 transition-transform duration-150 active:scale-[0.99]',
+                  isContinue
+                    ? 'border-[var(--nur-quran-ornament)]'
+                    : 'border-[color-mix(in_srgb,var(--nur-quran-ornament)_16%,var(--nur-line))]',
+                )}
               >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--nur-quran-translation-plane)] font-display text-sm font-medium text-[var(--nur-quran-ornament)] ring-1 ring-[color-mix(in_srgb,var(--nur-quran-ornament)_22%,transparent)]">
+                <span
+                  className={cx(
+                    'flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-display text-sm font-medium ring-1',
+                    isContinue
+                      ? 'bg-[var(--nur-quran-ornament)] text-white ring-[var(--nur-quran-ornament)]'
+                      : 'bg-[var(--nur-quran-translation-plane)] text-[var(--nur-quran-ornament)] ring-[color-mix(in_srgb,var(--nur-quran-ornament)_22%,transparent)]',
+                  )}
+                >
                   {surah.number}
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-3">
                     <p className="truncate font-display text-base font-medium tracking-[-0.015em] text-nur-ink">
                       {surah.nameUz ?? surah.nameLatin}
+                      {isContinue ? (
+                        <span className="ms-2 text-[0.6875rem] font-semibold tracking-[0.06em] text-[var(--nur-quran-ornament)] uppercase">
+                          Davom
+                        </span>
+                      ) : null}
                     </p>
                     <p
                       className="font-quran shrink-0 text-xl leading-none text-nur-ink"
@@ -251,11 +279,13 @@ export function SurahListPage() {
                   <p className="mt-1.5 text-xs text-nur-muted">
                     {surah.ayahCount} oyat ·{' '}
                     {surah.revelationType === 'meccan' ? 'Makkiy' : 'Madaniy'}
+                    {isContinue && progress ? ` · ${progress.ayahNumber}-oyat` : ''}
                   </p>
                 </div>
               </Link>
             </li>
-          ))}
+            );
+          })}
         </ul>
       ) : null}
 

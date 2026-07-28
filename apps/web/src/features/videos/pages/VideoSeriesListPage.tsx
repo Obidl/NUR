@@ -151,6 +151,8 @@ export function VideoSeriesListPage() {
           icon={<Video className="h-5 w-5" strokeWidth={1.75} />}
           title="Hali video yo‘q"
           description="Nashr qilingan seriya bo‘sh. Admin orqali YouTube video ID qo‘shiladi."
+          actionLabel="Bugunga"
+          actionTo="/"
         />
       ) : null}
 

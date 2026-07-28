@@ -114,6 +114,8 @@ export function PodcastSeriesListPage() {
           icon={<Mic2 className="h-5 w-5" strokeWidth={1.75} />}
           title="Hali podcast yo‘q"
           description="Nashr qilingan seriya bo‘sh. Admin orqali litsenziyalangan audio qo‘shiladi."
+          actionLabel="Bugunga"
+          actionTo="/"
         />
       ) : null}
 
