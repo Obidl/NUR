@@ -12,6 +12,7 @@ import type {
   LibraryFavorites,
 } from '@/features/library/types/library.types';
 import { readLocalQuranProgress } from '@/features/quran/lib/quranLocalProgress';
+import { readLocalPodcastProgressList } from '@/features/podcasts/lib/podcastLocalProgress';
 import { useVideoWatchStore, type VideoContinueItem } from '@/features/videos/store/videoWatchStore';
 import { Button } from '@/shared/components/Button';
 import { PageShell } from '@/shared/components/PageShell';
@@ -29,6 +30,19 @@ function formatTime(seconds: number) {
 
 function guestContinueFromDevice(videoRecent: VideoContinueItem[]): LibraryContinue {
   const local = readLocalQuranProgress();
+  const podcasts = readLocalPodcastProgressList()
+    .filter((row) => !row.completed)
+    .slice(0, 8)
+    .map((row) => ({
+      episodeId: row.episodeId,
+      seriesSlug: row.seriesSlug,
+      seriesTitle: row.seriesTitle,
+      title: row.title,
+      positionSeconds: row.positionSeconds,
+      durationSeconds: row.durationSeconds,
+      coverUrl: row.coverUrl,
+      updatedAt: row.updatedAt,
+    }));
   return {
     quran: local
       ? [
@@ -41,7 +55,7 @@ function guestContinueFromDevice(videoRecent: VideoContinueItem[]): LibraryConti
           },
         ]
       : [],
-    podcasts: [],
+    podcasts,
     videos: videoRecent.map((item) => ({
       episodeId: item.episodeId,
       seriesSlug: item.seriesSlug,
@@ -75,6 +89,23 @@ function mergeLocalIntoContinue(
     ];
   }
 
+  let podcasts = server.podcasts;
+  if (podcasts.length === 0) {
+    podcasts = readLocalPodcastProgressList()
+      .filter((row) => !row.completed)
+      .slice(0, 8)
+      .map((row) => ({
+        episodeId: row.episodeId,
+        seriesSlug: row.seriesSlug,
+        seriesTitle: row.seriesTitle,
+        title: row.title,
+        positionSeconds: row.positionSeconds,
+        durationSeconds: row.durationSeconds,
+        coverUrl: row.coverUrl,
+        updatedAt: row.updatedAt,
+      }));
+  }
+
   let videos = server.videos ?? [];
   if (videos.length === 0 && videoRecent.length > 0) {
     videos = videoRecent.map((item) => ({
@@ -90,7 +121,7 @@ function mergeLocalIntoContinue(
     }));
   }
 
-  return { ...server, quran, videos };
+  return { ...server, quran, podcasts, videos };
 }
 
 export function LibraryPage() {
@@ -194,9 +225,10 @@ export function LibraryPage() {
         <div className="space-y-8">
           {!accessToken &&
           continueData.quran.length === 0 &&
+          continueData.podcasts.length === 0 &&
           continueData.videos.length === 0 ? (
             <p className="text-sm text-nur-muted">
-              Hali davom yo‘q. Qur’on o‘qing yoki video ko‘ring — bu yerda saqlanadi.
+              Hali davom yo‘q. Qur’on, podcast yoki video oching — bu yerda saqlanadi.
             </p>
           ) : null}
 
@@ -218,30 +250,28 @@ export function LibraryPage() {
             ))}
           </Section>
 
-          {accessToken ? (
-            <Section
-              title="Podcastlar"
-              empty="Podcast progressi yo‘q."
-              count={continueData.podcasts.length}
-            >
-              {continueData.podcasts.map((item) => (
-                <li key={item.episodeId}>
-                  <Link
-                    to={`/podcasts/${item.seriesSlug}?episode=${item.episodeId}`}
-                    className="nur-list-row"
-                  >
-                    <span className="min-w-0">
-                      <span className="block font-semibold">{item.title}</span>
-                      <span className="mt-0.5 block text-xs text-nur-muted">
-                        {item.seriesTitle} · {formatTime(item.positionSeconds)} /{' '}
-                        {formatTime(item.durationSeconds)}
-                      </span>
+          <Section
+            title="Podcastlar"
+            empty="Podcast progressi yo‘q."
+            count={continueData.podcasts.length}
+          >
+            {continueData.podcasts.map((item) => (
+              <li key={item.episodeId}>
+                <Link
+                  to={`/podcasts/${item.seriesSlug}?episode=${item.episodeId}`}
+                  className="nur-list-row"
+                >
+                  <span className="min-w-0">
+                    <span className="block font-semibold">{item.title}</span>
+                    <span className="mt-0.5 block text-xs text-nur-muted">
+                      {item.seriesTitle} · {formatTime(item.positionSeconds)} /{' '}
+                      {formatTime(item.durationSeconds)}
                     </span>
-                  </Link>
-                </li>
-              ))}
-            </Section>
-          ) : null}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </Section>
 
           <Section
             title="Videolar"

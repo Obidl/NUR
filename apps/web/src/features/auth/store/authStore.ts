@@ -9,6 +9,7 @@ import {
   type RegisterInput,
 } from '@/features/auth/api/authApi';
 import type { PublicUser } from '@/features/auth/types/auth.types';
+import { syncLocalPodcastProgressToServer } from '@/features/podcasts/lib/podcastLocalProgress';
 import { syncLocalQuranProgressToServer } from '@/features/quran/lib/quranLocalProgress';
 
 const ACCESS_KEY = 'nur_access_token';
@@ -36,7 +37,10 @@ function persistTokens(accessToken: string | null, refreshToken: string | null) 
 }
 
 async function afterAuthSuccess() {
-  await syncLocalQuranProgressToServer();
+  await Promise.all([
+    syncLocalQuranProgressToServer(),
+    syncLocalPodcastProgressToServer(),
+  ]);
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({

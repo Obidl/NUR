@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { savePodcastProgress } from '@/features/podcasts/api/podcastApi';
+import { writeLocalPodcastProgress } from '@/features/podcasts/lib/podcastLocalProgress';
 import { stopOtherMedia } from '@/shared/lib/mediaSession';
 
 type PodcastPlayerState = {
@@ -63,16 +64,28 @@ export const usePodcastPlayerStore = create<PodcastPlayerState>((set, get) => ({
 
   persistProgress: async (accessToken) => {
     const state = get();
-    if (!accessToken || !state.episodeId || state.durationSeconds <= 0) return;
+    if (!state.episodeId || state.durationSeconds <= 0) return;
+    const completed = state.positionSeconds >= state.durationSeconds * 0.95;
+    writeLocalPodcastProgress({
+      episodeId: state.episodeId,
+      title: state.title ?? 'Epizod',
+      seriesSlug: state.seriesSlug ?? '',
+      seriesTitle: state.seriesTitle ?? '',
+      hostOrScholar: state.hostOrScholar ?? '',
+      positionSeconds: state.positionSeconds,
+      durationSeconds: state.durationSeconds,
+      completed,
+    });
+    if (!accessToken) return;
     try {
       await savePodcastProgress({
         episodeId: state.episodeId,
         positionSeconds: state.positionSeconds,
         durationSeconds: state.durationSeconds,
-        completed: state.positionSeconds >= state.durationSeconds * 0.95,
+        completed,
       });
     } catch {
-      // Non-blocking
+      // Non-blocking — local copy already saved
     }
   },
 

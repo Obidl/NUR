@@ -9,6 +9,7 @@ import {
   fetchPodcastSeriesDetail,
   removePodcastFavorite,
 } from '@/features/podcasts/api/podcastApi';
+import { readLocalPodcastPositionMap } from '@/features/podcasts/lib/podcastLocalProgress';
 import { usePodcastPlayerStore } from '@/features/podcasts/store/podcastPlayerStore';
 import type {
   PodcastEpisodeSummary,
@@ -61,11 +62,13 @@ export function PodcastSeriesDetailPage() {
           ]);
           if (cancelled) return;
           setFavorites(favs);
-          const map: Record<string, number> = {};
+          const map: Record<string, number> = { ...readLocalPodcastPositionMap() };
           for (const row of progress) {
             map[row.episodeId] = row.positionSeconds;
           }
           setProgressMap(map);
+        } else {
+          setProgressMap(readLocalPodcastPositionMap());
         }
       } catch (err) {
         if (!cancelled) setError(getErrorMessage(err, 'Seriya topilmadi'));

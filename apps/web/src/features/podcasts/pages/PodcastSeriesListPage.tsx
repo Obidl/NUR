@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mic2 } from 'lucide-react';
 import { fetchPodcastProgress, fetchPodcastSeries } from '@/features/podcasts/api/podcastApi';
+import {
+  readLocalPodcastProgressList,
+  toLibraryPodcastRows,
+} from '@/features/podcasts/lib/podcastLocalProgress';
 import type {
   PodcastProgressItem,
   PodcastSeriesCard,
@@ -44,17 +48,27 @@ export function PodcastSeriesListPage() {
   }, [query, reloadKey]);
 
   useEffect(() => {
+    let cancelled = false;
+
+    function fromLocal() {
+      return toLibraryPodcastRows(
+        readLocalPodcastProgressList().filter((row) => !row.completed),
+      ).slice(0, 3);
+    }
+
     if (!accessToken) {
-      setContinueItems([]);
+      setContinueItems(fromLocal());
       return;
     }
-    let cancelled = false;
+
     void fetchPodcastProgress()
       .then((rows) => {
-        if (!cancelled) setContinueItems(rows.filter((row) => !row.completed).slice(0, 3));
+        if (cancelled) return;
+        const incomplete = rows.filter((row) => !row.completed);
+        setContinueItems(incomplete.length > 0 ? incomplete.slice(0, 3) : fromLocal());
       })
       .catch(() => {
-        if (!cancelled) setContinueItems([]);
+        if (!cancelled) setContinueItems(fromLocal());
       });
     return () => {
       cancelled = true;
