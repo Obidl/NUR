@@ -9,7 +9,8 @@ export const http = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 15000,
+  // Render free-tier cold start can exceed 15s.
+  timeout: 60000,
 });
 
 let refreshPromise: Promise<string | null> | null = null;
@@ -24,7 +25,7 @@ async function refreshAccessToken(): Promise<string | null> {
     const { data } = await axios.post<{ data: { tokens: { accessToken: string; refreshToken: string } } }>(
       `${env.apiBaseUrl}${endpoints.auth.refresh}`,
       { refreshToken },
-      { timeout: 15000 },
+      { timeout: 60000 },
     );
 
     const tokens = data.data.tokens;

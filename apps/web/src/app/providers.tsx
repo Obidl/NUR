@@ -1,5 +1,6 @@
 import { useEffect, type PropsWithChildren } from 'react';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { warmApi } from '@/services/warmApi';
 import { ToastProvider } from '@/shared/components/Toast';
 
 export function AppProviders({ children }: PropsWithChildren) {
@@ -7,6 +8,7 @@ export function AppProviders({ children }: PropsWithChildren) {
   const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
+    warmApi();
     void hydrate();
   }, [hydrate]);
 

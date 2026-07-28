@@ -1,8 +1,9 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/Button';
 import { Field, Input } from '@/shared/components/Field';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { warmApi } from '@/services/warmApi';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { useToast } from '@/shared/components/Toast';
 
@@ -16,6 +17,7 @@ export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [slowHint, setSlowHint] = useState(false);
 
   const from =
     typeof location.state === 'object' &&
@@ -24,6 +26,19 @@ export function LoginPage() {
     typeof (location.state as { from?: unknown }).from === 'string'
       ? (location.state as { from: string }).from
       : '/';
+
+  useEffect(() => {
+    warmApi();
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setSlowHint(false);
+      return;
+    }
+    const id = window.setTimeout(() => setSlowHint(true), 8000);
+    return () => window.clearTimeout(id);
+  }, [isLoading]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -77,8 +92,14 @@ export function LoginPage() {
           </p>
         ) : null}
 
+        {isLoading && slowHint ? (
+          <p className="text-sm text-nur-muted" role="status">
+            Server uyg‘onyapti — biroz kuting…
+          </p>
+        ) : null}
+
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Kutilmoqda…' : 'Kirish'}
+          {isLoading ? (slowHint ? 'Uyg‘onmoqda…' : 'Kutilmoqda…') : 'Kirish'}
         </Button>
       </form>
 
