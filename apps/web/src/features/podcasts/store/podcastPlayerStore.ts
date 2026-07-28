@@ -1,10 +1,12 @@
 import { create } from 'zustand';
 import { savePodcastProgress } from '@/features/podcasts/api/podcastApi';
+import { stopOtherMedia } from '@/shared/lib/mediaSession';
 
 type PodcastPlayerState = {
   episodeId: string | null;
   title: string | null;
   seriesTitle: string | null;
+  seriesSlug: string | null;
   hostOrScholar: string | null;
   audioUrl: string | null;
   durationSeconds: number;
@@ -15,6 +17,7 @@ type PodcastPlayerState = {
     episodeId: string;
     title: string;
     seriesTitle: string;
+    seriesSlug: string;
     hostOrScholar: string;
     audioUrl: string;
     durationSeconds: number;
@@ -31,6 +34,7 @@ export const usePodcastPlayerStore = create<PodcastPlayerState>((set, get) => ({
   episodeId: null,
   title: null,
   seriesTitle: null,
+  seriesSlug: null,
   hostOrScholar: null,
   audioUrl: null,
   durationSeconds: 0,
@@ -38,17 +42,20 @@ export const usePodcastPlayerStore = create<PodcastPlayerState>((set, get) => ({
   isPlaying: false,
   playbackRate: 1,
 
-  loadEpisode: (input) =>
+  loadEpisode: (input) => {
+    void stopOtherMedia('podcast');
     set({
       episodeId: input.episodeId,
       title: input.title,
       seriesTitle: input.seriesTitle,
+      seriesSlug: input.seriesSlug,
       hostOrScholar: input.hostOrScholar,
       audioUrl: input.audioUrl,
       durationSeconds: input.durationSeconds,
       positionSeconds: input.positionSeconds ?? 0,
       isPlaying: true,
-    }),
+    });
+  },
 
   setPlaying: (value) => set({ isPlaying: value }),
   setPosition: (seconds) => set({ positionSeconds: seconds }),
@@ -74,6 +81,7 @@ export const usePodcastPlayerStore = create<PodcastPlayerState>((set, get) => ({
       episodeId: null,
       title: null,
       seriesTitle: null,
+      seriesSlug: null,
       hostOrScholar: null,
       audioUrl: null,
       durationSeconds: 0,

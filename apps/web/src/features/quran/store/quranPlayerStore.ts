@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { fetchQuranAudio } from '@/features/quran/api/quranApi';
+import { stopOtherMedia } from '@/shared/lib/mediaSession';
 
 type PlaybackScope = 'ayah' | 'surah';
 
@@ -15,7 +16,10 @@ type QuranPlayerState = {
   isPlaying: boolean;
   autoAdvance: boolean;
   error: string | null;
+  /** Optional listener (e.g. SurahReaderPage) for ayah focus while bar is global. */
+  onAyahBoundary: ((ayahNumber: number) => void) | null;
   setReciter: (id: string, name: string) => void;
+  setOnAyahBoundary: (handler: ((ayahNumber: number) => void) | null) => void;
   playAyah: (
     surahNumber: number,
     ayahNumber: number,
@@ -39,8 +43,10 @@ export const useQuranPlayerStore = create<QuranPlayerState>((set, get) => ({
   isPlaying: false,
   autoAdvance: true,
   error: null,
+  onAyahBoundary: null,
 
   setReciter: (id, name) => set({ reciterId: id, reciterName: name }),
+  setOnAyahBoundary: (handler) => set({ onAyahBoundary: handler }),
 
   playAyah: async (surahNumber, ayahNumber, options) => {
     const { reciterId } = get();
@@ -50,6 +56,7 @@ export const useQuranPlayerStore = create<QuranPlayerState>((set, get) => ({
     }
 
     try {
+      await stopOtherMedia('quran');
       const items = await fetchQuranAudio({
         reciterId,
         surahNumber,
@@ -71,13 +78,13 @@ export const useQuranPlayerStore = create<QuranPlayerState>((set, get) => ({
         autoAdvance: options?.autoAdvance ?? true,
         error: null,
       });
+      get().onAyahBoundary?.(ayahNumber);
     } catch {
       set({ error: 'Audioni yuklab bo‘lmadi' });
     }
   },
 
   playSurah: async (surahNumber, ayahCount) => {
-    // Sequential per-ayah playback so each ayah can highlight as it plays.
     await get().playAyah(surahNumber, 1, { ayahCount, autoAdvance: true });
     set({ scope: 'surah' });
   },

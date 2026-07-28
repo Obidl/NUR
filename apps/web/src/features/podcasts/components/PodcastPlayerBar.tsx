@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { Pause, Play, X } from 'lucide-react';
 import { usePodcastPlayerStore } from '@/features/podcasts/store/podcastPlayerStore';
 import { useAuthStore } from '@/features/auth/store/authStore';
@@ -16,6 +17,7 @@ export function PodcastPlayerBar() {
 
   const audioUrl = usePodcastPlayerStore((s) => s.audioUrl);
   const title = usePodcastPlayerStore((s) => s.title);
+  const seriesSlug = usePodcastPlayerStore((s) => s.seriesSlug);
   const hostOrScholar = usePodcastPlayerStore((s) => s.hostOrScholar);
   const isPlaying = usePodcastPlayerStore((s) => s.isPlaying);
   const positionSeconds = usePodcastPlayerStore((s) => s.positionSeconds);
@@ -70,7 +72,7 @@ export function PodcastPlayerBar() {
   if (!audioUrl) return null;
 
   return (
-    <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 border-t border-nur-line/60 bg-nur-elevated/95 px-4 py-3 backdrop-blur-xl md:bottom-0">
+    <div className="fixed inset-x-0 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 border-t border-nur-line/60 bg-nur-elevated/95 px-4 py-3 backdrop-blur-xl md:bottom-0">
       <audio
         ref={audioRef}
         preload="metadata"
@@ -94,7 +96,16 @@ export function PodcastPlayerBar() {
         ) : null}
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold tracking-[-0.01em]">{title}</p>
+            {seriesSlug ? (
+              <Link
+                to={`/podcasts/${seriesSlug}`}
+                className="block truncate text-sm font-semibold tracking-[-0.01em] hover:opacity-80"
+              >
+                {title}
+              </Link>
+            ) : (
+              <p className="truncate text-sm font-semibold tracking-[-0.01em]">{title}</p>
+            )}
             <p className="truncate text-xs text-nur-muted">{hostOrScholar}</p>
           </div>
           <div className="flex items-center gap-2">

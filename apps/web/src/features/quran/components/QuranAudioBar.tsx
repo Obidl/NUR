@@ -1,13 +1,9 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { Pause, Play, X } from 'lucide-react';
 import { useQuranPlayerStore } from '@/features/quran/store/quranPlayerStore';
 
-type QuranAudioBarProps = {
-  /** Called when playback moves to / focuses an ayah (including auto-next). */
-  onAyahBoundary?: (ayahNumber: number) => void;
-};
-
-export function QuranAudioBar({ onAyahBoundary }: QuranAudioBarProps) {
+export function QuranAudioBar() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUrl = useQuranPlayerStore((s) => s.audioUrl);
   const isPlaying = useQuranPlayerStore((s) => s.isPlaying);
@@ -22,6 +18,7 @@ export function QuranAudioBar({ onAyahBoundary }: QuranAudioBarProps) {
   const stop = useQuranPlayerStore((s) => s.stop);
   const playAyah = useQuranPlayerStore((s) => s.playAyah);
   const playNextAyah = useQuranPlayerStore((s) => s.playNextAyah);
+  const onAyahBoundary = useQuranPlayerStore((s) => s.onAyahBoundary);
 
   useEffect(() => {
     const el = audioRef.current;
@@ -49,7 +46,7 @@ export function QuranAudioBar({ onAyahBoundary }: QuranAudioBarProps) {
   }
 
   return (
-    <div className="sticky bottom-0 z-20 border-t border-[color-mix(in_srgb,var(--nur-quran-ornament)_14%,var(--nur-line))] bg-[color-mix(in_srgb,var(--nur-quran-panel)_94%,transparent)] px-4 py-3 backdrop-blur-xl">
+    <div className="fixed inset-x-0 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 border-t border-[color-mix(in_srgb,var(--nur-quran-ornament)_14%,var(--nur-line))] bg-[color-mix(in_srgb,var(--nur-quran-panel)_94%,transparent)] px-4 py-3 backdrop-blur-xl md:bottom-0">
       <audio
         ref={audioRef}
         preload="metadata"
@@ -67,11 +64,20 @@ export function QuranAudioBar({ onAyahBoundary }: QuranAudioBarProps) {
       />
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
         <div className="min-w-0 border-l-2 border-l-[var(--nur-quran-ornament)] pl-3">
-          <p className="truncate text-sm font-medium tracking-[-0.01em] text-[var(--nur-quran-ink)]">
-            Surah {surahNumber}
-            {ayahNumber ? ` · oyat ${ayahNumber}` : ''}
-            {ayahCount ? ` / ${ayahCount}` : ''}
-          </p>
+          {surahNumber ? (
+            <Link
+              to={`/quran/${surahNumber}${ayahNumber ? `?ayah=${ayahNumber}` : ''}`}
+              className="block truncate text-sm font-medium tracking-[-0.01em] text-[var(--nur-quran-ink)] hover:opacity-80"
+            >
+              Surah {surahNumber}
+              {ayahNumber ? ` · oyat ${ayahNumber}` : ''}
+              {ayahCount ? ` / ${ayahCount}` : ''}
+            </Link>
+          ) : (
+            <p className="truncate text-sm font-medium tracking-[-0.01em] text-[var(--nur-quran-ink)]">
+              Qur’on
+            </p>
+          )}
           <p className="truncate text-xs leading-relaxed text-[var(--nur-quran-muted)]">
             {reciterName ?? 'Qori'}
             {scope === 'surah' ? ' · surah ketma-ket' : ' · oyat'}

@@ -11,7 +11,6 @@ import {
   saveQuranProgress,
 } from '@/features/quran/api/quranApi';
 import { AyahRow } from '@/features/quran/components/AyahRow';
-import { QuranAudioBar } from '@/features/quran/components/QuranAudioBar';
 import { useQuranPlayerStore } from '@/features/quran/store/quranPlayerStore';
 import { useQuranSettingsStore } from '@/features/quran/store/quranSettingsStore';
 import type {
@@ -49,6 +48,7 @@ export function SurahReaderPage() {
   const playSurah = useQuranPlayerStore((s) => s.playSurah);
   const activeAyah = useQuranPlayerStore((s) => s.ayahNumber);
   const playerSurah = useQuranPlayerStore((s) => s.surahNumber);
+  const setOnAyahBoundary = useQuranPlayerStore((s) => s.setOnAyahBoundary);
 
   const [detail, setDetail] = useState<SurahDetail | null>(null);
   const [reciters, setReciters] = useState<Reciter[]>([]);
@@ -155,6 +155,34 @@ export function SurahReaderPage() {
     return () => window.clearTimeout(handle);
   }, [detail, focusedAyah, persistReadProgress]);
 
+  useEffect(() => {
+    const onBoundary = (ayahNumber: number) => {
+      setFocusedAyah(ayahNumber);
+      void persistReadProgress(ayahNumber);
+      window.setTimeout(() => {
+        document.getElementById(`ayah-${ayahNumber}`)?.scrollIntoView({
+          behavior: reduceMotion ? 'auto' : 'smooth',
+          block: 'center',
+        });
+      }, 40);
+      if (accessToken) {
+        void saveQuranProgress({
+          mode: 'listen',
+          surahNumber,
+          ayahNumber,
+        }).catch(() => undefined);
+      }
+    };
+    setOnAyahBoundary(onBoundary);
+    return () => setOnAyahBoundary(null);
+  }, [
+    accessToken,
+    persistReadProgress,
+    reduceMotion,
+    setOnAyahBoundary,
+    surahNumber,
+  ]);
+
   const bookmarkMap = useMemo(() => {
     const map = new Map<number, QuranBookmark>();
     for (const mark of bookmarks) {
@@ -243,7 +271,7 @@ export function SurahReaderPage() {
         initial={reduceMotion ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: reduceMotion ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="relative mx-auto max-w-2xl space-y-4 px-4 pt-8 pb-36 md:px-6"
+        className="relative mx-auto max-w-2xl space-y-4 px-4 pt-8 pb-8 md:px-6"
       >
         <header className="nur-quran-surah-hero mb-8">
           <p
@@ -391,26 +419,6 @@ export function SurahReaderPage() {
           ))}
         </div>
       </motion.section>
-
-      <QuranAudioBar
-        onAyahBoundary={(ayahNumber) => {
-          setFocusedAyah(ayahNumber);
-          void persistReadProgress(ayahNumber);
-          window.setTimeout(() => {
-            document.getElementById(`ayah-${ayahNumber}`)?.scrollIntoView({
-              behavior: reduceMotion ? 'auto' : 'smooth',
-              block: 'center',
-            });
-          }, 40);
-          if (accessToken) {
-            void saveQuranProgress({
-              mode: 'listen',
-              surahNumber,
-              ayahNumber,
-            }).catch(() => undefined);
-          }
-        }}
-      />
     </div>
   );
 }

@@ -139,7 +139,7 @@ export function TodayJourney({
                       type="button"
                       variant="ghost"
                       className="min-h-10 px-4"
-                      disabled={saving || requireLogin}
+                      disabled={saving}
                       onClick={() => onComplete(lesson.id)}
                     >
                       {requireLogin ? 'Kirish kerak' : 'Yakunlash'}

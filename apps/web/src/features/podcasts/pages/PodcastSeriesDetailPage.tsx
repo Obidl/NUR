@@ -102,6 +102,7 @@ export function PodcastSeriesDetailPage() {
         episodeId: detail.id,
         title: detail.title,
         seriesTitle: detail.series.title,
+        seriesSlug: detail.series.slug,
         hostOrScholar: detail.series.hostOrScholar,
         audioUrl: detail.audioUrl,
         durationSeconds: detail.durationSeconds,

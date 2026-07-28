@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { BookOpen, Check, Circle, Mic2, Play, Settings, Video } from 'lucide-react';
+import { BookOpen, Check, Circle, Mic2, Play, Video } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/shared/components/Button';
 import type { PathLesson } from '@/features/curriculum/types/curriculum.types';
@@ -160,6 +160,7 @@ export function TodayMission({
         episodeId: detail.id,
         title: detail.title,
         seriesTitle: detail.series.title,
+        seriesSlug: detail.series.slug,
         hostOrScholar: detail.series.hostOrScholar,
         audioUrl: detail.audioUrl,
         durationSeconds: detail.durationSeconds,
@@ -174,14 +175,7 @@ export function TodayMission({
 
   return (
     <div className="mx-auto w-full max-w-lg space-y-12">
-      <header className="relative pr-14">
-        <Link
-          to="/settings"
-          className="absolute right-0 top-0 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-nur-muted shadow-[var(--shadow-xs)] ring-1 ring-nur-line transition-colors hover:text-nur-ink"
-          aria-label="Sozlamalar"
-        >
-          <Settings size={18} strokeWidth={1.5} />
-        </Link>
+      <header>
         {dates.hijri ? (
           <p className="nur-section-label">{dates.hijri}</p>
         ) : null}
@@ -202,24 +196,6 @@ export function TodayMission({
         </h2>
         <div className="mt-6">
           <ProgressRing percent={percent} label="bugun" />
-        </div>
-        <div className="mt-7 grid grid-cols-3 divide-x divide-nur-line text-center text-xs text-nur-faint">
-          <div className="px-2">
-            <p className="text-sm font-semibold tabular-nums text-nur-ink">
-              {dayIndex}/{dayTotal}
-            </p>
-            <p className="mt-1">Kun</p>
-          </div>
-          <div className="px-2">
-            <p className="text-sm font-semibold tabular-nums text-nur-ink">~{minutes || '—'}m</p>
-            <p className="mt-1">Vaqt</p>
-          </div>
-          <div className="px-2">
-            <p className="text-sm font-semibold tabular-nums text-nur-ink">
-              {lessons.filter((l) => completedIds.has(l.id)).length}/{lessons.length}
-            </p>
-            <p className="mt-1">Qadam</p>
-          </div>
         </div>
 
         <ul className="mt-8 space-y-2">
@@ -260,7 +236,7 @@ export function TodayMission({
                   </button>
                   <button
                     type="button"
-                    disabled={done || saving || requireLogin}
+                    disabled={done || saving}
                     onClick={() => onComplete(lesson.id)}
                     className={cx(
                       'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-[background-color,box-shadow,color] duration-500',
@@ -281,6 +257,24 @@ export function TodayMission({
             );
           })}
         </ul>
+        <div className="mt-8 grid grid-cols-3 divide-x divide-nur-line border-t border-nur-line pt-6 text-center text-xs text-nur-faint">
+          <div className="px-2">
+            <p className="text-sm font-semibold tabular-nums text-nur-ink">
+              {dayIndex}/{dayTotal}
+            </p>
+            <p className="mt-1">Kun</p>
+          </div>
+          <div className="px-2">
+            <p className="text-sm font-semibold tabular-nums text-nur-ink">~{minutes || '—'}m</p>
+            <p className="mt-1">Vaqt</p>
+          </div>
+          <div className="px-2">
+            <p className="text-sm font-semibold tabular-nums text-nur-ink">
+              {lessons.filter((l) => completedIds.has(l.id)).length}/{lessons.length}
+            </p>
+            <p className="mt-1">Qadam</p>
+          </div>
+        </div>
         {requireLogin ? (
           <p className="mt-4 text-center text-xs leading-relaxed text-nur-faint">
             Belgilash uchun{' '}
@@ -475,7 +469,7 @@ function RoutineBlock({
             <Button
               type="button"
               className="w-full"
-              disabled={saving || requireLogin}
+              disabled={saving}
               onClick={onComplete}
             >
               {requireLogin ? 'Kirish kerak' : markLabel}

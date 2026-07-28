@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import {
   BookMarked,
   Library,
-  Mic2,
+  Route,
   Search,
   Settings,
   BookOpen,
@@ -11,7 +11,7 @@ import { PageShell } from '@/shared/components/PageShell';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
 const links = [
-  { to: '/podcasts', label: 'Podcastlar', hint: 'Tinglash', icon: Mic2 },
+  { to: '/curriculum', label: 'Yo‘llar', hint: 'Kunlik o‘quv yo‘li', icon: Route },
   { to: '/books', label: 'Kitoblar', hint: 'O‘qish', icon: BookOpen },
   { to: '/research', label: 'Tadqiqot', hint: 'Manbali maqolalar', icon: BookMarked },
   { to: '/search', label: 'Qidiruv', hint: 'Barcha kontent', icon: Search },
