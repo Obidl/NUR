@@ -2,9 +2,11 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from '@/app/App';
 import { initWebSentry, Sentry } from '@/shared/lib/sentry';
+import { registerPwa } from '@/shared/lib/pwa';
 import '@/styles/index.css';
 
 initWebSentry();
+registerPwa();
 
 const rootElement = document.getElementById('root');
 

@@ -10,6 +10,7 @@ import {
 import { PageShell } from '@/shared/components/PageShell';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { useCommandPaletteStore } from '@/features/shell/store/commandPaletteStore';
+import { AddToHomeScreenCard } from '@/features/home/components/AddToHomeScreenCard';
 
 const links = [
   { to: '/curriculum', label: 'Yo‘llar', hint: 'Kunlik o‘quv yo‘li', icon: Route },
@@ -26,6 +27,7 @@ export function MorePage() {
 
   return (
     <PageShell title="Ko‘proq" description="Boshqa bo‘limlar va shaxsiy joy.">
+      <AddToHomeScreenCard />
       <button
         type="button"
         onClick={() => openPalette(true)}

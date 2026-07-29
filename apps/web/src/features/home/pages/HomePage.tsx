@@ -11,6 +11,7 @@ import {
 } from '@/features/curriculum/api/curriculumApi';
 import type { PathDetail, PathProgressItem } from '@/features/curriculum/types/curriculum.types';
 import { TodayMission } from '@/features/home/components/TodayMission';
+import { AddToHomeScreenCard } from '@/features/home/components/AddToHomeScreenCard';
 import {
   dayThemeFromModuleTitle,
   flattenPathLessons,
@@ -145,6 +146,9 @@ export function HomePage() {
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-nur-muted">
           Hali o‘quv yo‘li yo‘q.
         </p>
+        <div className="mt-8">
+          <AddToHomeScreenCard />
+        </div>
         {quranContinue ? (
           <Button
             to={`/quran/${quranContinue.surahNumber}?ayah=${quranContinue.ayahNumber}`}
@@ -171,6 +175,7 @@ export function HomePage() {
         transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
         {error ? <p className="mb-4 text-center text-sm text-[var(--nur-danger)]">{error}</p> : null}
+        <AddToHomeScreenCard />
         {quranContinue ? (
           <Link
             to={`/quran/${quranContinue.surahNumber}?ayah=${quranContinue.ayahNumber}`}
