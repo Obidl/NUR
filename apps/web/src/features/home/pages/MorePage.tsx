@@ -27,7 +27,7 @@ export function MorePage() {
 
   return (
     <PageShell title="Ko‘proq" description="Boshqa bo‘limlar va shaxsiy joy.">
-      <AddToHomeScreenCard />
+      <AddToHomeScreenCard force />
       <button
         type="button"
         onClick={() => openPalette(true)}

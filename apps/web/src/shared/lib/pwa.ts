@@ -6,6 +6,8 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 };
 
+export type InstallPlatform = 'ios' | 'android' | 'desktop' | 'unknown';
+
 let deferredPrompt: BeforeInstallPromptEvent | null = null;
 const listeners = new Set<() => void>();
 
@@ -22,12 +24,16 @@ export function isStandaloneDisplay(): boolean {
   return media || iosStandalone;
 }
 
-export function isIosSafari(): boolean {
-  if (typeof navigator === 'undefined') return false;
+export function detectInstallPlatform(): InstallPlatform {
+  if (typeof navigator === 'undefined') return 'unknown';
   const ua = navigator.userAgent;
-  const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|Chrome/.test(ua);
-  return isIOS && (isSafari || /Safari/.test(ua));
+  const isIOS =
+    /iPad|iPhone|iPod/.test(ua) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (isIOS) return 'ios';
+  if (/Android/i.test(ua)) return 'android';
+  if (/Windows|Macintosh|Linux/i.test(ua)) return 'desktop';
+  return 'unknown';
 }
 
 export function wasInstallDismissedRecently(): boolean {
@@ -42,18 +48,30 @@ export function wasInstallDismissedRecently(): boolean {
   }
 }
 
+export function clearInstallDismiss(): void {
+  try {
+    localStorage.removeItem(DISMISS_KEY);
+  } catch {
+    // ignore
+  }
+  notify();
+}
+
 export function dismissInstallPrompt(): void {
   try {
     localStorage.setItem(DISMISS_KEY, String(Date.now()));
   } catch {
     // ignore
   }
-  deferredPrompt = null;
   notify();
 }
 
 export function getDeferredInstallPrompt(): BeforeInstallPromptEvent | null {
   return deferredPrompt;
+}
+
+export function canNativeInstall(): boolean {
+  return Boolean(deferredPrompt);
 }
 
 export function subscribeInstallPrompt(listener: () => void): () => void {
@@ -72,24 +90,33 @@ export function registerPwa(): void {
 
   window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
-    dismissInstallPrompt();
+    try {
+      localStorage.setItem(DISMISS_KEY, String(Date.now()));
+    } catch {
+      // ignore
+    }
+    notify();
   });
 
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
+    const register = () => {
       void navigator.serviceWorker.register('/sw.js').catch(() => {
         // Non-blocking
       });
-    });
+    };
+    if (document.readyState === 'complete') register();
+    else window.addEventListener('load', register, { once: true });
   }
 }
 
 export async function promptInstall(): Promise<'accepted' | 'dismissed' | 'unavailable'> {
   if (!deferredPrompt) return 'unavailable';
   const promptEvent = deferredPrompt;
-  deferredPrompt = null;
   await promptEvent.prompt();
   const { outcome } = await promptEvent.userChoice;
+  if (outcome === 'accepted') {
+    deferredPrompt = null;
+  }
   if (outcome === 'dismissed') {
     dismissInstallPrompt();
   }
