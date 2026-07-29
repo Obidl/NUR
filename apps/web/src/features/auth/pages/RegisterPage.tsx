@@ -4,7 +4,7 @@ import { Button } from '@/shared/components/Button';
 import { Field, Input } from '@/shared/components/Field';
 import { LoadingOverlay } from '@/shared/components/LoadingScreen';
 import { useAuthStore } from '@/features/auth/store/authStore';
-import { warmApi } from '@/services/warmApi';
+import { warmApiBackground } from '@/services/warmApi';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { useToast } from '@/shared/components/Toast';
 
@@ -21,7 +21,7 @@ export function RegisterPage() {
   const [slowHint, setSlowHint] = useState(false);
 
   useEffect(() => {
-    warmApi();
+    warmApiBackground();
   }, []);
 
   useEffect(() => {

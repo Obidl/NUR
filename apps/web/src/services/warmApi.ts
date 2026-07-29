@@ -2,11 +2,21 @@ import axios from 'axios';
 import { env } from '@/config/env';
 import { endpoints } from '@/services/endpoints';
 
-/** Fire-and-forget wake for Render cold starts (can take 30–60s). */
-export function warmApi(): void {
-  void axios
-    .get(`${env.apiBaseUrl}${endpoints.health}`, { timeout: 60000 })
-    .catch(() => {
-      // Ignore — next user request will retry after wake.
-    });
+function healthUrl() {
+  return `${env.apiBaseUrl}${endpoints.health}` || endpoints.health;
+}
+
+/** Wake Render (via same-origin proxy in production). Returns true if healthy. */
+export async function warmApi(): Promise<boolean> {
+  try {
+    await axios.get(healthUrl(), { timeout: 60000 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Fire-and-forget warm on app boot. */
+export function warmApiBackground(): void {
+  void warmApi();
 }

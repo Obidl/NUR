@@ -6,9 +6,10 @@ import { Field, Input } from '@/shared/components/Field';
 import { LoadingOverlay } from '@/shared/components/LoadingScreen';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { setRememberSession } from '@/features/auth/lib/tokenStorage';
-import { warmApi } from '@/services/warmApi';
+import { warmApi, warmApiBackground } from '@/services/warmApi';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { useToast } from '@/shared/components/Toast';
+import axios from 'axios';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ export function LoginPage() {
       : '/';
 
   useEffect(() => {
-    warmApi();
+    warmApiBackground();
   }, []);
 
   useEffect(() => {
@@ -61,6 +62,21 @@ export function LoginPage() {
       toast('Xush kelibsiz', 'success');
       navigate(from, { replace: true });
     } catch (err) {
+      const isNetwork =
+        axios.isAxiosError(err) &&
+        (err.message === 'Network Error' || err.code === 'ERR_NETWORK');
+      if (isNetwork) {
+        await warmApi();
+        try {
+          await login({ email, password });
+          toast('Xush kelibsiz', 'success');
+          navigate(from, { replace: true });
+          return;
+        } catch (retryErr) {
+          setError(getErrorMessage(retryErr, 'Kirish amalga oshmadi'));
+          return;
+        }
+      }
       setError(getErrorMessage(err, 'Kirish amalga oshmadi'));
     }
   }
