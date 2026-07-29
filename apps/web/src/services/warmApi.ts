@@ -77,7 +77,7 @@ export async function waitForApiReady(options?: {
   signal?: AbortSignal;
 }): Promise<boolean> {
   const delayMs = options?.delayMs ?? 2000;
-  const deadline = Date.now() + (options?.deadlineMs ?? 180_000);
+  const deadline = Date.now() + (options?.deadlineMs ?? 60_000);
   let attempt = 0;
   const maxAttempts = options?.maxAttempts ?? 60;
 

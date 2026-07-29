@@ -78,7 +78,7 @@ export function LoginPage() {
       }
     }
 
-    // Cold start: keep poking + retrying login for up to 3 minutes.
+    // Cold start: keep poking + retrying login for up to 60s.
     setWarming(true);
     setWarmSeconds(0);
     const started = Date.now();
@@ -87,7 +87,7 @@ export function LoginPage() {
     }, 1000);
 
     try {
-      const deadline = Date.now() + 180_000;
+      const deadline = Date.now() + 60_000;
       let lastError: unknown;
 
       while (Date.now() < deadline) {
@@ -105,7 +105,7 @@ export function LoginPage() {
           }
         }
 
-        await new Promise((r) => window.setTimeout(r, 4000));
+        await new Promise((r) => window.setTimeout(r, 2500));
       }
 
       setError(
@@ -128,7 +128,7 @@ export function LoginPage() {
           message={warming ? 'Server uyg‘onyapti…' : 'Kirish amalga oshirilmoqda…'}
           hint={
             warming
-              ? `Kuting — ${warmSeconds}s / 180s. Sahifani yopmang.`
+              ? `Kuting — ${warmSeconds}s / 60s. Sahifani yopmang.`
               : null
           }
         />
