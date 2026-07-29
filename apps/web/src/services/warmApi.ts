@@ -16,7 +16,7 @@ export type WarmProgress = {
 export async function warmApi(): Promise<boolean> {
   try {
     const { data, status } = await axios.get(healthUrl(), {
-      timeout: 45000,
+      timeout: 12000,
       validateStatus: (code) => code < 500,
     });
     if (status !== 200) return false;
@@ -41,8 +41,8 @@ export async function waitForApiReady(options?: {
   onProgress?: (progress: WarmProgress) => void;
   signal?: AbortSignal;
 }): Promise<boolean> {
-  const maxAttempts = options?.maxAttempts ?? 24;
-  const delayMs = options?.delayMs ?? 2500;
+  const maxAttempts = options?.maxAttempts ?? 12;
+  const delayMs = options?.delayMs ?? 2000;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     if (options?.signal?.aborted) return false;

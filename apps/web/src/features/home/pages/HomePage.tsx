@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Button } from '@/shared/components/Button';
 import { BrandMark } from '@/shared/components/BrandMark';
+import { Skeleton } from '@/shared/components/Skeleton';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import {
   completeCurriculumLesson,
@@ -131,9 +132,18 @@ export function HomePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center text-sm text-nur-muted">
-        Yuklanmoqda…
-      </div>
+      <section className="nur-atmosphere mx-auto max-w-lg px-5 py-10 md:px-8">
+        <p className="text-sm text-nur-muted">Assalomu alaykum</p>
+        <h1 className="mt-2 text-2xl font-semibold tracking-[-0.02em] text-nur-ink">
+          Bugungi yo‘l
+        </h1>
+        <div className="mt-8 space-y-4" role="status" aria-label="Yuklanmoqda">
+          <Skeleton className="h-28 w-full rounded-[var(--radius-xl)]" />
+          <Skeleton className="h-16 w-full rounded-[var(--radius-l)]" />
+          <Skeleton className="h-16 w-full rounded-[var(--radius-l)]" />
+          <Skeleton className="h-16 w-[85%] rounded-[var(--radius-l)]" />
+        </div>
+      </section>
     );
   }
 

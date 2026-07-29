@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { Button } from '@/shared/components/Button';
 import { BrandMark } from '@/shared/components/BrandMark';
 import { Field, Input } from '@/shared/components/Field';
@@ -8,6 +9,18 @@ import { useAuthStore } from '@/features/auth/store/authStore';
 import { waitForApiReady, warmApiBackground } from '@/services/warmApi';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { useToast } from '@/shared/components/Toast';
+
+function isNetworkError(err: unknown): boolean {
+  return (
+    axios.isAxiosError(err) &&
+    (err.message === 'Network Error' ||
+      err.code === 'ERR_NETWORK' ||
+      err.code === 'ECONNABORTED' ||
+      err.response?.status === 502 ||
+      err.response?.status === 503 ||
+      err.response?.status === 504)
+  );
+}
 
 export function RegisterPage() {
   const navigate = useNavigate();
@@ -20,25 +33,20 @@ export function RegisterPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [slowHint, setSlowHint] = useState(false);
-  const [apiReady, setApiReady] = useState(false);
+  const [warming, setWarming] = useState(false);
 
   useEffect(() => {
     warmApiBackground();
-    const controller = new AbortController();
-    void waitForApiReady({ signal: controller.signal }).then((ok) => {
-      if (!controller.signal.aborted) setApiReady(ok);
-    });
-    return () => controller.abort();
   }, []);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && !warming) {
       setSlowHint(false);
       return;
     }
-    const id = window.setTimeout(() => setSlowHint(true), 8000);
+    const id = window.setTimeout(() => setSlowHint(true), 6000);
     return () => window.clearTimeout(id);
-  }, [isLoading]);
+  }, [isLoading, warming]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -49,35 +57,54 @@ export function RegisterPage() {
       toast('Hisob yaratildi', 'success');
       navigate('/', { replace: true });
     } catch (err) {
-      setError(getErrorMessage(err, 'Ro‘yxatdan o‘tish amalga oshmadi'));
+      if (!isNetworkError(err)) {
+        setError(getErrorMessage(err, 'Ro‘yxatdan o‘tish amalga oshmadi'));
+        return;
+      }
+
+      setWarming(true);
+      const warmed = await waitForApiReady({ maxAttempts: 10, delayMs: 2000 });
+      setWarming(false);
+
+      if (!warmed) {
+        setError('Server uyg‘onmadi. Bir daqiqadan keyin qayta urinib ko‘ring.');
+        return;
+      }
+
+      try {
+        await register({ displayName, email, password });
+        toast('Hisob yaratildi', 'success');
+        navigate('/', { replace: true });
+      } catch (retryErr) {
+        setError(getErrorMessage(retryErr, 'Ro‘yxatdan o‘tish amalga oshmadi'));
+      }
     }
   }
 
+  const busy = isLoading || warming;
+
   return (
     <div className="nur-surface relative overflow-hidden px-6 py-9 md:px-8 md:py-11">
-      {isLoading ? (
+      {busy ? (
         <LoadingOverlay
-          message={slowHint ? 'Server uyg‘onyapti…' : 'Hisob yaratilmoqda…'}
+          message={
+            warming || slowHint ? 'Server uyg‘onyapti…' : 'Hisob yaratilmoqda…'
+          }
           hint={
-            slowHint
-              ? 'Birinchi ochilish 20–40 soniya olishi mumkin. Sahifani yopmang.'
+            warming || slowHint
+              ? 'Birinchi ochilish biroz vaqt olishi mumkin. Sahifani yopmang.'
               : null
           }
         />
       ) : null}
 
-      {!apiReady && !isLoading ? (
-        <LoadingOverlay
-          message="Server tayyorlanmoqda…"
-          hint="Uyg‘onish 20–50 soniya olishi mumkin."
-        />
-      ) : null}
-
       <BrandMark size="md" className="justify-center" />
-      <h1 className="mt-6 text-lg font-medium tracking-[-0.02em] text-nur-muted">Ro‘yxatdan o‘tish</h1>
+      <h1 className="mt-6 text-lg font-medium tracking-[-0.02em] text-nur-muted">
+        Ro‘yxatdan o‘tish
+      </h1>
       <p className="mt-2 text-sm leading-relaxed text-nur-muted">Odatnoma hisobini yarating.</p>
 
-      <form className="mt-8 space-y-5" onSubmit={onSubmit} aria-busy={isLoading || !apiReady}>
+      <form className="mt-8 space-y-5" onSubmit={onSubmit} aria-busy={busy}>
         <Field label="Ism">
           <Input
             type="text"
@@ -87,7 +114,7 @@ export function RegisterPage() {
             minLength={2}
             value={displayName}
             onChange={(event) => setDisplayName(event.target.value)}
-            disabled={isLoading || !apiReady}
+            disabled={busy}
           />
         </Field>
         <Field label="Email">
@@ -98,7 +125,7 @@ export function RegisterPage() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            disabled={isLoading || !apiReady}
+            disabled={busy}
           />
         </Field>
         <Field label="Parol" hint="Kamida 8 belgi">
@@ -110,7 +137,7 @@ export function RegisterPage() {
             minLength={8}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            disabled={isLoading || !apiReady}
+            disabled={busy}
           />
         </Field>
 
@@ -120,8 +147,8 @@ export function RegisterPage() {
           </p>
         ) : null}
 
-        <Button type="submit" className="w-full" disabled={isLoading || !apiReady}>
-          {apiReady ? 'Ro‘yxatdan o‘tish' : 'Kutilmoqda…'}
+        <Button type="submit" className="w-full" disabled={busy}>
+          Ro‘yxatdan o‘tish
         </Button>
       </form>
 

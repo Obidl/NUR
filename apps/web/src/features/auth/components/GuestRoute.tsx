@@ -8,13 +8,14 @@ export function GuestRoute({ children }: PropsWithChildren) {
   const isHydrated = useAuthStore((state) => state.isHydrated);
   const accessToken = useAuthStore((state) => state.accessToken);
 
+  // No session → show form immediately (don't block on hydrate splash).
+  if (!accessToken) {
+    return children;
+  }
+
   if (!isHydrated) {
     return <LoadingScreen message="Hisob tekshirilmoqda…" />;
   }
 
-  if (accessToken) {
-    return <Navigate to="/" replace />;
-  }
-
-  return children;
+  return <Navigate to="/" replace />;
 }

@@ -24,7 +24,7 @@ export function BrandMark({
   const content = (
     <>
       <img
-        src="/icons/icon-192.png"
+        src="/favicon.svg"
         alt=""
         width={44}
         height={44}

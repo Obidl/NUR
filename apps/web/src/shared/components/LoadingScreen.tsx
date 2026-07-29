@@ -1,16 +1,13 @@
 import { cx } from '@/shared/lib/cx';
-import { BrandMark } from '@/shared/components/BrandMark';
 
 type LoadingScreenProps = {
-  title?: string;
   message?: string;
   className?: string;
-  /** Fill viewport (auth hydrate / cold start). */
   fullscreen?: boolean;
 };
 
+/** Compact spinner — no heavy brand splash. */
 export function LoadingScreen({
-  title = 'Odatnoma',
   message = 'Yuklanmoqda…',
   className,
   fullscreen = false,
@@ -19,29 +16,25 @@ export function LoadingScreen({
     <div
       className={cx(
         'flex flex-col items-center justify-center text-center',
-        fullscreen ? 'min-h-dvh px-6' : 'min-h-[40vh] px-4 py-12',
+        fullscreen ? 'min-h-dvh px-6' : 'min-h-[30vh] px-4 py-10',
         className,
       )}
       role="status"
       aria-live="polite"
       aria-busy="true"
     >
-      <BrandMark size="lg" className="justify-center" />
-      {title !== 'Odatnoma' ? (
-        <p className="mt-3 text-lg font-semibold tracking-[-0.02em] text-nur-ink">{title}</p>
-      ) : null}
       <div
-        className="nur-spinner mt-8 h-9 w-9 rounded-full border-2 border-nur-line border-t-nur-accent"
+        className="nur-spinner h-7 w-7 rounded-full border-2 border-nur-line border-t-nur-accent"
         aria-hidden
       />
-      <p className="mt-5 max-w-xs text-sm leading-relaxed text-nur-muted">{message}</p>
+      <p className="mt-4 max-w-xs text-sm text-nur-muted">{message}</p>
     </div>
   );
 }
 
-/** Soft overlay over a surface (e.g. login card) while a request runs. */
+/** Soft overlay only while a submit request is in flight. */
 export function LoadingOverlay({
-  message = 'Kirish amalga oshirilmoqda…',
+  message = 'Kutilmoqda…',
   hint,
 }: {
   message?: string;
@@ -55,11 +48,15 @@ export function LoadingOverlay({
       aria-busy="true"
     >
       <div
-        className="nur-spinner h-9 w-9 rounded-full border-2 border-nur-line border-t-nur-accent"
+        className="nur-spinner h-8 w-8 rounded-full border-2 border-nur-line border-t-nur-accent"
         aria-hidden
       />
       <p className="mt-4 text-sm font-medium text-nur-ink">{message}</p>
-      {hint ? <p className="mt-2 max-w-[16rem] text-center text-xs leading-relaxed text-nur-muted">{hint}</p> : null}
+      {hint ? (
+        <p className="mt-2 max-w-[16rem] text-center text-xs leading-relaxed text-nur-muted">
+          {hint}
+        </p>
+      ) : null}
     </div>
   );
 }
