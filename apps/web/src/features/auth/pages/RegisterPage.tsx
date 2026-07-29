@@ -32,52 +32,70 @@ export function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [slowHint, setSlowHint] = useState(false);
   const [warming, setWarming] = useState(false);
 
   useEffect(() => {
     warmApiBackground();
   }, []);
 
-  useEffect(() => {
-    if (!isLoading && !warming) {
-      setSlowHint(false);
-      return;
-    }
-    const id = window.setTimeout(() => setSlowHint(true), 6000);
-    return () => window.clearTimeout(id);
-  }, [isLoading, warming]);
+  async function tryRegister(): Promise<void> {
+    await register({ displayName, email, password });
+    toast('Hisob yaratildi', 'success');
+    navigate('/', { replace: true });
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
 
     try {
-      await register({ displayName, email, password });
-      toast('Hisob yaratildi', 'success');
-      navigate('/', { replace: true });
+      await tryRegister();
+      return;
     } catch (err) {
       if (!isNetworkError(err)) {
         setError(getErrorMessage(err, 'Ro‘yxatdan o‘tish amalga oshmadi'));
         return;
       }
+    }
 
-      setWarming(true);
-      const warmed = await waitForApiReady({ maxAttempts: 10, delayMs: 2000 });
-      setWarming(false);
-
+    setWarming(true);
+    try {
+      const warmed = await waitForApiReady({ maxAttempts: 8, delayMs: 1500 });
       if (!warmed) {
-        setError('Server uyg‘onmadi. Bir daqiqadan keyin qayta urinib ko‘ring.');
-        return;
+        try {
+          await tryRegister();
+          return;
+        } catch (lastErr) {
+          setError(
+            isNetworkError(lastErr)
+              ? 'Server hali uyg‘onyapti. 30 soniya kutib qayta urinib ko‘ring.'
+              : getErrorMessage(lastErr, 'Ro‘yxatdan o‘tish amalga oshmadi'),
+          );
+          return;
+        }
       }
 
-      try {
-        await register({ displayName, email, password });
-        toast('Hisob yaratildi', 'success');
-        navigate('/', { replace: true });
-      } catch (retryErr) {
-        setError(getErrorMessage(retryErr, 'Ro‘yxatdan o‘tish amalga oshmadi'));
+      let lastError: unknown;
+      for (let i = 0; i < 3; i += 1) {
+        try {
+          await tryRegister();
+          return;
+        } catch (retryErr) {
+          lastError = retryErr;
+          if (!isNetworkError(retryErr)) {
+            setError(getErrorMessage(retryErr, 'Ro‘yxatdan o‘tish amalga oshmadi'));
+            return;
+          }
+          await new Promise((r) => window.setTimeout(r, 2000));
+        }
       }
+      setError(
+        isNetworkError(lastError)
+          ? 'Server hali uyg‘onyapti. 30 soniya kutib qayta urinib ko‘ring.'
+          : getErrorMessage(lastError, 'Ro‘yxatdan o‘tish amalga oshmadi'),
+      );
+    } finally {
+      setWarming(false);
     }
   }
 
@@ -87,12 +105,10 @@ export function RegisterPage() {
     <div className="nur-surface relative overflow-hidden px-6 py-9 md:px-8 md:py-11">
       {busy ? (
         <LoadingOverlay
-          message={
-            warming || slowHint ? 'Server uyg‘onyapti…' : 'Hisob yaratilmoqda…'
-          }
+          message={warming ? 'Server uyg‘onyapti…' : 'Hisob yaratilmoqda…'}
           hint={
-            warming || slowHint
-              ? 'Birinchi ochilish biroz vaqt olishi mumkin. Sahifani yopmang.'
+            warming
+              ? 'Birinchi marta 30–60 soniya olishi mumkin. Sahifani yopmang.'
               : null
           }
         />

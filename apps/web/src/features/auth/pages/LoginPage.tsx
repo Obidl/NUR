@@ -42,7 +42,6 @@ export function LoginPage() {
     }
   });
   const [error, setError] = useState<string | null>(null);
-  const [slowHint, setSlowHint] = useState(false);
   const [warming, setWarming] = useState(false);
 
   const from =
@@ -57,50 +56,67 @@ export function LoginPage() {
     warmApiBackground();
   }, []);
 
-  useEffect(() => {
-    if (!isLoading && !warming) {
-      setSlowHint(false);
-      return;
-    }
-    const id = window.setTimeout(() => setSlowHint(true), 6000);
-    return () => window.clearTimeout(id);
-  }, [isLoading, warming]);
+  async function tryLogin(): Promise<void> {
+    setRememberSession(remember);
+    await login({ email, password });
+    toast('Xush kelibsiz', 'success');
+    navigate(from, { replace: true });
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
 
     try {
-      setRememberSession(remember);
-      await login({ email, password });
-      toast('Xush kelibsiz', 'success');
-      navigate(from, { replace: true });
+      await tryLogin();
+      return;
     } catch (err) {
       if (!isNetworkError(err)) {
         setError(getErrorMessage(err, 'Kirish amalga oshmadi'));
         return;
       }
+    }
 
-      setWarming(true);
-      const warmed = await waitForApiReady({
-        maxAttempts: 10,
-        delayMs: 2000,
-      });
-      setWarming(false);
-
+    // Cold start: wake API, then retry login a few times.
+    setWarming(true);
+    try {
+      const warmed = await waitForApiReady({ maxAttempts: 8, delayMs: 1500 });
       if (!warmed) {
-        setError('Server uyg‘onmadi. Bir daqiqadan keyin qayta urinib ko‘ring.');
-        return;
+        // Last chance — still try login (health may have lied / timed out).
+        try {
+          await tryLogin();
+          return;
+        } catch (lastErr) {
+          setError(
+            isNetworkError(lastErr)
+              ? 'Server hali uyg‘onyapti. 30 soniya kutib qayta «Kirish»ni bosing.'
+              : getErrorMessage(lastErr, 'Kirish amalga oshmadi'),
+          );
+          return;
+        }
       }
 
-      try {
-        setRememberSession(remember);
-        await login({ email, password });
-        toast('Xush kelibsiz', 'success');
-        navigate(from, { replace: true });
-      } catch (retryErr) {
-        setError(getErrorMessage(retryErr, 'Kirish amalga oshmadi'));
+      let lastError: unknown;
+      for (let i = 0; i < 3; i += 1) {
+        try {
+          await tryLogin();
+          return;
+        } catch (retryErr) {
+          lastError = retryErr;
+          if (!isNetworkError(retryErr)) {
+            setError(getErrorMessage(retryErr, 'Kirish amalga oshmadi'));
+            return;
+          }
+          await new Promise((r) => window.setTimeout(r, 2000));
+        }
       }
+      setError(
+        isNetworkError(lastError)
+          ? 'Server hali uyg‘onyapti. 30 soniya kutib qayta «Kirish»ni bosing.'
+          : getErrorMessage(lastError, 'Kirish amalga oshmadi'),
+      );
+    } finally {
+      setWarming(false);
     }
   }
 
@@ -110,12 +126,10 @@ export function LoginPage() {
     <div className="nur-surface relative overflow-hidden px-6 py-9 shadow-[var(--shadow-md)] md:px-8 md:py-11">
       {busy ? (
         <LoadingOverlay
-          message={
-            warming || slowHint ? 'Server uyg‘onyapti…' : 'Kirish amalga oshirilmoqda…'
-          }
+          message={warming ? 'Server uyg‘onyapti…' : 'Kirish amalga oshirilmoqda…'}
           hint={
-            warming || slowHint
-              ? 'Birinchi ochilish biroz vaqt olishi mumkin. Sahifani yopmang.'
+            warming
+              ? 'Birinchi marta 30–60 soniya olishi mumkin. Sahifani yopmang.'
               : null
           }
         />
