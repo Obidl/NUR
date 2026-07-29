@@ -1,5 +1,5 @@
 /* Network-first shell — never trap phones on stale HTML after deploys. */
-const CACHE = 'odatnoma-shell-v4';
+const CACHE = 'odatnoma-shell-v5';
 const PRECACHE = ['/favicon.svg', '/icons/icon-192.png', '/manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {

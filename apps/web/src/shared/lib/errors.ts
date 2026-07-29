@@ -8,22 +8,22 @@ export function getErrorMessage(error: unknown, fallback = 'Xatolik yuz berdi'):
       return data.error.message;
     }
     if (error.code === 'ECONNABORTED' || /timeout/i.test(error.message)) {
-      return 'Server uyg‘onyapti. 20–40 soniya kutib, qayta «Kirish»ni bosing.';
+      return 'Ulanish sekin. Qayta «Kirish»ni bosing.';
     }
     if (
       error.response?.status === 502 ||
       error.response?.status === 503 ||
       error.response?.status === 504
     ) {
-      return 'Server uyg‘onyapti. Bir oz kutib qayta urinib ko‘ring.';
+      return 'Server band. Bir oz kutib qayta urinib ko‘ring.';
     }
     if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
-      return 'Server hali uyg‘onmagan. Sahifani yopmang — 30 soniya kutib qayta «Kirish».';
+      return 'Internet yoki server xatosi. Qayta urinib ko‘ring.';
     }
   }
   if (error instanceof Error && error.message) {
     if (/timeout/i.test(error.message)) {
-      return 'Server uyg‘onyapti. 20–40 soniya kutib, qayta «Kirish»ni bosing.';
+      return 'Ulanish sekin. Qayta «Kirish»ni bosing.';
     }
     return error.message;
   }

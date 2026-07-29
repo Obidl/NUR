@@ -24,25 +24,27 @@
     />
     <title>Odatnoma</title>
     <script>
-      /* One-shot recovery if a previous SW left a blank shell on mobile. */
+      /* Force-clear stale SW once (fixes blank / old login timer on phones). */
       (function () {
+        var VER = 'odatnoma_cache_v5';
         try {
-          var key = 'odatnoma_sw_bust_v4';
-          if (sessionStorage.getItem(key)) return;
-          var params = new URLSearchParams(location.search);
-          if (params.get('reset') === '1' && 'serviceWorker' in navigator) {
-            sessionStorage.setItem(key, '1');
-            navigator.serviceWorker.getRegistrations().then(function (regs) {
-              return Promise.all(regs.map(function (r) { return r.unregister(); }));
-            }).then(function () {
-              if (!('caches' in window)) return;
-              return caches.keys().then(function (keys) {
-                return Promise.all(keys.map(function (k) { return caches.delete(k); }));
-              });
-            }).then(function () {
-              location.replace(location.pathname);
-            });
+          if (localStorage.getItem(VER) === '1') return;
+          localStorage.setItem(VER, '1');
+          var done = function () {
+            location.replace(location.pathname + location.search.replace(/[?&]reset=1/, ''));
+          };
+          if (!('serviceWorker' in navigator)) {
+            done();
+            return;
           }
+          navigator.serviceWorker.getRegistrations().then(function (regs) {
+            return Promise.all(regs.map(function (r) { return r.unregister(); }));
+          }).then(function () {
+            if (!('caches' in window)) return;
+            return caches.keys().then(function (keys) {
+              return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+            });
+          }).then(done).catch(done);
         } catch (e) {}
       })();
     </script>

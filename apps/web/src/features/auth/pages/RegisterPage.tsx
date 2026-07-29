@@ -1,26 +1,13 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Button } from '@/shared/components/Button';
 import { BrandMark } from '@/shared/components/BrandMark';
 import { Field, Input } from '@/shared/components/Field';
 import { LoadingOverlay } from '@/shared/components/LoadingScreen';
 import { useAuthStore } from '@/features/auth/store/authStore';
-import { waitForApiReady, warmApiBackground } from '@/services/warmApi';
+import { pokeRenderDirect, warmApiBackground } from '@/services/warmApi';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { useToast } from '@/shared/components/Toast';
-
-function isNetworkError(err: unknown): boolean {
-  return (
-    axios.isAxiosError(err) &&
-    (err.message === 'Network Error' ||
-      err.code === 'ERR_NETWORK' ||
-      err.code === 'ECONNABORTED' ||
-      err.response?.status === 502 ||
-      err.response?.status === 503 ||
-      err.response?.status === 504)
-  );
-}
 
 export function RegisterPage() {
   const navigate = useNavigate();
@@ -32,61 +19,29 @@ export function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [warming, setWarming] = useState(false);
 
   useEffect(() => {
+    pokeRenderDirect();
     warmApiBackground();
   }, []);
-
-  async function tryRegister(): Promise<void> {
-    await register({ displayName, email, password });
-    toast('Hisob yaratildi', 'success');
-    navigate('/', { replace: true });
-  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    pokeRenderDirect();
 
     try {
-      await tryRegister();
-      return;
+      await register({ displayName, email, password });
+      toast('Hisob yaratildi', 'success');
+      navigate('/', { replace: true });
     } catch (err) {
-      if (!isNetworkError(err)) {
-        setError(getErrorMessage(err, 'Ro‘yxatdan o‘tish amalga oshmadi'));
-        return;
-      }
-    }
-
-    setWarming(true);
-    try {
-      const ready = await waitForApiReady({ deadlineMs: 55_000, delayMs: 2000 });
-      if (!ready) {
-        setError('Server hali sekin. 20 soniya kutib qayta urinib ko‘ring.');
-        return;
-      }
-      await tryRegister();
-    } catch (err) {
-      setError(
-        isNetworkError(err)
-          ? 'Server hali sekin. 20 soniya kutib qayta urinib ko‘ring.'
-          : getErrorMessage(err, 'Ro‘yxatdan o‘tish amalga oshmadi'),
-      );
-    } finally {
-      setWarming(false);
+      setError(getErrorMessage(err, 'Ro‘yxatdan o‘tish amalga oshmadi'));
     }
   }
 
-  const busy = isLoading || warming;
-
   return (
     <div className="nur-surface relative overflow-hidden px-6 py-9 md:px-8 md:py-11">
-      {busy ? (
-        <LoadingOverlay
-          message={warming ? 'Server uyg‘onyapti…' : 'Hisob yaratilmoqda…'}
-          hint={warming ? 'Bir daqiqadan kam. Sahifani yopmang.' : null}
-        />
-      ) : null}
+      {isLoading ? <LoadingOverlay message="Hisob yaratilmoqda…" /> : null}
 
       <BrandMark size="md" className="justify-center" />
       <h1 className="mt-6 text-lg font-medium tracking-[-0.02em] text-nur-muted">
@@ -94,7 +49,7 @@ export function RegisterPage() {
       </h1>
       <p className="mt-2 text-sm leading-relaxed text-nur-muted">Odatnoma hisobini yarating.</p>
 
-      <form className="mt-8 space-y-5" onSubmit={onSubmit} aria-busy={busy}>
+      <form className="mt-8 space-y-5" onSubmit={onSubmit} aria-busy={isLoading}>
         <Field label="Ism">
           <Input
             type="text"
@@ -104,7 +59,7 @@ export function RegisterPage() {
             minLength={2}
             value={displayName}
             onChange={(event) => setDisplayName(event.target.value)}
-            disabled={busy}
+            disabled={isLoading}
           />
         </Field>
         <Field label="Email">
@@ -115,7 +70,7 @@ export function RegisterPage() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            disabled={busy}
+            disabled={isLoading}
           />
         </Field>
         <Field label="Parol" hint="Kamida 8 belgi">
@@ -127,7 +82,7 @@ export function RegisterPage() {
             minLength={8}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            disabled={busy}
+            disabled={isLoading}
           />
         </Field>
 
@@ -137,7 +92,7 @@ export function RegisterPage() {
           </p>
         ) : null}
 
-        <Button type="submit" className="w-full" disabled={busy}>
+        <Button type="submit" className="w-full" disabled={isLoading}>
           Ro‘yxatdan o‘tish
         </Button>
       </form>

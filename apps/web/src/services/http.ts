@@ -14,8 +14,8 @@ export const http = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  // Render free-tier cold start can exceed 15s.
-  timeout: 60000,
+  // Render free-tier cold start can be slow, but don't hang forever.
+  timeout: 25000,
 });
 
 let refreshPromise: Promise<string | null> | null = null;
