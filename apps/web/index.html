@@ -24,19 +24,11 @@
     />
     <title>Odatnoma</title>
     <script>
-      /* Force-clear stale SW once (fixes blank / old login timer on phones). */
+      /* Optional recovery only when ?reset=1 — never auto-reload (breaks Telegram). */
       (function () {
-        var VER = 'odatnoma_cache_v5';
         try {
-          if (localStorage.getItem(VER) === '1') return;
-          localStorage.setItem(VER, '1');
-          var done = function () {
-            location.replace(location.pathname + location.search.replace(/[?&]reset=1/, ''));
-          };
-          if (!('serviceWorker' in navigator)) {
-            done();
-            return;
-          }
+          var params = new URLSearchParams(location.search);
+          if (params.get('reset') !== '1' || !('serviceWorker' in navigator)) return;
           navigator.serviceWorker.getRegistrations().then(function (regs) {
             return Promise.all(regs.map(function (r) { return r.unregister(); }));
           }).then(function () {
@@ -44,7 +36,11 @@
             return caches.keys().then(function (keys) {
               return Promise.all(keys.map(function (k) { return caches.delete(k); }));
             });
-          }).then(done).catch(done);
+          }).then(function () {
+            location.replace(location.pathname);
+          }).catch(function () {
+            location.replace(location.pathname);
+          });
         } catch (e) {}
       })();
     </script>

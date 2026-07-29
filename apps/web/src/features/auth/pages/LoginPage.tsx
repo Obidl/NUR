@@ -8,6 +8,7 @@ import { LoadingOverlay } from '@/shared/components/LoadingScreen';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { setRememberSession } from '@/features/auth/lib/tokenStorage';
 import { pokeRenderDirect, warmApiBackground } from '@/services/warmApi';
+import { isInAppBrowser } from '@/shared/lib/pwa';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { useToast } from '@/shared/components/Toast';
 
@@ -17,6 +18,7 @@ export function LoginPage() {
   const login = useAuthStore((state) => state.login);
   const isLoading = useAuthStore((state) => state.isLoading);
   const { toast } = useToast();
+  const inApp = isInAppBrowser();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -69,6 +71,11 @@ export function LoginPage() {
       <p className="mt-2 text-sm leading-relaxed text-nur-muted">
         Hisobingizga kiring va bugungi yo‘lni davom ettiring.
       </p>
+      {inApp ? (
+        <p className="mt-3 rounded-[var(--radius-m)] border border-nur-line bg-nur-sunken/60 px-3 py-2 text-xs leading-relaxed text-nur-muted">
+          Telegram ichida muammo bo‘lsa: pastdagi ⋯ → «Brauzerda ochish» / Safari yoki Chrome’da oching.
+        </p>
+      ) : null}
 
       <form className="mt-8 space-y-5" onSubmit={onSubmit} aria-busy={isLoading}>
         <Field label="Email">

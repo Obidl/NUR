@@ -15,6 +15,15 @@ function notify() {
   listeners.forEach((listener) => listener());
 }
 
+/** Telegram / Instagram / FB in-app browsers break with service workers. */
+export function isInAppBrowser(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  return /Telegram|FBAN|FBAV|Instagram|Line\/|MicroMessenger|Twitter|Snapchat|TikTok/i.test(
+    ua,
+  );
+}
+
 export function isStandaloneDisplay(): boolean {
   if (typeof window === 'undefined') return false;
   const media = window.matchMedia('(display-mode: standalone)').matches;
@@ -79,7 +88,6 @@ export function subscribeInstallPrompt(listener: () => void): () => void {
   return () => listeners.delete(listener);
 }
 
-/** Unregister broken SW + clear caches (recovery for blank mobile screens). */
 export async function resetPwaCache(): Promise<void> {
   if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return;
   try {
@@ -96,6 +104,13 @@ export async function resetPwaCache(): Promise<void> {
 
 export function registerPwa(): void {
   if (typeof window === 'undefined') return;
+  if (!('serviceWorker' in navigator)) return;
+
+  // In-app browsers (esp. Telegram): SW causes Network Error on API calls.
+  if (isInAppBrowser()) {
+    void resetPwaCache();
+    return;
+  }
 
   window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
@@ -113,13 +128,10 @@ export function registerPwa(): void {
     notify();
   });
 
-  if (!('serviceWorker' in navigator)) return;
-
   const register = () => {
     void navigator.serviceWorker
       .register('/sw.js', { updateViaCache: 'none' })
       .then((reg) => {
-        // Pull updates on each load so phones leave stale shells quickly.
         void reg.update();
         if (reg.waiting) {
           reg.waiting.postMessage('SKIP_WAITING');
@@ -134,15 +146,12 @@ export function registerPwa(): void {
           });
         });
       })
-      .catch(() => {
-        // Non-blocking
-      });
+      .catch(() => undefined);
   };
 
   if (document.readyState === 'complete') register();
   else window.addEventListener('load', register, { once: true });
 
-  // If a new SW takes control, reload once to pick up fresh assets.
   let refreshing = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (refreshing) return;

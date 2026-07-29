@@ -36,10 +36,14 @@ export function createApp(env: Env) {
   const app = express();
 
   app.set('trust proxy', 1);
-  // cross-origin: SPA on Vercel must read API responses (Helmet default same-origin blocks).
+  // SPA + in-app browsers (Telegram): keep Helmet light — COOP/CSP on JSON breaks WebViews.
   app.use(
     helmet({
+      contentSecurityPolicy: false,
+      crossOriginEmbedderPolicy: false,
+      crossOriginOpenerPolicy: false,
       crossOriginResourcePolicy: { policy: 'cross-origin' },
+      originAgentCluster: false,
     }),
   );
   app.use(cors(createCorsOptions(env)));

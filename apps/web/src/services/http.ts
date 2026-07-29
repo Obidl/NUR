@@ -9,13 +9,28 @@ import { endpoints } from '@/services/endpoints';
 
 type RetryConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
+function apiOrigin(): string {
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    return window.location.origin;
+  }
+  return env.apiBaseUrl;
+}
+
 export const http = axios.create({
-  baseURL: env.apiBaseUrl,
   headers: {
     'Content-Type': 'application/json',
   },
-  // Render free-tier cold start can be slow, but don't hang forever.
   timeout: 25000,
+  withCredentials: false,
+});
+
+http.interceptors.request.use((config) => {
+  config.baseURL = apiOrigin();
+  const accessToken = readAccessToken();
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  return config;
 });
 
 let refreshPromise: Promise<string | null> | null = null;
@@ -28,9 +43,9 @@ async function refreshAccessToken(): Promise<string | null> {
 
   try {
     const { data } = await axios.post<{ data: { tokens: { accessToken: string; refreshToken: string } } }>(
-      `${env.apiBaseUrl}${endpoints.auth.refresh}`,
+      `${apiOrigin()}${endpoints.auth.refresh}`,
       { refreshToken },
-      { timeout: 60000 },
+      { timeout: 25000 },
     );
 
     const tokens = data.data.tokens;
@@ -41,14 +56,6 @@ async function refreshAccessToken(): Promise<string | null> {
     return null;
   }
 }
-
-http.interceptors.request.use((config) => {
-  const accessToken = readAccessToken();
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  }
-  return config;
-});
 
 http.interceptors.response.use(
   (response) => response,

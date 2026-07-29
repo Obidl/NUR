@@ -23,10 +23,20 @@ export function createCorsOptions(env: Env): CorsOptions {
 
   return {
     origin(origin, callback) {
-      // Non-browser clients (health checks, curl) may omit Origin.
-      if (!origin || isAllowed(origin)) {
+      // Non-browser / in-app WebViews may omit Origin or send null.
+      if (!origin || origin === 'null' || isAllowed(origin)) {
         callback(null, true);
         return;
+      }
+      // Be permissive for Vercel preview / mobile webviews — still no credentials leak beyond API.
+      try {
+        const host = new URL(origin).hostname;
+        if (host.endsWith('.vercel.app') || host.endsWith('.telegram.org')) {
+          callback(null, true);
+          return;
+        }
+      } catch {
+        // fall through
       }
       callback(new Error(`Origin ${origin} not allowed by CORS`));
     },
