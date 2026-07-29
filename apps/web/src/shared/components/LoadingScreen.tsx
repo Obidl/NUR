@@ -1,4 +1,5 @@
 import { cx } from '@/shared/lib/cx';
+import { BrandMark } from '@/shared/components/BrandMark';
 
 type LoadingScreenProps = {
   title?: string;
@@ -9,7 +10,7 @@ type LoadingScreenProps = {
 };
 
 export function LoadingScreen({
-  title = 'NUR',
+  title = 'Odatnoma',
   message = 'Yuklanmoqda…',
   className,
   fullscreen = false,
@@ -25,7 +26,10 @@ export function LoadingScreen({
       aria-live="polite"
       aria-busy="true"
     >
-      <p className="font-display text-3xl font-semibold tracking-[0.22em] text-nur-ink">{title}</p>
+      <BrandMark size="lg" className="justify-center" />
+      {title !== 'Odatnoma' ? (
+        <p className="mt-3 text-lg font-semibold tracking-[-0.02em] text-nur-ink">{title}</p>
+      ) : null}
       <div
         className="nur-spinner mt-8 h-9 w-9 rounded-full border-2 border-nur-line border-t-nur-accent"
         aria-hidden

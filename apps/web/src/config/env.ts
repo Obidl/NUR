@@ -21,5 +21,5 @@ export const env = {
   get apiBaseUrl() {
     return resolveApiBaseUrl();
   },
-  appName: 'NUR',
+  appName: 'Odatnoma',
 } as const;

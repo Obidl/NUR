@@ -18,12 +18,12 @@ export function CoverImage({ src, alt = '', className }: CoverImageProps) {
     return (
       <span
         className={cx(
-          'inline-flex shrink-0 items-center justify-center bg-nur-sunken text-[10px] font-medium uppercase tracking-wide text-nur-faint',
+          'inline-flex shrink-0 items-center justify-center overflow-hidden bg-nur-sunken',
           className,
         )}
         aria-hidden
       >
-        NUR
+        <img src="/icons/icon-192.png" alt="" className="h-full w-full object-cover opacity-80" />
       </span>
     );
   }

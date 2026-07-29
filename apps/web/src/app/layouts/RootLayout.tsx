@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Home, Mic2, MoreHorizontal, ScrollText, Search, Video } from 'lucide-react';
 import { cx } from '@/shared/lib/cx';
+import { BrandMark } from '@/shared/components/BrandMark';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { PodcastPlayerBar } from '@/features/podcasts/components/PodcastPlayerBar';
 import { QuranAudioBar } from '@/features/quran/components/QuranAudioBar';
@@ -59,13 +60,7 @@ export function RootLayout() {
       {!isSurahReader ? (
         <header className="sticky top-0 z-30 border-b border-nur-line/60 bg-[color-mix(in_srgb,var(--nur-bg)_88%,transparent)] backdrop-blur-xl">
           <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-3 md:px-8">
-            <NavLink
-              to="/"
-              className="font-display text-lg font-semibold tracking-[0.22em] text-nur-ink transition-opacity duration-250 hover:opacity-70"
-              aria-label="NUR bosh sahifa"
-            >
-              NUR
-            </NavLink>
+            <BrandMark to="/" size="sm" />
 
             <nav
               className="hidden items-center gap-0.5 text-sm md:flex"

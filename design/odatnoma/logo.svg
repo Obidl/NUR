@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+  <!-- Hilol (crescent) -->
+  <path
+    d="M38 14
+       a18 18 0 1 0 8 32
+       a15 15 0 0 1 -8 -32z"
+    stroke="#0F6E56"
+    stroke-width="2.25"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <!-- Check badge -->
+  <circle
+    cx="46"
+    cy="20"
+    r="9"
+    stroke="#0F6E56"
+    stroke-width="2.25"
+  />
+  <path
+    d="M42.5 20.5 L45 23 L50 17.5"
+    stroke="#0F6E56"
+    stroke-width="2.25"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

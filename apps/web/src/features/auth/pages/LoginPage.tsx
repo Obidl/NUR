@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import axios from 'axios';
 import { Button } from '@/shared/components/Button';
+import { BrandMark } from '@/shared/components/BrandMark';
 import { Field, Input } from '@/shared/components/Field';
 import { LoadingOverlay } from '@/shared/components/LoadingScreen';
 import { useAuthStore } from '@/features/auth/store/authStore';
@@ -148,8 +149,8 @@ export function LoginPage() {
         />
       ) : null}
 
-      <p className="font-display text-3xl font-semibold tracking-[0.22em]">NUR</p>
-      <h1 className="mt-7 font-display text-2xl font-medium tracking-[-0.02em] text-nur-ink">
+      <BrandMark to={undefined} size="lg" className="justify-center" />
+      <h1 className="mt-7 text-2xl font-semibold tracking-[-0.02em] text-nur-ink">
         Xush kelibsiz
       </h1>
       <p className="mt-2 text-sm leading-relaxed text-nur-muted">

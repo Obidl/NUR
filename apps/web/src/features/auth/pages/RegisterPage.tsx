@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/Button';
+import { BrandMark } from '@/shared/components/BrandMark';
 import { Field, Input } from '@/shared/components/Field';
 import { LoadingOverlay } from '@/shared/components/LoadingScreen';
 import { useAuthStore } from '@/features/auth/store/authStore';
@@ -72,9 +73,9 @@ export function RegisterPage() {
         />
       ) : null}
 
-      <p className="font-display text-2xl font-semibold tracking-[0.2em]">NUR</p>
+      <BrandMark size="md" className="justify-center" />
       <h1 className="mt-6 text-lg font-medium tracking-[-0.02em] text-nur-muted">Ro‘yxatdan o‘tish</h1>
-      <p className="mt-2 text-sm leading-relaxed text-nur-muted">NUR hisobini yarating.</p>
+      <p className="mt-2 text-sm leading-relaxed text-nur-muted">Odatnoma hisobini yarating.</p>
 
       <form className="mt-8 space-y-5" onSubmit={onSubmit} aria-busy={isLoading || !apiReady}>
         <Field label="Ism">

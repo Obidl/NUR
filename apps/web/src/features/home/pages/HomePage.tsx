@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Button } from '@/shared/components/Button';
+import { BrandMark } from '@/shared/components/BrandMark';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import {
   completeCurriculumLesson,
@@ -139,8 +140,8 @@ export function HomePage() {
   if (!path || !today) {
     return (
       <section className="nur-atmosphere mx-auto max-w-lg px-4 py-20">
-        <p className="font-display text-4xl tracking-[0.22em]">NUR</p>
-        <h1 className="mt-8 font-display text-2xl font-medium tracking-[-0.02em]">
+        <BrandMark size="lg" />
+        <h1 className="mt-8 text-2xl font-semibold tracking-[-0.02em]">
           Assalomu alaykum
         </h1>
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-nur-muted">

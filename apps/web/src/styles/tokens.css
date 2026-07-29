@@ -1,31 +1,31 @@
 :root {
-  /* Quiet Light — readability first (WCAG AA) */
-  --nur-bg: #f7f7f5;
-  --nur-bg-elevated: #ffffff;
-  --nur-bg-sunken: #ecece9;
-  --nur-ink: #1f1e1b;
-  --nur-ink-muted: #54514a;
-  --nur-ink-faint: #54514a;
+  /* Odatnoma — calm cream + forest teal */
+  --nur-bg: #f5f1e8;
+  --nur-bg-elevated: #faf8f3;
+  --nur-bg-sunken: #ebe6db;
+  --nur-ink: #2c2c2a;
+  --nur-ink-muted: #5f5e5a;
+  --nur-ink-faint: #5f5e5a;
 
-  /* Gold — icons, progress rings, dividers ONLY (never body text on light) */
-  --nur-lamp: #a87c0e;
-  --nur-lamp-soft: #f5ecd4;
+  /* Amber — rare details ONLY */
+  --nur-lamp: #854f0b;
+  --nur-lamp-soft: #f0e6d4;
   --nur-lamp-ink: #ffffff;
   --nur-lamp-glow: color-mix(in srgb, var(--nur-lamp) 10%, transparent);
 
-  /* Emerald — primary CTA, active nav, focus (white text on fill) */
-  --nur-accent: #16342c;
-  --nur-accent-soft: #dce8e4;
+  /* Forest teal — primary CTA, icons, focus */
+  --nur-accent: #0f6e56;
+  --nur-accent-soft: #d8ebe4;
   --nur-accent-ink: #ffffff;
-  --nur-focus: #16342c;
+  --nur-focus: #0f6e56;
 
   /* Lines */
-  --nur-line: #e4e2dc;
-  --nur-line-strong: #cecbc3;
+  --nur-line: #ddd7ca;
+  --nur-line-strong: #c9c2b2;
 
   /* Feedback */
-  --nur-success: #16342c;
-  --nur-warning: #a87c0e;
+  --nur-success: #0f6e56;
+  --nur-warning: #854f0b;
   --nur-danger: #a84832;
 
   /* Sacred / Qur’an — Oddiy light (Quran.com-like) */
@@ -97,7 +97,7 @@
   --nur-book-line: #e8e4da;
 
   color-scheme: light;
-  font-family: Inter, system-ui, sans-serif;
+  font-family: Manrope, system-ui, sans-serif;
   font-size: var(--text-body);
   line-height: var(--text-body-lh);
   font-weight: 400;

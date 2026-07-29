@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/shared/components/Button';
+import { BrandMark } from '@/shared/components/BrandMark';
 import { Field, Input } from '@/shared/components/Field';
 import { requestPasswordReset } from '@/features/auth/api/authApi';
 import { getErrorMessage } from '@/shared/lib/errors';
@@ -35,7 +36,7 @@ export function ForgotPasswordPage() {
 
   return (
     <div className="nur-surface px-6 py-9 md:px-8 md:py-11">
-      <p className="font-display text-2xl font-semibold tracking-[0.2em]">NUR</p>
+      <BrandMark size="md" className="justify-center" />
       <h1 className="mt-5 text-xl font-semibold tracking-[-0.02em]">Parolni tiklash</h1>
       <p className="mt-2 text-sm leading-relaxed text-nur-muted">Emailingizni kiriting.</p>
 

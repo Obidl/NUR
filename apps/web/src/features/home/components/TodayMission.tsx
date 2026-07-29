@@ -180,7 +180,7 @@ export function TodayMission({
           <p className="nur-section-label">{dates.hijri}</p>
         ) : null}
         <p className="mt-1 text-sm leading-relaxed text-nur-muted">{dates.gregorian}</p>
-        <p className="mt-5 font-display text-sm tracking-[0.22em] text-nur-ink">NUR</p>
+        <p className="mt-5 text-sm font-semibold tracking-[-0.02em] text-nur-accent">Odatnoma</p>
         <h1 className="mt-4 font-display text-[1.75rem] font-medium leading-tight tracking-[-0.02em] text-nur-ink md:text-3xl">
           Assalomu alaykum{greetingName ? `, ${greetingName}` : ''}
         </h1>

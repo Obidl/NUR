@@ -1,5 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <rect width="64" height="64" rx="14" fill="#0c1218"/>
-  <circle cx="32" cy="28" r="12" fill="#d7a34a" opacity="0.9"/>
-  <path d="M18 48c4-8 10-12 14-12s10 4 14 12" stroke="#5fb4bc" stroke-width="3" stroke-linecap="round"/>
+  <rect width="64" height="64" rx="14" fill="#F5F1E8"/>
+  <!-- Crescent -->
+  <path
+    d="M36 14
+       a18 18 0 1 0 9 33
+       a14.5 14.5 0 0 1 -9 -33z"
+    stroke="#0F6E56"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+  <!-- Check badge -->
+  <circle cx="46" cy="20" r="9" fill="#0F6E56"/>
+  <path
+    d="M42.2 20.2 L45 23 L50.2 16.8"
+    stroke="#F5F1E8"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
 </svg>

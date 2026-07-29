@@ -17,7 +17,7 @@ function copyForPlatform(platform: InstallPlatform, hasNative: boolean): {
 } {
   if (hasNative) {
     return {
-      body: 'NURni telefon/kompyuteringizga ilova sifatida qo‘shing.',
+      body: 'Odatnomani telefon/kompyuteringizga ilova sifatida qo‘shing.',
       actionLabel: 'Qo‘shish',
     };
   }
@@ -34,7 +34,7 @@ function copyForPlatform(platform: InstallPlatform, hasNative: boolean): {
       };
     case 'desktop':
       return {
-        body: 'Chrome/Edge: manzil qatori o‘ngidagi o‘rnatish belgisini bosing, yoki menyu → «Install NUR» / «Ilovani o‘rnatish».',
+        body: 'Chrome/Edge: manzil qatori o‘ngidagi o‘rnatish belgisini bosing, yoki menyu → «Install Odatnoma» / «Ilovani o‘rnatish».',
         actionLabel: null,
       };
     default:
