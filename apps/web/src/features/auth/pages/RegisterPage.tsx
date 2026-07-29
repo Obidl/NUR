@@ -6,7 +6,7 @@ import { BrandMark } from '@/shared/components/BrandMark';
 import { Field, Input } from '@/shared/components/Field';
 import { LoadingOverlay } from '@/shared/components/LoadingScreen';
 import { useAuthStore } from '@/features/auth/store/authStore';
-import { pokeRenderDirect, warmApiBackground } from '@/services/warmApi';
+import { waitForApiReady, warmApiBackground } from '@/services/warmApi';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { useToast } from '@/shared/components/Toast';
 
@@ -33,7 +33,6 @@ export function RegisterPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [warming, setWarming] = useState(false);
-  const [warmSeconds, setWarmSeconds] = useState(0);
 
   useEffect(() => {
     warmApiBackground();
@@ -60,41 +59,20 @@ export function RegisterPage() {
     }
 
     setWarming(true);
-    setWarmSeconds(0);
-    const started = Date.now();
-    const tick = window.setInterval(() => {
-      setWarmSeconds(Math.floor((Date.now() - started) / 1000));
-    }, 1000);
-
     try {
-      const deadline = Date.now() + 60_000;
-      let lastError: unknown;
-
-      while (Date.now() < deadline) {
-        pokeRenderDirect();
-        void fetch('/api/keepalive', { cache: 'no-store' }).catch(() => undefined);
-
-        try {
-          await tryRegister();
-          return;
-        } catch (retryErr) {
-          lastError = retryErr;
-          if (!isNetworkError(retryErr)) {
-            setError(getErrorMessage(retryErr, 'Ro‘yxatdan o‘tish amalga oshmadi'));
-            return;
-          }
-        }
-
-        await new Promise((r) => window.setTimeout(r, 2500));
+      const ready = await waitForApiReady({ deadlineMs: 55_000, delayMs: 2000 });
+      if (!ready) {
+        setError('Server hali sekin. 20 soniya kutib qayta urinib ko‘ring.');
+        return;
       }
-
+      await tryRegister();
+    } catch (err) {
       setError(
-        isNetworkError(lastError)
+        isNetworkError(err)
           ? 'Server hali sekin. 20 soniya kutib qayta urinib ko‘ring.'
-          : getErrorMessage(lastError, 'Ro‘yxatdan o‘tish amalga oshmadi'),
+          : getErrorMessage(err, 'Ro‘yxatdan o‘tish amalga oshmadi'),
       );
     } finally {
-      window.clearInterval(tick);
       setWarming(false);
     }
   }
@@ -106,11 +84,7 @@ export function RegisterPage() {
       {busy ? (
         <LoadingOverlay
           message={warming ? 'Server uyg‘onyapti…' : 'Hisob yaratilmoqda…'}
-          hint={
-            warming
-              ? `Kuting — ${warmSeconds}s / 60s. Sahifani yopmang.`
-              : null
-          }
+          hint={warming ? 'Bir daqiqadan kam. Sahifani yopmang.' : null}
         />
       ) : null}
 

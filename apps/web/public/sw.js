@@ -1,5 +1,5 @@
 /* Minimal service worker — required for Chrome installability. */
-const CACHE = 'odatnoma-shell-v2';
+const CACHE = 'odatnoma-shell-v3';
 const PRECACHE = ['/', '/manifest.webmanifest', '/favicon.svg', '/icons/icon-192.png'];
 
 self.addEventListener('install', (event) => {

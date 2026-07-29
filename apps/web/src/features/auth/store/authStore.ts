@@ -32,10 +32,11 @@ type AuthState = {
 };
 
 async function afterAuthSuccess() {
-  await Promise.all([
+  // Never block login/register on progress sync.
+  void Promise.all([
     syncLocalQuranProgressToServer(),
     syncLocalPodcastProgressToServer(),
-  ]);
+  ]).catch(() => undefined);
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
