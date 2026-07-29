@@ -170,6 +170,11 @@
     padding: var(--space-5);
   }
 
+  .nur-ayah-card:has(.nur-ayah-number-active) {
+    border-color: color-mix(in srgb, var(--nur-quran-ornament) 32%, var(--nur-line));
+    background: color-mix(in srgb, var(--nur-quran-ornament) 5%, var(--nur-quran-panel));
+  }
+
   @media (min-width: 768px) {
     .nur-ayah-card {
       padding: var(--space-6);

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, Play, Settings2 } from 'lucide-react';
@@ -59,6 +59,7 @@ export function SurahReaderPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const scrollSyncPausedUntil = useRef(0);
 
   useEffect(() => {
     if (user?.preferences.quranFontSize) {
@@ -123,6 +124,7 @@ export function SurahReaderPage() {
     if (!detail) return;
     const target = Math.min(Math.max(initialAyah || 1, 1), detail.ayahs.length || 1);
     setFocusedAyah(target);
+    scrollSyncPausedUntil.current = Date.now() + 900;
     const timer = window.setTimeout(() => {
       document.getElementById(`ayah-${target}`)?.scrollIntoView({
         behavior: reduceMotion ? 'auto' : 'smooth',
@@ -131,6 +133,53 @@ export function SurahReaderPage() {
     }, 50);
     return () => window.clearTimeout(timer);
   }, [detail, initialAyah, reduceMotion]);
+
+  // Track which ayah is in the reading viewport while scrolling.
+  useEffect(() => {
+    if (!detail) return;
+
+    const nodes = detail.ayahs
+      .map((ayah) => document.getElementById(`ayah-${ayah.ayahNumber}`))
+      .filter((node): node is HTMLElement => Boolean(node));
+
+    if (nodes.length === 0) return;
+
+    const ratios = new Map<number, number>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = entry.target.id;
+          const num = Number(id.replace('ayah-', ''));
+          if (!Number.isInteger(num)) continue;
+          ratios.set(num, entry.isIntersecting ? entry.intersectionRatio : 0);
+        }
+
+        if (Date.now() < scrollSyncPausedUntil.current) return;
+
+        let best = 0;
+        let bestRatio = 0;
+        for (const [num, ratio] of ratios) {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            best = num;
+          }
+        }
+        if (best > 0 && bestRatio > 0.12) {
+          setFocusedAyah((prev) => (prev === best ? prev : best));
+        }
+      },
+      {
+        root: null,
+        // Prefer the band just below the sticky header.
+        rootMargin: '-18% 0px -42% 0px',
+        threshold: [0, 0.15, 0.3, 0.45, 0.6, 0.75, 1],
+      },
+    );
+
+    for (const node of nodes) observer.observe(node);
+    return () => observer.disconnect();
+  }, [detail]);
 
   const persistReadProgress = useCallback(
     async (ayahNumber: number) => {
@@ -165,6 +214,7 @@ export function SurahReaderPage() {
 
   useEffect(() => {
     const onBoundary = (ayahNumber: number) => {
+      scrollSyncPausedUntil.current = Date.now() + 700;
       setFocusedAyah(ayahNumber);
       void persistReadProgress(ayahNumber);
       writeLocalQuranProgress({
@@ -256,6 +306,10 @@ export function SurahReaderPage() {
 
   if (!detail) return null;
 
+  const readingAyah =
+    playerSurah === surahNumber && activeAyah ? activeAyah : focusedAyah;
+  const ayahTotal = detail.surah.ayahCount;
+
   const translatorName = detail.ayahs.find((ayah) => ayah.translation)?.translation
     ?.translatorName;
 
@@ -270,9 +324,17 @@ export function SurahReaderPage() {
             <ArrowLeft size={16} strokeWidth={1.75} />
             Surahlar
           </Link>
-          <p className="min-w-0 truncate text-center font-display text-sm font-medium tracking-[-0.01em] text-[var(--nur-quran-ink)]">
-            {detail.surah.number}. {detail.surah.nameUz ?? detail.surah.nameLatin}
-          </p>
+          <div className="min-w-0 text-center">
+            <p className="truncate font-display text-sm font-medium tracking-[-0.01em] text-[var(--nur-quran-ink)]">
+              {detail.surah.number}. {detail.surah.nameUz ?? detail.surah.nameLatin}
+            </p>
+            <p
+              className="mt-0.5 text-xs font-medium tabular-nums text-[var(--nur-quran-ornament)]"
+              aria-live="polite"
+            >
+              {readingAyah}-oyat · {ayahTotal}
+            </p>
+          </div>
           <button
             type="button"
             className="inline-flex h-10 w-10 items-center justify-center rounded-full text-[var(--nur-quran-muted)] transition-colors hover:bg-[var(--nur-quran-translation-plane)] hover:text-[var(--nur-quran-ink)]"
@@ -282,6 +344,17 @@ export function SurahReaderPage() {
           >
             <Settings2 size={18} strokeWidth={1.6} />
           </button>
+        </div>
+        <div
+          className="h-0.5 bg-[color-mix(in_srgb,var(--nur-quran-ornament)_18%,transparent)]"
+          aria-hidden
+        >
+          <div
+            className="h-full bg-[var(--nur-quran-ornament)] transition-[width] duration-200 ease-out"
+            style={{
+              width: `${Math.min(100, Math.max(2, (readingAyah / Math.max(ayahTotal, 1)) * 100))}%`,
+            }}
+          />
         </div>
       </header>
 
@@ -411,12 +484,14 @@ export function SurahReaderPage() {
               fontSize={fontSize}
               showTranslation={showTranslation}
               isActive={
+                readingAyah === ayah.ayahNumber ||
                 focusedAyah === ayah.ayahNumber ||
                 (playerSurah === surahNumber && activeAyah === ayah.ayahNumber)
               }
               isBookmarked={bookmarkMap.has(ayah.ayahNumber)}
               canBookmark
               onPlay={() => {
+                scrollSyncPausedUntil.current = Date.now() + 700;
                 void playAyah(surahNumber, ayah.ayahNumber, {
                   ayahCount: detail.ayahs.length,
                   autoAdvance: true,
