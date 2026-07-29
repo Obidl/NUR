@@ -79,6 +79,21 @@ export function subscribeInstallPrompt(listener: () => void): () => void {
   return () => listeners.delete(listener);
 }
 
+/** Unregister broken SW + clear caches (recovery for blank mobile screens). */
+export async function resetPwaCache(): Promise<void> {
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return;
+  try {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(regs.map((reg) => reg.unregister()));
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((key) => caches.delete(key)));
+    }
+  } catch {
+    // ignore
+  }
+}
+
 export function registerPwa(): void {
   if (typeof window === 'undefined') return;
 
@@ -98,15 +113,42 @@ export function registerPwa(): void {
     notify();
   });
 
-  if ('serviceWorker' in navigator) {
-    const register = () => {
-      void navigator.serviceWorker.register('/sw.js').catch(() => {
+  if (!('serviceWorker' in navigator)) return;
+
+  const register = () => {
+    void navigator.serviceWorker
+      .register('/sw.js', { updateViaCache: 'none' })
+      .then((reg) => {
+        // Pull updates on each load so phones leave stale shells quickly.
+        void reg.update();
+        if (reg.waiting) {
+          reg.waiting.postMessage('SKIP_WAITING');
+        }
+        reg.addEventListener('updatefound', () => {
+          const worker = reg.installing;
+          if (!worker) return;
+          worker.addEventListener('statechange', () => {
+            if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+              worker.postMessage('SKIP_WAITING');
+            }
+          });
+        });
+      })
+      .catch(() => {
         // Non-blocking
       });
-    };
-    if (document.readyState === 'complete') register();
-    else window.addEventListener('load', register, { once: true });
-  }
+  };
+
+  if (document.readyState === 'complete') register();
+  else window.addEventListener('load', register, { once: true });
+
+  // If a new SW takes control, reload once to pick up fresh assets.
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (refreshing) return;
+    refreshing = true;
+    window.location.reload();
+  });
 }
 
 export async function promptInstall(): Promise<'accepted' | 'dismissed' | 'unavailable'> {

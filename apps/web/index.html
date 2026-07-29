@@ -23,6 +23,29 @@
       rel="stylesheet"
     />
     <title>Odatnoma</title>
+    <script>
+      /* One-shot recovery if a previous SW left a blank shell on mobile. */
+      (function () {
+        try {
+          var key = 'odatnoma_sw_bust_v4';
+          if (sessionStorage.getItem(key)) return;
+          var params = new URLSearchParams(location.search);
+          if (params.get('reset') === '1' && 'serviceWorker' in navigator) {
+            sessionStorage.setItem(key, '1');
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+              return Promise.all(regs.map(function (r) { return r.unregister(); }));
+            }).then(function () {
+              if (!('caches' in window)) return;
+              return caches.keys().then(function (keys) {
+                return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+              });
+            }).then(function () {
+              location.replace(location.pathname);
+            });
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
