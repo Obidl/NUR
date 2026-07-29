@@ -1,0 +1,31 @@
+{
+  "slug": "shamoili-muhammadiyya",
+  "title": "Shamoili Muhammadiyya",
+  "authors": ["Имом Муҳаммад ат-Термизий"],
+  "translator": "Саййид Маҳмуд Тарозий",
+  "description": "Пайғамбар соллаллоҳу алайҳи ва салламнинг ташқи кўринишлари, хулқ-атворлари ва турмуш тарзларини тасвирловчи 326 ривоят (ҳадис) тўплами. Ўзбекча таржима — Саййид Маҳмуд Тарозий (1354 ҳижрий). ziyouz.com кутубхонаси нусхаси.",
+  "coverUrl": "https://placehold.co/600x800/0f1419/c9a227?text=Shamoil",
+  "language": "uz",
+  "categories": ["hadis", "siyrat"],
+  "pdf": "incoming/shamoili-muhammadiyya.pdf",
+  "rights": {
+    "licenseStatus": "unknown",
+    "licenseNotes": "Owner-supplied PDF (ziyouz.com edition, Sayyid Mahmud Taroziy translation, 1354 hijri). Confirm redistribution rights before publish (CONTENT_RULES B-02)."
+  },
+  "splitMode": "hadith-ranges",
+  "hadithChapters": [
+    { "title": "1–25-ҳадислар: Кўринишлари ва сочлари", "slug": "hadis-1-25", "from": 1, "to": 25 },
+    { "title": "26–50-ҳадислар: Сочлари, кийимлари", "slug": "hadis-26-50", "from": 26, "to": 50 },
+    { "title": "51–75-ҳадислар: Кийимлари ва ковуши", "slug": "hadis-51-75", "from": 51, "to": 75 },
+    { "title": "76–100-ҳадислар: Юриши ва ўтириши", "slug": "hadis-76-100", "from": 76, "to": 100 },
+    { "title": "101–125-ҳадислар: Овқатланиши", "slug": "hadis-101-125", "from": 101, "to": 125 },
+    { "title": "126–150-ҳадислар: Ичимлиги ва дуоси", "slug": "hadis-126-150", "from": 126, "to": 150 },
+    { "title": "151–175-ҳадислар: Ибодати ва Қуръон тиловати", "slug": "hadis-151-175", "from": 151, "to": 175 },
+    { "title": "176–200-ҳадислар: Тавозеълиги", "slug": "hadis-176-200", "from": 176, "to": 200 },
+    { "title": "201–225-ҳадислар: Хулқи ва кулгуси", "slug": "hadis-201-225", "from": 201, "to": 225 },
+    { "title": "226–250-ҳадислар: Уйқуси ва ибодатлари", "slug": "hadis-226-250", "from": 226, "to": 250 },
+    { "title": "251–275-ҳадислар: Муомаласи ва саховатлари", "slug": "hadis-251-275", "from": 251, "to": 275 },
+    { "title": "276–300-ҳадислар: Ҳаёси ва тавозеълиги", "slug": "hadis-276-300", "from": 276, "to": 300 },
+    { "title": "301–326-ҳадислар: Вафотлари ва мерослари", "slug": "hadis-301-326", "from": 301, "to": 326 }
+  ]
+}

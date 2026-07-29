@@ -6,3 +6,9 @@ dist
 *.log
 apps/web/dist
 apps/api/dist
+
+# Book PDF pipeline — keep manifests, not binaries / raw extracts
+apps/api/content/books/incoming/*
+!apps/api/content/books/incoming/.gitkeep
+apps/api/content/books/extracted/*
+!apps/api/content/books/extracted/.gitkeep

@@ -463,6 +463,52 @@
   animation: nur-spin 0.85s linear infinite;
 }
 
+.nur-reader-body p {
+  margin-bottom: 1.25em;
+}
+
+.nur-reader-body p:last-child {
+  margin-bottom: 0;
+}
+
+.nur-reader-body p:first-child::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-size: 3.25em;
+  line-height: 0.8;
+  font-weight: 500;
+  color: var(--nur-lamp);
+  padding-right: 0.08em;
+  padding-top: 0.06em;
+}
+
+.nur-reader-body blockquote {
+  border-left: 3px solid var(--nur-lamp);
+  margin: 1.5em 0;
+  padding: 0.5em 0 0.5em 1.25em;
+  color: var(--nur-ink-muted);
+  font-style: italic;
+}
+
+.nur-reader-body h2,
+.nur-reader-body h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--nur-ink);
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+}
+
+.nur-reader-body h2 {
+  font-size: 1.375rem;
+  letter-spacing: -0.015em;
+}
+
+.nur-reader-body h3 {
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nur-skeleton,
   .nur-fade-in,

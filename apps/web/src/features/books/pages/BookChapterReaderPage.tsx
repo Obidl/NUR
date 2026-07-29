@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Bookmark, BookmarkCheck, Highlighter, Trash2 } from 'lucide-react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import {
+  Bookmark,
+  BookmarkCheck,
+  ChevronLeft,
+  Highlighter,
+  Trash2,
+} from 'lucide-react';
 import {
   createBookBookmark,
   createBookHighlight,
@@ -13,10 +19,13 @@ import {
   updateBookHighlight,
 } from '@/features/books/api/bookApi';
 import { renderSafeChapterHtml } from '@/features/books/lib/safeRender';
-import type { BookBookmark, BookChapterDetail, BookHighlight } from '@/features/books/types/book.types';
+import type {
+  BookBookmark,
+  BookChapterDetail,
+  BookHighlight,
+} from '@/features/books/types/book.types';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { Button } from '@/shared/components/Button';
-import { DetailBackLink } from '@/shared/components/DetailBackLink';
 import { DetailLoading } from '@/shared/components/DetailLoading';
 import { ErrorState } from '@/shared/components/Skeleton';
 import { getErrorMessage } from '@/shared/lib/errors';
@@ -198,160 +207,212 @@ export function BookChapterReaderPage() {
   if (!detail) return null;
 
   return (
-    <section className="mx-auto max-w-2xl px-4 py-10 nur-fade-in md:px-6 md:py-14">
-      <div className="mb-10 flex items-start justify-between gap-3">
-        <div>
-          <DetailBackLink to={`/books/${detail.book.slug}`}>{detail.book.title}</DetailBackLink>
-          <h1 className="mt-5 font-display text-2xl font-medium tracking-[-0.025em] md:text-[1.75rem]">
-            {detail.chapter.title}
-          </h1>
-          <p className="mt-2.5 text-xs leading-relaxed text-nur-muted">
-            {detail.book.authors.join(', ')}
-            {detail.book.translator ? ` · tarj. ${detail.book.translator}` : ''}
-          </p>
-        </div>
-        <div className="flex items-center gap-0.5">
-          <button
-            type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-m)] text-nur-lamp transition-colors duration-200 hover:bg-nur-lamp-soft"
-            aria-label="Belgilash"
-            title="Matnni belgilab, highlight qo‘shing"
-            onClick={captureSelection}
+    <section className="nur-fade-in">
+      {/* Sticky reader nav */}
+      <div className="sticky top-0 z-20 border-b border-nur-line/60 bg-nur-bg/90 backdrop-blur-md">
+        <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-5 py-3 md:px-8">
+          <Link
+            to={`/books/${detail.book.slug}`}
+            className="flex items-center gap-1.5 text-xs font-medium text-nur-muted transition-colors hover:text-nur-ink"
           >
-            <Highlighter size={18} />
-          </button>
-          <button
-            type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-m)] text-nur-lamp transition-colors duration-200 hover:bg-nur-lamp-soft"
-            aria-label="Xatcho‘p"
-            onClick={() => void toggleBookmark()}
-          >
-            {chapterBookmark ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
-          </button>
+            <ChevronLeft size={14} />
+            <span className="hidden sm:inline">{detail.book.title}</span>
+            <span className="sm:hidden">Orqaga</span>
+          </Link>
+
+          <div className="flex items-center gap-0.5">
+            <button
+              type="button"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-m)] text-nur-lamp transition-colors duration-200 hover:bg-nur-lamp-soft"
+              aria-label="Belgilash"
+              title="Matnni belgilab, highlight qo'shing"
+              onClick={captureSelection}
+            >
+              <Highlighter size={16} />
+            </button>
+            <button
+              type="button"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-m)] text-nur-lamp transition-colors duration-200 hover:bg-nur-lamp-soft"
+              aria-label="Xatcho'p"
+              onClick={() => void toggleBookmark()}
+            >
+              {chapterBookmark ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+            </button>
+          </div>
         </div>
       </div>
 
-      {error ? (
-        <p className="mb-4 text-sm text-[var(--nur-danger)]" role="alert">
-          {error}
+      {/* Chapter header */}
+      <div className="mx-auto max-w-2xl px-5 pt-10 pb-2 md:px-8 md:pt-14">
+        <p className="text-xs font-medium uppercase tracking-widest text-nur-lamp">
+          {detail.chapter.order}-bob
         </p>
+        <h1 className="mt-3 font-display text-2xl font-medium tracking-[-0.025em] text-nur-ink md:text-[1.875rem] md:leading-[1.2]">
+          {detail.chapter.title}
+        </h1>
+        <p className="mt-3 text-xs text-nur-muted">
+          {detail.book.authors.join(', ')}
+          {detail.book.translator ? ` · tarj. ${detail.book.translator}` : ''}
+        </p>
+        <div className="mt-6 h-px bg-gradient-to-r from-nur-lamp/30 via-nur-line to-transparent" />
+      </div>
+
+      {/* Error */}
+      {error ? (
+        <div className="mx-auto max-w-2xl px-5 md:px-8">
+          <p className="my-4 text-sm text-[var(--nur-danger)]" role="alert">
+            {error}
+          </p>
+        </div>
       ) : null}
 
+      {/* Highlight capture */}
       {selection ? (
-        <div className="nur-surface mb-8 px-5 py-5">
-          <p className="nur-section-label">Tanlangan matn</p>
-          <p className="mt-2.5 font-reading text-sm leading-7 text-nur-ink">“{selection}”</p>
-          <label className="mt-4 block text-sm font-medium text-nur-ink" htmlFor="highlight-note">
-            Shaxsiy eslatma (ixtiyoriy)
-          </label>
-          <textarea
-            id="highlight-note"
-            className="nur-input mt-2"
-            rows={2}
-            maxLength={1000}
-            value={draftNote}
-            onChange={(e) => setDraftNote(e.target.value)}
-          />
-          <div className="mt-3 flex gap-2">
-            <Button
-              type="button"
-              disabled={savingHighlight}
-              onClick={() => void saveHighlight()}
-            >
-              Saqlash
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => {
-                setSelection('');
-                setDraftNote('');
-              }}
-            >
-              Bekor
-            </Button>
+        <div className="mx-auto max-w-2xl px-5 md:px-8">
+          <div className="nur-surface my-6 px-5 py-5">
+            <p className="nur-section-label">Tanlangan matn</p>
+            <p className="mt-2.5 font-reading text-sm leading-7 text-nur-ink">"{selection}"</p>
+            <label className="mt-4 block text-sm font-medium text-nur-ink" htmlFor="highlight-note">
+              Shaxsiy eslatma (ixtiyoriy)
+            </label>
+            <textarea
+              id="highlight-note"
+              className="nur-input mt-2"
+              rows={2}
+              maxLength={1000}
+              value={draftNote}
+              onChange={(e) => setDraftNote(e.target.value)}
+            />
+            <div className="mt-3 flex gap-2">
+              <Button type="button" disabled={savingHighlight} onClick={() => void saveHighlight()}>
+                Saqlash
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  setSelection('');
+                  setDraftNote('');
+                }}
+              >
+                Bekor
+              </Button>
+            </div>
           </div>
         </div>
       ) : null}
 
+      {/* Reader body */}
       <article
         ref={articleRef}
-        className="font-reading max-w-prose text-[1.0625rem] leading-9 text-nur-ink md:text-[1.125rem] md:leading-[1.85]"
+        className="nur-reader-body mx-auto max-w-2xl px-5 pt-8 pb-16 font-reading text-[1.0625rem] leading-[2] text-nur-ink md:px-8 md:text-[1.125rem] md:leading-[2.05]"
         dangerouslySetInnerHTML={{ __html: safeHtml }}
         onMouseUp={captureSelection}
         onTouchEnd={captureSelection}
       />
 
-      {accessToken ? (
-        <div className="mt-14 border-t border-nur-line/70 pt-10">
-          <h2 className="text-sm font-semibold tracking-[-0.01em] text-nur-ink">Highlightlar</h2>
-          {highlights.length === 0 ? (
-            <p className="mt-3 text-sm leading-relaxed text-nur-muted">
-              Matndan belgilang yoki Highlighter tugmasini bosing.
-            </p>
+      {/* Chapter navigation */}
+      <div className="mx-auto max-w-2xl px-5 pb-6 md:px-8">
+        <div className="flex items-center justify-between border-t border-nur-line/60 pt-6">
+          {detail.chapter.order > 1 ? (
+            <button
+              type="button"
+              className="flex items-center gap-1 text-xs font-medium text-nur-accent transition-colors hover:text-nur-ink"
+              onClick={() => navigate(-1)}
+            >
+              <ChevronLeft size={14} />
+              Oldingi bob
+            </button>
           ) : (
-            <ul className="mt-5 space-y-3">
-              {highlights.map((row) => (
-                <li key={row.id} className="rounded-[var(--radius-l)] bg-nur-lamp-soft/30 px-4 py-3.5">
-                  <p className="font-reading text-sm leading-7 text-nur-ink">“{row.selectedText}”</p>
-                  {editingId === row.id ? (
-                    <div className="mt-2">
-                      <textarea
-                        className="nur-input"
-                        rows={2}
-                        maxLength={1000}
-                        value={editNote}
-                        onChange={(e) => setEditNote(e.target.value)}
-                      />
-                      <div className="mt-2 flex gap-2">
-                        <Button type="button" onClick={() => void saveEditedNote(row.id)}>
-                          Saqlash
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          onClick={() => {
-                            setEditingId(null);
-                            setEditNote('');
-                          }}
-                        >
-                          Bekor
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      {row.note ? (
-                        <p className="mt-2 text-xs text-nur-muted">{row.note}</p>
-                      ) : (
-                        <p className="mt-2 text-xs text-nur-faint">Eslatma yo‘q</p>
-                      )}
-                      <div className="mt-2 flex gap-3">
-                        <button
-                          type="button"
-                          className="text-xs font-medium text-nur-accent"
-                          onClick={() => {
-                            setEditingId(row.id);
-                            setEditNote(row.note ?? '');
-                          }}
-                        >
-                          Eslatmani tahrirlash
-                        </button>
-                        <button
-                          type="button"
-                          className="inline-flex items-center gap-1 text-xs text-[var(--nur-danger)]"
-                          onClick={() => void removeHighlight(row.id)}
-                        >
-                          <Trash2 size={12} />
-                          O‘chirish
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <span />
           )}
+          <Link
+            to={`/books/${detail.book.slug}`}
+            className="text-xs font-medium text-nur-muted hover:text-nur-ink"
+          >
+            Barcha boblar
+          </Link>
+        </div>
+      </div>
+
+      {/* Highlights section */}
+      {accessToken ? (
+        <div className="mx-auto max-w-2xl px-5 pb-14 md:px-8">
+          <div className="border-t border-nur-line/60 pt-10">
+            <h2 className="nur-section-label mb-5">Belgilangan matnlar</h2>
+            {highlights.length === 0 ? (
+              <p className="text-sm leading-relaxed text-nur-muted">
+                Matndan belgilang yoki Highlighter tugmasini bosing.
+              </p>
+            ) : (
+              <ul className="space-y-3">
+                {highlights.map((row) => (
+                  <li
+                    key={row.id}
+                    className="rounded-[var(--radius-l)] border border-nur-lamp-soft/60 bg-nur-lamp-soft/15 px-4 py-3.5"
+                  >
+                    <p className="font-reading text-sm leading-7 text-nur-ink">
+                      "{row.selectedText}"
+                    </p>
+                    {editingId === row.id ? (
+                      <div className="mt-2">
+                        <textarea
+                          className="nur-input"
+                          rows={2}
+                          maxLength={1000}
+                          value={editNote}
+                          onChange={(e) => setEditNote(e.target.value)}
+                        />
+                        <div className="mt-2 flex gap-2">
+                          <Button type="button" onClick={() => void saveEditedNote(row.id)}>
+                            Saqlash
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={() => {
+                              setEditingId(null);
+                              setEditNote('');
+                            }}
+                          >
+                            Bekor
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        {row.note ? (
+                          <p className="mt-2 text-xs text-nur-muted">{row.note}</p>
+                        ) : (
+                          <p className="mt-2 text-xs text-nur-faint">Eslatma yo'q</p>
+                        )}
+                        <div className="mt-2 flex gap-3">
+                          <button
+                            type="button"
+                            className="text-xs font-medium text-nur-accent"
+                            onClick={() => {
+                              setEditingId(row.id);
+                              setEditNote(row.note ?? '');
+                            }}
+                          >
+                            Tahrirlash
+                          </button>
+                          <button
+                            type="button"
+                            className="inline-flex items-center gap-1 text-xs text-[var(--nur-danger)]"
+                            onClick={() => void removeHighlight(row.id)}
+                          >
+                            <Trash2 size={12} />
+                            O'chirish
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       ) : null}
     </section>

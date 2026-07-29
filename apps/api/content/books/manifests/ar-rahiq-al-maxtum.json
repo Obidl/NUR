@@ -1,0 +1,157 @@
+{
+  "slug": "ar-rahiq-al-maxtum",
+  "title": "Ar-Rahiq al-Maxtum",
+  "authors": ["Сафиййурраҳмон Муборакпурий"],
+  "translator": null,
+  "description": "Пайғамбар соллаллоҳу алайҳи ва салламнинг муборак сийратлари ҳақида мукофот олган классик асар — «Муҳрланган нектар». Узбекча нашр (ziyouz.com кутубхонаси нусхаси асосида PDF экстракт).",
+  "coverUrl": "https://placehold.co/600x800/0f1419/c9a227?text=Ar-Rahiq",
+  "language": "uz",
+  "categories": ["siyrat"],
+  "pdf": "incoming/ar-rahiq-al-maxtum.pdf",
+  "rights": {
+    "licenseStatus": "unknown",
+    "licenseNotes": "Owner-supplied PDF (ziyouz.com edition). Confirm redistribution rights before publish (CONTENT_RULES B-02)."
+  },
+  "chapterMarkers": [
+    { "title": "Муқаддима", "slug": "muqaddima", "match": "МУҚАДДИМА" },
+    {
+      "title": "Таваллуд ва рисолатгача бўлган қирқ йил",
+      "slug": "tavallud-va-qirq-yil",
+      "match": "РАСУЛУЛЛОҲ СОЛЛАЛЛОҲУ АЛАЙҲИ ВА САЛЛАМНИНГ ТАВАЛЛУДЛАРИ ВА РИСОЛАТГАЧА БЎЛГАН ҚИРҚ ЙИЛ"
+    },
+    {
+      "title": "Нубувват, рисолат ва даъват ҳаёти",
+      "slug": "nubuvvat-risolat-davat",
+      "match": "НУБУВВАТ, РИСОЛАТ ВА ДАЪВАТ ҲАЁТИ"
+    },
+    {
+      "title": "Даъват жиҳодининг биринчи босқичи",
+      "slug": "davat-jihodi-birinchi",
+      "match": "ДАЪВАТ ЖИҲОДИНИНГ БИРИНЧИ БОСҚИЧИ"
+    },
+    {
+      "title": "Иккинчи босқич — ошкора даъват",
+      "slug": "ikkinchi-bosqich-oshkora",
+      "match": "ИККИНЧИ БОСҚИЧ ОШКОРА ДАЪВАТ"
+    },
+    {
+      "title": "Алоқаларнинг батамом узилиши",
+      "slug": "aloqalar-uzilishi",
+      "match": "АЛОҚАЛАРНИНГ БАТАМОМ УЗИЛИШИ"
+    },
+    { "title": "Маҳзунлик йили", "slug": "mahzunlik-yili", "match": "МАҲЗУНЛИК ЙИЛИ" },
+    {
+      "title": "Сабр ва матонат омиллари",
+      "slug": "sabr-va-matonat",
+      "match": "САБР ВА МАТОНАТ ОМИЛЛАРИ"
+    },
+    {
+      "title": "Учинчи босқич",
+      "slug": "uchinchi-bosqich",
+      "match": "УЧИНЧИ БОСҚИЧ"
+    },
+    {
+      "title": "Ислом даъвати Макка ташқарисида",
+      "slug": "davat-makka-tashqarisida",
+      "match": "ИСЛОМ ДАЪВАТИ МАККА ТАШҚАРИСИДА"
+    },
+    {
+      "title": "Ҳижрат",
+      "slug": "hijrat",
+      "match": "РАСУЛУЛЛОҲ СОЛЛАЛЛОҲУ АЛАЙҲИ ВА САЛЛАМНИНГ ҲИЖРАТ"
+    },
+    {
+      "title": "Мадина даври",
+      "slug": "madina-davri",
+      "match": "МАДИНАДАГИ ДАВР"
+    },
+    {
+      "title": "Катта Бадр жанги",
+      "slug": "katta-badr",
+      "match": "КАТТА БАДР ЖАНГИ"
+    },
+    {
+      "title": "Бадр ва Уҳуд оралиғидаги ҳаракатлар",
+      "slug": "badr-uhud-oraligi",
+      "match": "БАДР ВА УҲУД ОРАЛИҒИДА БЎЛИБ ЎТГАН ЖАНГОВОР ҲАРАКАТЛАР"
+    },
+    {
+      "title": "Бану Қайнуқоъ ғазоти",
+      "slug": "banu-qaynuqo",
+      "match": "БАНУ ҚАЙНУҚОЪ ҒАЗОТИ"
+    },
+    {
+      "title": "Уҳуд ва Аҳзоб оралиғидаги ҳаракатлар",
+      "slug": "uhud-ahzob-oraligi",
+      "match": "УҲУД ВА АҲЗОБ ҒАЗОТЛАРИ ОРАЛИҒИДАГИ ЖАНГОВОР ҲАРАКАТЛАР"
+    },
+    {
+      "title": "Аҳзоб (жамоалар) жанги",
+      "slug": "ahzob-jangi",
+      "match": "АҲЗОБ (ЖАМОАЛАР) ЖАНГИ"
+    },
+    {
+      "title": "Бану Қурайза ғазоти",
+      "slug": "banu-qurayza",
+      "match": "БАНУ ҚУРАЙЗА ҒАЗОТИ"
+    },
+    {
+      "title": "Қурайзадан кейинги ҳаракатлар",
+      "slug": "qurayzadan-keyin",
+      "match": "УШБУ ҒАЗОТДАН КЕЙИН БЎЛИБ ЎТГАН ЖАНГОВАР ҲАРАКАТЛАР"
+    },
+    {
+      "title": "Бану Мусталиқ / Мурайсиъ ғазоти",
+      "slug": "banu-mustaliq",
+      "match": "БАНУ МУСТАЛИҚ ЁКИ МУРАЙСИЪ ҒАЗОТИ"
+    },
+    {
+      "title": "Мурайсиъдан кейинги ҳаракатлар",
+      "slug": "muraysidan-keyin",
+      "match": "МУРАЙСИЪ ҒАЗОТИДАН КЕЙИНГИ ҲАРБИЙ ҲАРАКАТЛАР"
+    },
+    {
+      "title": "Ҳудайбия умраси",
+      "slug": "hudaybiya-umrasi",
+      "match": "ҲУДАЙБИЯ УМРАСИ"
+    },
+    {
+      "title": "Иккинчи босқич — янги давр",
+      "slug": "ikkinchi-bosqich-yangi-davr",
+      "match": "ИККИНЧИ БОСҚИЧ",
+      "occurrence": 2
+    },
+    {
+      "title": "Ҳудайбия сулҳидан кейинги ҳаракатлар",
+      "slug": "hudaybiyadan-keyin",
+      "match": "ҲУДАЙБИЯ СУЛҲИДАН КЕЙИНГИ ҲАРБИЙ ҲАРАКАТЛАР"
+    },
+    {
+      "title": "Еттинчи йил сарийя ва ғазотлари",
+      "slug": "ettinchi-yil",
+      "match": "ЕТТИНЧИ ЙИЛДА БЎЛИБ ЎТГАН БОШҚА САРИЙЯ ВА ҒАЗОТЛАР"
+    },
+    {
+      "title": "Макканинг фатҳ этилиши",
+      "slug": "makka-fathi",
+      "match": "МАККАНИНГ ФАТҲ ЭТИЛИШИ"
+    },
+    { "title": "Табук ғазоти", "slug": "tabuk", "match": "ТАБУК ҒАЗОТИ" },
+    { "title": "Ҳажжатул вадоъ", "slug": "hajjatul-vado", "match": "ҲАЖЖАТУЛ ВАДОЪ" },
+    {
+      "title": "Покиза умрнинг сўнгги кунлари",
+      "slug": "songgi-kunlar",
+      "match": "ПОКИЗА УМРНИНГ СЎНГГИ КУНЛАРИ"
+    },
+    {
+      "title": "Пайғамбар хонадони",
+      "slug": "paygambar-xonadoni",
+      "match": "ПАЙҒАМБАР ХОНАДОНИ"
+    },
+    {
+      "title": "Кўринишлари ва хулқ-атворлари",
+      "slug": "korinishlari-va-xulq",
+      "match": "КЎРИНИШЛАРИ ВА ХУЛҚ-АТВОРЛАРИ"
+    }
+  ]
+}
