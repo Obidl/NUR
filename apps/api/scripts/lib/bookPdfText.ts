@@ -56,20 +56,67 @@ export function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;');
 }
 
+/**
+ * Join PDF soft-wrapped lines into logical paragraphs.
+ *
+ * PDF extractors break every ~80 chars with `\n`, but real paragraph
+ * boundaries only appear after sentence-ending punctuation (. » ! ? :)
+ * followed by a newline where the next line starts a new sentence
+ * (capital Cyrillic/Latin letter, digit, or quote).
+ */
+function joinSoftWraps(text: string): string {
+  const lines = text.split('\n');
+  const paragraphs: string[] = [];
+  let buffer = '';
+
+  for (const raw of lines) {
+    const line = raw.replace(/\t+/g, ' ').replace(/[ \u00a0]{2,}/g, ' ').trim();
+
+    if (!line) {
+      if (buffer) {
+        paragraphs.push(buffer);
+        buffer = '';
+      }
+      continue;
+    }
+
+    if (!buffer) {
+      buffer = line;
+      continue;
+    }
+
+    const endsWithSentence = /[.!?»;:]\s*\d*\s*$/.test(buffer);
+    const startsNewSentence = /^[A-ZА-ЯЁЎҚҒҲ«"\d]/.test(line);
+
+    if (endsWithSentence && startsNewSentence) {
+      paragraphs.push(buffer);
+      buffer = line;
+    } else {
+      buffer += ' ' + line;
+    }
+  }
+  if (buffer) paragraphs.push(buffer);
+
+  return paragraphs.join('\n\n');
+}
+
+/** Strip footnote numbers like `70 .` or `70.` embedded in text. */
+function cleanFootnotes(text: string): string {
+  return text.replace(/(\S)\s*\d{1,3}\s*\.\s*(?=[А-ЯЁЎҚҒҲA-Z«])/g, '$1. ');
+}
+
 /** Plain chapter text → sanitized-friendly HTML paragraphs. */
 export function textToChapterHtml(body: string): string {
-  const normalized = body
-    .replace(/\t+/g, ' ')
-    .replace(/[ \u00a0]{2,}/g, ' ')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
+  let normalized = cleanFootnotes(body.trim());
+  normalized = joinSoftWraps(normalized);
+
   if (!normalized) {
     return '<p></p>';
   }
 
   const paragraphs = normalized
     .split(/\n{2,}/)
-    .map((p) => p.replace(/\n/g, ' ').trim())
+    .map((p) => p.trim())
     .filter(Boolean);
 
   if (paragraphs.length === 0) {

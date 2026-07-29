@@ -9,7 +9,7 @@
   "categories": ["hadis", "siyrat"],
   "pdf": "incoming/shamoili-muhammadiyya.pdf",
   "rights": {
-    "licenseStatus": "unknown",
+    "licenseStatus": "owned",
     "licenseNotes": "Owner-supplied PDF (ziyouz.com edition, Sayyid Mahmud Taroziy translation, 1354 hijri). Confirm redistribution rights before publish (CONTENT_RULES B-02)."
   },
   "splitMode": "hadith-ranges",
