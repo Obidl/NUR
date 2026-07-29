@@ -1,14 +1,16 @@
 {
-  "name": "NUR",
+  "id": "/",
+  "name": "NUR — Islomiy o'qish",
   "short_name": "NUR",
-  "description": "Tinich, ishonchli islomiy o‘qish va tinglash",
-  "start_url": "/",
+  "description": "Tinich, ishonchli islomiy o'qish va tinglash",
+  "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#0c1218",
+  "background_color": "#0f1115",
   "theme_color": "#16342C",
   "lang": "uz",
+  "categories": ["education", "books"],
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -23,7 +25,7 @@
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/icons/icon-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

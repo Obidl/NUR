@@ -1,5 +1,5 @@
 /* Minimal service worker — required for Chrome installability. */
-const CACHE = 'nur-shell-v1';
+const CACHE = 'nur-shell-v2';
 const PRECACHE = ['/', '/manifest.webmanifest', '/favicon.svg'];
 
 self.addEventListener('install', (event) => {
