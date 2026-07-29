@@ -2,7 +2,6 @@ import axios from 'axios';
 import { env } from '@/config/env';
 import { endpoints } from '@/services/endpoints';
 
-/** Direct Render URL — used only to poke cold starts (opaque / best-effort). */
 const RENDER_HEALTH = 'https://nur-api-ow0b.onrender.com/health';
 
 function healthUrl() {
@@ -15,22 +14,15 @@ export type WarmProgress = {
   ready: boolean;
 };
 
-/** Best-effort poke so Render starts spinning even if Vercel rewrite times out. */
-function pokeRenderDirect(): void {
+export function pokeRenderDirect(): void {
   if (typeof window === 'undefined') return;
-  void fetch(RENDER_HEALTH, {
-    method: 'GET',
-    mode: 'no-cors',
-    cache: 'no-store',
-  }).catch(() => {
-    // ignore — wake-only
-  });
+  void fetch(RENDER_HEALTH, { method: 'GET', mode: 'no-cors', cache: 'no-store' }).catch(
+    () => undefined,
+  );
+  // Same-origin proxy poke (readable when ready).
+  void fetch(healthUrl(), { method: 'GET', cache: 'no-store' }).catch(() => undefined);
 }
 
-/**
- * Wake Render via Vercel rewrite.
- * Free-tier cold start can take 30–60s for a single request — timeout must cover that.
- */
 export async function warmApi(): Promise<boolean> {
   pokeRenderDirect();
   try {
@@ -49,55 +41,66 @@ export async function warmApi(): Promise<boolean> {
 
 let backgroundWarmStarted = false;
 
-/** Fire-and-forget warm; also schedules a quiet keep-alive while the tab is open. */
+/**
+ * Start warming immediately and keep the API awake while the tab is open.
+ * Also hits /api/keepalive (Vercel function → Render) when available.
+ */
 export function warmApiBackground(): void {
   pokeRenderDirect();
   void warmApi();
+  void fetch('/api/keepalive', { cache: 'no-store' }).catch(() => undefined);
+
   if (backgroundWarmStarted || typeof window === 'undefined') return;
   backgroundWarmStarted = true;
 
-  window.setInterval(() => {
-    if (document.visibilityState === 'visible') {
-      pokeRenderDirect();
-      void warmApi();
-    }
-  }, 4 * 60 * 1000);
+  const tick = () => {
+    if (document.visibilityState !== 'visible') return;
+    pokeRenderDirect();
+    void warmApi();
+    void fetch('/api/keepalive', { cache: 'no-store' }).catch(() => undefined);
+  };
+
+  window.setInterval(tick, 2 * 60 * 1000);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') tick();
+  });
 }
 
 /**
- * Poll until API is reachable or attempts exhausted.
- * Default budget ≈ several minutes for stubborn cold starts.
+ * Keep trying until ready or deadline (default ~3 minutes).
  */
 export async function waitForApiReady(options?: {
   maxAttempts?: number;
   delayMs?: number;
+  deadlineMs?: number;
   onProgress?: (progress: WarmProgress) => void;
   signal?: AbortSignal;
 }): Promise<boolean> {
-  const maxAttempts = options?.maxAttempts ?? 8;
-  const delayMs = options?.delayMs ?? 1500;
+  const delayMs = options?.delayMs ?? 2000;
+  const deadline = Date.now() + (options?.deadlineMs ?? 180_000);
+  let attempt = 0;
+  const maxAttempts = options?.maxAttempts ?? 60;
 
-  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+  while (Date.now() < deadline && attempt < maxAttempts) {
     if (options?.signal?.aborted) return false;
+    attempt += 1;
     options?.onProgress?.({ attempt, maxAttempts, ready: false });
     const ok = await warmApi();
     if (ok) {
       options?.onProgress?.({ attempt, maxAttempts, ready: true });
       return true;
     }
-    if (attempt < maxAttempts) {
-      await new Promise((resolve) => {
-        const id = window.setTimeout(resolve, delayMs);
-        options?.signal?.addEventListener(
-          'abort',
-          () => {
-            window.clearTimeout(id);
-            resolve(undefined);
-          },
-          { once: true },
-        );
-      });
-    }
+    await new Promise((resolve) => {
+      const id = window.setTimeout(resolve, delayMs);
+      options?.signal?.addEventListener(
+        'abort',
+        () => {
+          window.clearTimeout(id);
+          resolve(undefined);
+        },
+        { once: true },
+      );
+    });
   }
   return false;
 }

@@ -1,16 +1,26 @@
 # Keep Render free-tier API warm + basic uptime signal.
+# GitHub often delays */5 schedules — use staggered hourly slots for denser coverage.
 name: API health keep-alive
 
 on:
   schedule:
-    # Free Render sleeps ~15m idle — ping more often than that.
-    - cron: '*/5 * * * *'
+    - cron: '0,10,20,30,40,50 * * * *'
+    - cron: '5,15,25,35,45,55 * * * *'
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/api/**'
+      - '.github/workflows/api-health-keepalive.yml'
+
+concurrency:
+  group: api-keepalive
+  cancel-in-progress: true
 
 jobs:
   ping:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 4
     steps:
       - name: Wake via Vercel proxy then direct
         env:
@@ -22,19 +32,21 @@ jobs:
             local url="$1"
             local label="$2"
             echo "=== $label $url ==="
-            for attempt in 1 2 3 4 5; do
+            for attempt in 1 2 3 4 5 6; do
               echo "Attempt $attempt…"
               code=$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 90 "$url" || echo 000)
               echo "HTTP $code"
               cat /tmp/health.json || true
               echo
-              if [ "$code" = "200" ] && grep -q '"status":"ok"' /tmp/health.json && grep -q '"mongo":"up"' /tmp/health.json; then
+              if [ "$code" = "200" ] && grep -q '"mongo":"up"' /tmp/health.json; then
                 return 0
               fi
-              sleep 12
+              sleep 10
             done
             return 1
           }
+          # Hit both paths — direct poke helps even when proxy is slow.
+          (wake "$DIRECT_HEALTH" "direct" || true)
           wake "$PROXY_HEALTH" "proxy" || wake "$DIRECT_HEALTH" "direct" || {
             echo "Health check failed"
             exit 1

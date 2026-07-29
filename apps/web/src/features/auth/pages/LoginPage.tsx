@@ -8,7 +8,7 @@ import { Field, Input } from '@/shared/components/Field';
 import { LoadingOverlay } from '@/shared/components/LoadingScreen';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { setRememberSession } from '@/features/auth/lib/tokenStorage';
-import { waitForApiReady, warmApiBackground } from '@/services/warmApi';
+import { pokeRenderDirect, warmApiBackground } from '@/services/warmApi';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { useToast } from '@/shared/components/Toast';
 
@@ -43,6 +43,7 @@ export function LoginPage() {
   });
   const [error, setError] = useState<string | null>(null);
   const [warming, setWarming] = useState(false);
+  const [warmSeconds, setWarmSeconds] = useState(0);
 
   const from =
     typeof location.state === 'object' &&
@@ -77,27 +78,22 @@ export function LoginPage() {
       }
     }
 
-    // Cold start: wake API, then retry login a few times.
+    // Cold start: keep poking + retrying login for up to 3 minutes.
     setWarming(true);
-    try {
-      const warmed = await waitForApiReady({ maxAttempts: 8, delayMs: 1500 });
-      if (!warmed) {
-        // Last chance — still try login (health may have lied / timed out).
-        try {
-          await tryLogin();
-          return;
-        } catch (lastErr) {
-          setError(
-            isNetworkError(lastErr)
-              ? 'Server hali uyg‘onyapti. 30 soniya kutib qayta «Kirish»ni bosing.'
-              : getErrorMessage(lastErr, 'Kirish amalga oshmadi'),
-          );
-          return;
-        }
-      }
+    setWarmSeconds(0);
+    const started = Date.now();
+    const tick = window.setInterval(() => {
+      setWarmSeconds(Math.floor((Date.now() - started) / 1000));
+    }, 1000);
 
+    try {
+      const deadline = Date.now() + 180_000;
       let lastError: unknown;
-      for (let i = 0; i < 3; i += 1) {
+
+      while (Date.now() < deadline) {
+        pokeRenderDirect();
+        void fetch('/api/keepalive', { cache: 'no-store' }).catch(() => undefined);
+
         try {
           await tryLogin();
           return;
@@ -107,15 +103,18 @@ export function LoginPage() {
             setError(getErrorMessage(retryErr, 'Kirish amalga oshmadi'));
             return;
           }
-          await new Promise((r) => window.setTimeout(r, 2000));
         }
+
+        await new Promise((r) => window.setTimeout(r, 4000));
       }
+
       setError(
         isNetworkError(lastError)
-          ? 'Server hali uyg‘onyapti. 30 soniya kutib qayta «Kirish»ni bosing.'
+          ? 'Server hali sekin. 20 soniya kutib qayta «Kirish»ni bosing.'
           : getErrorMessage(lastError, 'Kirish amalga oshmadi'),
       );
     } finally {
+      window.clearInterval(tick);
       setWarming(false);
     }
   }
@@ -129,7 +128,7 @@ export function LoginPage() {
           message={warming ? 'Server uyg‘onyapti…' : 'Kirish amalga oshirilmoqda…'}
           hint={
             warming
-              ? 'Birinchi marta 30–60 soniya olishi mumkin. Sahifani yopmang.'
+              ? `Kuting — ${warmSeconds}s / 180s. Sahifani yopmang.`
               : null
           }
         />
