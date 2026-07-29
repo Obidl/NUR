@@ -463,8 +463,53 @@
   animation: nur-spin 0.85s linear infinite;
 }
 
+/* Book reader shell */
+.nur-book-shell {
+  min-height: 100dvh;
+  background: var(--nur-book-bg);
+  color: var(--nur-book-ink);
+}
+
+.nur-book-shell .nur-book-nav {
+  background: color-mix(in srgb, var(--nur-book-bg) 92%, transparent);
+  border-bottom: 1px solid var(--nur-book-line);
+  backdrop-filter: blur(12px);
+}
+
+.nur-book-shell .nur-book-divider {
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--nur-book-ornament),
+    transparent
+  );
+  height: 1px;
+  opacity: 0.35;
+}
+
+.nur-book-shell .nur-book-chapter-label {
+  color: var(--nur-book-ornament);
+}
+
+.nur-book-shell .nur-book-title {
+  color: var(--nur-book-ink);
+}
+
+.nur-book-shell .nur-book-meta {
+  color: var(--nur-book-muted);
+}
+
+.nur-reader-body {
+  color: var(--nur-book-ink);
+}
+
 .nur-reader-body p {
-  margin-bottom: 1.25em;
+  margin-bottom: 1.5em;
+  text-indent: 1.5em;
+}
+
+.nur-reader-body p:first-child {
+  text-indent: 0;
 }
 
 .nur-reader-body p:last-child {
@@ -474,29 +519,35 @@
 .nur-reader-body p:first-child::first-letter {
   float: left;
   font-family: var(--font-display);
-  font-size: 3.25em;
-  line-height: 0.8;
+  font-size: 3.5em;
+  line-height: 0.82;
   font-weight: 500;
-  color: var(--nur-lamp);
-  padding-right: 0.08em;
-  padding-top: 0.06em;
+  color: var(--nur-book-ornament);
+  padding-right: 0.1em;
+  padding-top: 0.04em;
 }
 
 .nur-reader-body blockquote {
-  border-left: 3px solid var(--nur-lamp);
-  margin: 1.5em 0;
-  padding: 0.5em 0 0.5em 1.25em;
-  color: var(--nur-ink-muted);
+  border-left: 3px solid var(--nur-book-ornament);
+  margin: 1.75em 0;
+  padding: 0.75em 0 0.75em 1.5em;
+  color: var(--nur-book-muted);
   font-style: italic;
+  text-indent: 0;
+}
+
+.nur-reader-body blockquote p {
+  text-indent: 0;
 }
 
 .nur-reader-body h2,
 .nur-reader-body h3 {
   font-family: var(--font-display);
   font-weight: 500;
-  color: var(--nur-ink);
-  margin-top: 2em;
+  color: var(--nur-book-ink);
+  margin-top: 2.5em;
   margin-bottom: 0.75em;
+  text-indent: 0;
 }
 
 .nur-reader-body h2 {

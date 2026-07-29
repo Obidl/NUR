@@ -207,13 +207,13 @@ export function BookChapterReaderPage() {
   if (!detail) return null;
 
   return (
-    <section className="nur-fade-in">
+    <div className="nur-book-shell nur-fade-in">
       {/* Sticky reader nav */}
-      <div className="sticky top-0 z-20 border-b border-nur-line/60 bg-nur-bg/90 backdrop-blur-md">
+      <div className="nur-book-nav sticky top-0 z-20">
         <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-5 py-3 md:px-8">
           <Link
             to={`/books/${detail.book.slug}`}
-            className="flex items-center gap-1.5 text-xs font-medium text-nur-muted transition-colors hover:text-nur-ink"
+            className="nur-book-meta flex items-center gap-1.5 text-xs font-medium transition-colors hover:text-[var(--nur-book-ink)]"
           >
             <ChevronLeft size={14} />
             <span className="hidden sm:inline">{detail.book.title}</span>
@@ -223,7 +223,7 @@ export function BookChapterReaderPage() {
           <div className="flex items-center gap-0.5">
             <button
               type="button"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-m)] text-nur-lamp transition-colors duration-200 hover:bg-nur-lamp-soft"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-m)] text-[var(--nur-book-ornament)] transition-colors duration-200 hover:bg-[var(--nur-book-ornament)]/10"
               aria-label="Belgilash"
               title="Matnni belgilab, highlight qo'shing"
               onClick={captureSelection}
@@ -232,7 +232,7 @@ export function BookChapterReaderPage() {
             </button>
             <button
               type="button"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-m)] text-nur-lamp transition-colors duration-200 hover:bg-nur-lamp-soft"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-m)] text-[var(--nur-book-ornament)] transition-colors duration-200 hover:bg-[var(--nur-book-ornament)]/10"
               aria-label="Xatcho'p"
               onClick={() => void toggleBookmark()}
             >
@@ -243,18 +243,18 @@ export function BookChapterReaderPage() {
       </div>
 
       {/* Chapter header */}
-      <div className="mx-auto max-w-2xl px-5 pt-10 pb-2 md:px-8 md:pt-14">
-        <p className="text-xs font-medium uppercase tracking-widest text-nur-lamp">
+      <div className="mx-auto max-w-2xl px-5 pt-12 pb-2 md:px-8 md:pt-16">
+        <p className="nur-book-chapter-label text-xs font-semibold uppercase tracking-[0.15em]">
           {detail.chapter.order}-bob
         </p>
-        <h1 className="mt-3 font-display text-2xl font-medium tracking-[-0.025em] text-nur-ink md:text-[1.875rem] md:leading-[1.2]">
+        <h1 className="nur-book-title mt-4 font-display text-[1.75rem] font-medium tracking-[-0.025em] md:text-[2.125rem] md:leading-[1.15]">
           {detail.chapter.title}
         </h1>
-        <p className="mt-3 text-xs text-nur-muted">
+        <p className="nur-book-meta mt-3 text-xs leading-relaxed">
           {detail.book.authors.join(', ')}
           {detail.book.translator ? ` · tarj. ${detail.book.translator}` : ''}
         </p>
-        <div className="mt-6 h-px bg-gradient-to-r from-nur-lamp/30 via-nur-line to-transparent" />
+        <div className="nur-book-divider mt-8" />
       </div>
 
       {/* Error */}
@@ -269,10 +269,10 @@ export function BookChapterReaderPage() {
       {/* Highlight capture */}
       {selection ? (
         <div className="mx-auto max-w-2xl px-5 md:px-8">
-          <div className="nur-surface my-6 px-5 py-5">
+          <div className="my-6 rounded-[var(--radius-xl)] border border-[var(--nur-book-line)] bg-[var(--nur-book-panel)] px-5 py-5 shadow-xs">
             <p className="nur-section-label">Tanlangan matn</p>
-            <p className="mt-2.5 font-reading text-sm leading-7 text-nur-ink">"{selection}"</p>
-            <label className="mt-4 block text-sm font-medium text-nur-ink" htmlFor="highlight-note">
+            <p className="mt-2.5 font-reading text-sm leading-7">"{selection}"</p>
+            <label className="mt-4 block text-sm font-medium" htmlFor="highlight-note">
               Shaxsiy eslatma (ixtiyoriy)
             </label>
             <textarea
@@ -305,19 +305,20 @@ export function BookChapterReaderPage() {
       {/* Reader body */}
       <article
         ref={articleRef}
-        className="nur-reader-body mx-auto max-w-2xl px-5 pt-8 pb-16 font-reading text-[1.0625rem] leading-[2] text-nur-ink md:px-8 md:text-[1.125rem] md:leading-[2.05]"
+        className="nur-reader-body mx-auto max-w-2xl px-5 pt-10 pb-20 font-reading text-[1.0625rem] leading-[2] md:px-8 md:text-[1.125rem] md:leading-[2.1]"
         dangerouslySetInnerHTML={{ __html: safeHtml }}
         onMouseUp={captureSelection}
         onTouchEnd={captureSelection}
       />
 
       {/* Chapter navigation */}
-      <div className="mx-auto max-w-2xl px-5 pb-6 md:px-8">
-        <div className="flex items-center justify-between border-t border-nur-line/60 pt-6">
+      <div className="mx-auto max-w-2xl px-5 pb-8 md:px-8">
+        <div className="nur-book-divider" />
+        <div className="flex items-center justify-between pt-6">
           {detail.chapter.order > 1 ? (
             <button
               type="button"
-              className="flex items-center gap-1 text-xs font-medium text-nur-accent transition-colors hover:text-nur-ink"
+              className="nur-book-meta flex items-center gap-1 text-xs font-medium transition-colors hover:text-[var(--nur-book-ink)]"
               onClick={() => navigate(-1)}
             >
               <ChevronLeft size={14} />
@@ -328,7 +329,7 @@ export function BookChapterReaderPage() {
           )}
           <Link
             to={`/books/${detail.book.slug}`}
-            className="text-xs font-medium text-nur-muted hover:text-nur-ink"
+            className="nur-book-meta text-xs font-medium transition-colors hover:text-[var(--nur-book-ink)]"
           >
             Barcha boblar
           </Link>
@@ -338,10 +339,10 @@ export function BookChapterReaderPage() {
       {/* Highlights section */}
       {accessToken ? (
         <div className="mx-auto max-w-2xl px-5 pb-14 md:px-8">
-          <div className="border-t border-nur-line/60 pt-10">
+          <div className="border-t border-[var(--nur-book-line)] pt-10">
             <h2 className="nur-section-label mb-5">Belgilangan matnlar</h2>
             {highlights.length === 0 ? (
-              <p className="text-sm leading-relaxed text-nur-muted">
+              <p className="nur-book-meta text-sm leading-relaxed">
                 Matndan belgilang yoki Highlighter tugmasini bosing.
               </p>
             ) : (
@@ -349,9 +350,9 @@ export function BookChapterReaderPage() {
                 {highlights.map((row) => (
                   <li
                     key={row.id}
-                    className="rounded-[var(--radius-l)] border border-nur-lamp-soft/60 bg-nur-lamp-soft/15 px-4 py-3.5"
+                    className="rounded-[var(--radius-l)] border border-[var(--nur-book-ornament)]/20 bg-[var(--nur-book-ornament)]/5 px-4 py-3.5"
                   >
-                    <p className="font-reading text-sm leading-7 text-nur-ink">
+                    <p className="font-reading text-sm leading-7">
                       "{row.selectedText}"
                     </p>
                     {editingId === row.id ? (
@@ -382,14 +383,14 @@ export function BookChapterReaderPage() {
                     ) : (
                       <>
                         {row.note ? (
-                          <p className="mt-2 text-xs text-nur-muted">{row.note}</p>
+                          <p className="nur-book-meta mt-2 text-xs">{row.note}</p>
                         ) : (
-                          <p className="mt-2 text-xs text-nur-faint">Eslatma yo'q</p>
+                          <p className="mt-2 text-xs opacity-50">Eslatma yo'q</p>
                         )}
                         <div className="mt-2 flex gap-3">
                           <button
                             type="button"
-                            className="text-xs font-medium text-nur-accent"
+                            className="text-xs font-medium text-[var(--nur-book-ornament)]"
                             onClick={() => {
                               setEditingId(row.id);
                               setEditNote(row.note ?? '');
@@ -415,6 +416,6 @@ export function BookChapterReaderPage() {
           </div>
         </div>
       ) : null}
-    </section>
+    </div>
   );
 }

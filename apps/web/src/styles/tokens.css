@@ -88,6 +88,14 @@
 
   --quran-font-size: 34px;
 
+  /* Book reader */
+  --nur-book-bg: #faf8f4;
+  --nur-book-panel: #ffffff;
+  --nur-book-ink: #2c2a24;
+  --nur-book-muted: #6b665c;
+  --nur-book-ornament: #a87c0e;
+  --nur-book-line: #e8e4da;
+
   color-scheme: light;
   font-family: Inter, system-ui, sans-serif;
   font-size: var(--text-body);
@@ -141,6 +149,13 @@
   --shadow-xs: 0 2px 8px rgba(0, 0, 0, 0.28);
   --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.36);
   --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.44);
+
+  --nur-book-bg: #161820;
+  --nur-book-panel: #1e2028;
+  --nur-book-ink: #e8e6e0;
+  --nur-book-muted: #9a978e;
+  --nur-book-ornament: #d4a84b;
+  --nur-book-line: #2a2c34;
 
   color-scheme: dark;
 }
