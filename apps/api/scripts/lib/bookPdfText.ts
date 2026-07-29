@@ -27,8 +27,11 @@ export function cleanExtractedText(raw: string): string {
     if (/^https?:\/\//i.test(t)) continue;
     if (/ziyouz\.com/i.test(t)) continue;
     if (/^–\s*\d+\s*–$/.test(t)) continue;
+    if (/^--\s*\d+\s*(of|из)\s*\d+\s*--$/i.test(t)) continue;
     if (/^\d{1,3}$/.test(t)) continue;
     if (/^Саҳифа\s*\d+/i.test(t)) continue;
+    if (/^Shamoili Muhammadiy\.\s*Muhammad at-Termiziy$/i.test(t)) continue;
+    if (/^www\.ziyouz\.com\s+kutubxonasi\s+\d*$/i.test(t)) continue;
     kept.push(line);
   }
   let text = collapseSpacedCaps(kept.join('\n').replace(/\n{3,}/g, '\n\n'));

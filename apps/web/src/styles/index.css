@@ -375,6 +375,103 @@
   .nur-breath {
     animation: nur-breath 5s ease-in-out infinite;
   }
+
+  /* Book reader shell */
+  .nur-book-shell {
+    min-height: 100dvh;
+    background: var(--nur-book-bg);
+    color: var(--nur-book-ink);
+  }
+
+  .nur-book-shell .nur-book-nav {
+    background: color-mix(in srgb, var(--nur-book-bg) 92%, transparent);
+    border-bottom: 1px solid var(--nur-book-line);
+    backdrop-filter: blur(12px);
+  }
+
+  .nur-book-shell .nur-book-divider {
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--nur-book-ornament),
+      transparent
+    );
+    height: 1px;
+    opacity: 0.35;
+  }
+
+  .nur-book-shell .nur-book-chapter-label {
+    color: var(--nur-book-ornament);
+  }
+
+  .nur-book-shell .nur-book-title {
+    color: var(--nur-book-ink);
+  }
+
+  .nur-book-shell .nur-book-meta {
+    color: var(--nur-book-muted);
+  }
+
+  .nur-reader-body {
+    color: var(--nur-book-ink);
+  }
+
+  .nur-reader-body p {
+    margin-bottom: 1.5em;
+    text-indent: 1.5em;
+  }
+
+  .nur-reader-body p:first-child {
+    text-indent: 0;
+  }
+
+  .nur-reader-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  .nur-reader-body p:first-child::first-letter {
+    float: left;
+    font-family: var(--font-display);
+    font-size: 3.5em;
+    line-height: 0.82;
+    font-weight: 500;
+    color: var(--nur-book-ornament);
+    padding-right: 0.1em;
+    padding-top: 0.04em;
+  }
+
+  .nur-reader-body blockquote {
+    border-left: 3px solid var(--nur-book-ornament);
+    margin: 1.75em 0;
+    padding: 0.75em 0 0.75em 1.5em;
+    color: var(--nur-book-muted);
+    font-style: italic;
+    text-indent: 0;
+  }
+
+  .nur-reader-body blockquote p {
+    text-indent: 0;
+  }
+
+  .nur-reader-body h2,
+  .nur-reader-body h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    color: var(--nur-book-ink);
+    margin-top: 2.5em;
+    margin-bottom: 0.75em;
+    text-indent: 0;
+  }
+
+  .nur-reader-body h2 {
+    font-size: 1.375rem;
+    letter-spacing: -0.015em;
+  }
+
+  .nur-reader-body h3 {
+    font-size: 1.125rem;
+    letter-spacing: -0.01em;
+  }
 }
 
 @layer utilities {
@@ -461,103 +558,6 @@
 
 .nur-spinner {
   animation: nur-spin 0.85s linear infinite;
-}
-
-/* Book reader shell */
-.nur-book-shell {
-  min-height: 100dvh;
-  background: var(--nur-book-bg);
-  color: var(--nur-book-ink);
-}
-
-.nur-book-shell .nur-book-nav {
-  background: color-mix(in srgb, var(--nur-book-bg) 92%, transparent);
-  border-bottom: 1px solid var(--nur-book-line);
-  backdrop-filter: blur(12px);
-}
-
-.nur-book-shell .nur-book-divider {
-  background: linear-gradient(
-    to right,
-    transparent,
-    var(--nur-book-ornament),
-    transparent
-  );
-  height: 1px;
-  opacity: 0.35;
-}
-
-.nur-book-shell .nur-book-chapter-label {
-  color: var(--nur-book-ornament);
-}
-
-.nur-book-shell .nur-book-title {
-  color: var(--nur-book-ink);
-}
-
-.nur-book-shell .nur-book-meta {
-  color: var(--nur-book-muted);
-}
-
-.nur-reader-body {
-  color: var(--nur-book-ink);
-}
-
-.nur-reader-body p {
-  margin-bottom: 1.5em;
-  text-indent: 1.5em;
-}
-
-.nur-reader-body p:first-child {
-  text-indent: 0;
-}
-
-.nur-reader-body p:last-child {
-  margin-bottom: 0;
-}
-
-.nur-reader-body p:first-child::first-letter {
-  float: left;
-  font-family: var(--font-display);
-  font-size: 3.5em;
-  line-height: 0.82;
-  font-weight: 500;
-  color: var(--nur-book-ornament);
-  padding-right: 0.1em;
-  padding-top: 0.04em;
-}
-
-.nur-reader-body blockquote {
-  border-left: 3px solid var(--nur-book-ornament);
-  margin: 1.75em 0;
-  padding: 0.75em 0 0.75em 1.5em;
-  color: var(--nur-book-muted);
-  font-style: italic;
-  text-indent: 0;
-}
-
-.nur-reader-body blockquote p {
-  text-indent: 0;
-}
-
-.nur-reader-body h2,
-.nur-reader-body h3 {
-  font-family: var(--font-display);
-  font-weight: 500;
-  color: var(--nur-book-ink);
-  margin-top: 2.5em;
-  margin-bottom: 0.75em;
-  text-indent: 0;
-}
-
-.nur-reader-body h2 {
-  font-size: 1.375rem;
-  letter-spacing: -0.015em;
-}
-
-.nur-reader-body h3 {
-  font-size: 1.125rem;
-  letter-spacing: -0.01em;
 }
 
 @media (prefers-reduced-motion: reduce) {
