@@ -4,7 +4,7 @@ import { Button } from '@/shared/components/Button';
 import { Field, Input } from '@/shared/components/Field';
 import { LoadingOverlay } from '@/shared/components/LoadingScreen';
 import { useAuthStore } from '@/features/auth/store/authStore';
-import { warmApiBackground } from '@/services/warmApi';
+import { waitForApiReady, warmApiBackground } from '@/services/warmApi';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { useToast } from '@/shared/components/Toast';
 
@@ -19,9 +19,15 @@ export function RegisterPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [slowHint, setSlowHint] = useState(false);
+  const [apiReady, setApiReady] = useState(false);
 
   useEffect(() => {
     warmApiBackground();
+    const controller = new AbortController();
+    void waitForApiReady({ signal: controller.signal }).then((ok) => {
+      if (!controller.signal.aborted) setApiReady(ok);
+    });
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
@@ -59,11 +65,18 @@ export function RegisterPage() {
         />
       ) : null}
 
+      {!apiReady && !isLoading ? (
+        <LoadingOverlay
+          message="Server tayyorlanmoqda…"
+          hint="Uyg‘onish 20–50 soniya olishi mumkin."
+        />
+      ) : null}
+
       <p className="font-display text-2xl font-semibold tracking-[0.2em]">NUR</p>
       <h1 className="mt-6 text-lg font-medium tracking-[-0.02em] text-nur-muted">Ro‘yxatdan o‘tish</h1>
       <p className="mt-2 text-sm leading-relaxed text-nur-muted">NUR hisobini yarating.</p>
 
-      <form className="mt-8 space-y-5" onSubmit={onSubmit} aria-busy={isLoading}>
+      <form className="mt-8 space-y-5" onSubmit={onSubmit} aria-busy={isLoading || !apiReady}>
         <Field label="Ism">
           <Input
             type="text"
@@ -73,7 +86,7 @@ export function RegisterPage() {
             minLength={2}
             value={displayName}
             onChange={(event) => setDisplayName(event.target.value)}
-            disabled={isLoading}
+            disabled={isLoading || !apiReady}
           />
         </Field>
         <Field label="Email">
@@ -84,7 +97,7 @@ export function RegisterPage() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            disabled={isLoading}
+            disabled={isLoading || !apiReady}
           />
         </Field>
         <Field label="Parol" hint="Kamida 8 belgi">
@@ -96,7 +109,7 @@ export function RegisterPage() {
             minLength={8}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            disabled={isLoading}
+            disabled={isLoading || !apiReady}
           />
         </Field>
 
@@ -106,8 +119,8 @@ export function RegisterPage() {
           </p>
         ) : null}
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          Ro‘yxatdan o‘tish
+        <Button type="submit" className="w-full" disabled={isLoading || !apiReady}>
+          {apiReady ? 'Ro‘yxatdan o‘tish' : 'Kutilmoqda…'}
         </Button>
       </form>
 
