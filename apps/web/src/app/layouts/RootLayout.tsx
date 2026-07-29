@@ -1,22 +1,20 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Home, Mic2, MoreHorizontal, ScrollText, Video } from 'lucide-react';
+import { Home, Mic2, MoreHorizontal, ScrollText, Search, Video } from 'lucide-react';
 import { cx } from '@/shared/lib/cx';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { PodcastPlayerBar } from '@/features/podcasts/components/PodcastPlayerBar';
 import { QuranAudioBar } from '@/features/quran/components/QuranAudioBar';
 import { usePodcastPlayerStore } from '@/features/podcasts/store/podcastPlayerStore';
 import { useQuranPlayerStore } from '@/features/quran/store/quranPlayerStore';
+import { CommandPalette } from '@/features/shell/components/CommandPalette';
+import { useCommandPaletteStore } from '@/features/shell/store/commandPaletteStore';
 
 const desktopNav = [
   { to: '/', label: 'Bugun', end: true },
   { to: '/quran', label: 'Qur’on' },
-  { to: '/videos', label: 'Videolar' },
-  { to: '/podcasts', label: 'Podcastlar' },
-  { to: '/books', label: 'Kitoblar' },
-  { to: '/research', label: 'Tadqiqot' },
-  { to: '/curriculum', label: 'Yo‘llar' },
-  { to: '/search', label: 'Qidiruv' },
-  { to: '/library', label: 'Kutubxona' },
+  { to: '/videos', label: 'Video' },
+  { to: '/podcasts', label: 'Audio' },
+  { to: '/more', label: 'Ko‘proq' },
 ] as const;
 
 const mobileNav = [
@@ -34,6 +32,7 @@ export function RootLayout() {
   const podcastActive = usePodcastPlayerStore((s) => Boolean(s.audioUrl));
   const quranActive = useQuranPlayerStore((s) => Boolean(s.audioUrl || s.error));
   const playerActive = podcastActive || quranActive;
+  const openPalette = useCommandPaletteStore((s) => s.setOpen);
 
   const isSurahReader = /^\/quran\/\d+/.test(pathname);
 
@@ -55,6 +54,8 @@ export function RootLayout() {
         Asosiy kontentga o‘tish
       </a>
 
+      <CommandPalette />
+
       {!isSurahReader ? (
         <header className="sticky top-0 z-30 border-b border-nur-line/60 bg-[color-mix(in_srgb,var(--nur-bg)_88%,transparent)] backdrop-blur-xl">
           <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-3 md:px-8">
@@ -75,18 +76,34 @@ export function RootLayout() {
                   key={item.to}
                   to={item.to}
                   end={'end' in item ? item.end : false}
-                  className={({ isActive }) =>
-                    cx(
+                  className={({ isActive }) => {
+                    const forceMore = item.to === '/more' && onMoreSection;
+                    const active = isActive || forceMore;
+                    return cx(
                       'rounded-[var(--radius-pill)] px-3.5 py-2 text-nur-muted transition-[color,background-color] duration-250',
-                      isActive
+                      active
                         ? 'bg-nur-elevated font-medium text-nur-ink'
                         : 'hover:bg-nur-elevated/70 hover:text-nur-ink',
-                    )
-                  }
+                    );
+                  }}
                 >
                   {item.label}
                 </NavLink>
               ))}
+
+              <button
+                type="button"
+                onClick={() => openPalette(true)}
+                className="ml-2 inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-nur-line bg-nur-elevated/80 px-3 py-1.5 text-xs text-nur-muted transition-colors duration-200 hover:text-nur-ink"
+                aria-label="Qidiruv (⌘K)"
+              >
+                <Search size={14} strokeWidth={1.75} aria-hidden />
+                <span className="hidden lg:inline">Qidiruv</span>
+                <kbd className="rounded bg-nur-sunken px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-nur-faint">
+                  ⌘K
+                </kbd>
+              </button>
+
               {accessToken ? (
                 <NavLink
                   to="/settings"
@@ -112,6 +129,14 @@ export function RootLayout() {
             </nav>
 
             <div className="flex items-center gap-1 md:hidden">
+              <button
+                type="button"
+                onClick={() => openPalette(true)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full text-nur-muted ring-1 ring-nur-line transition-colors hover:bg-nur-elevated hover:text-nur-ink"
+                aria-label="Qidiruv"
+              >
+                <Search size={18} strokeWidth={1.75} />
+              </button>
               {accessToken ? (
                 <NavLink
                   to="/settings"

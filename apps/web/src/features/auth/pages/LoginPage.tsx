@@ -1,9 +1,11 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/shared/components/Button';
 import { Field, Input } from '@/shared/components/Field';
 import { LoadingOverlay } from '@/shared/components/LoadingScreen';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { setRememberSession } from '@/features/auth/lib/tokenStorage';
 import { warmApi } from '@/services/warmApi';
 import { getErrorMessage } from '@/shared/lib/errors';
 import { useToast } from '@/shared/components/Toast';
@@ -17,6 +19,14 @@ export function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(() => {
+    try {
+      return localStorage.getItem('nur_remember_session') !== '0';
+    } catch {
+      return true;
+    }
+  });
   const [error, setError] = useState<string | null>(null);
   const [slowHint, setSlowHint] = useState(false);
 
@@ -46,6 +56,7 @@ export function LoginPage() {
     setError(null);
 
     try {
+      setRememberSession(remember);
       await login({ email, password });
       toast('Xush kelibsiz', 'success');
       navigate(from, { replace: true });
@@ -55,7 +66,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="nur-surface relative overflow-hidden px-6 py-9 md:px-8 md:py-11">
+    <div className="nur-surface relative overflow-hidden px-6 py-9 shadow-[var(--shadow-md)] md:px-8 md:py-11">
       {isLoading ? (
         <LoadingOverlay
           message={slowHint ? 'Server uyg‘onyapti…' : 'Kirish amalga oshirilmoqda…'}
@@ -67,8 +78,10 @@ export function LoginPage() {
         />
       ) : null}
 
-      <p className="font-display text-2xl font-semibold tracking-[0.2em]">NUR</p>
-      <h1 className="mt-6 text-lg font-medium tracking-[-0.02em] text-nur-muted">Kirish</h1>
+      <p className="font-display text-3xl font-semibold tracking-[0.22em]">NUR</p>
+      <h1 className="mt-7 font-display text-2xl font-medium tracking-[-0.02em] text-nur-ink">
+        Xush kelibsiz
+      </h1>
       <p className="mt-2 text-sm leading-relaxed text-nur-muted">
         Hisobingizga kiring va bugungi yo‘lni davom ettiring.
       </p>
@@ -87,18 +100,41 @@ export function LoginPage() {
           />
         </Field>
         <Field label="Parol">
-          <Input
-            type="password"
-            name="password"
-            autoComplete="current-password"
-            required
-            minLength={8}
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            invalid={Boolean(error)}
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <Input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              autoComplete="current-password"
+              required
+              minLength={8}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              invalid={Boolean(error)}
+              disabled={isLoading}
+              className="pr-12"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute top-1/2 right-3 -translate-y-1/2 rounded-[var(--radius-s)] p-1.5 text-nur-muted transition-colors hover:text-nur-ink"
+              aria-label={showPassword ? 'Parolni yashirish' : 'Parolni ko‘rsatish'}
+              disabled={isLoading}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </Field>
+
+        <label className="flex items-center gap-2.5 text-sm text-nur-muted">
+          <input
+            type="checkbox"
+            checked={remember}
+            onChange={(event) => setRemember(event.target.checked)}
+            disabled={isLoading}
+            className="h-4 w-4 rounded border-nur-line accent-[var(--nur-accent)]"
+          />
+          Meni eslab qol
+        </label>
 
         {error ? (
           <p className="text-sm text-[var(--nur-danger)]" role="alert">

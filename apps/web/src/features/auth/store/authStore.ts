@@ -9,11 +9,13 @@ import {
   type RegisterInput,
 } from '@/features/auth/api/authApi';
 import type { PublicUser } from '@/features/auth/types/auth.types';
+import {
+  persistAuthTokens,
+  readAccessToken,
+  readRefreshToken,
+} from '@/features/auth/lib/tokenStorage';
 import { syncLocalPodcastProgressToServer } from '@/features/podcasts/lib/podcastLocalProgress';
 import { syncLocalQuranProgressToServer } from '@/features/quran/lib/quranLocalProgress';
-
-const ACCESS_KEY = 'nur_access_token';
-const REFRESH_KEY = 'nur_refresh_token';
 
 type AuthState = {
   accessToken: string | null;
@@ -29,13 +31,6 @@ type AuthState = {
   clear: () => void;
 };
 
-function persistTokens(accessToken: string | null, refreshToken: string | null) {
-  if (accessToken) localStorage.setItem(ACCESS_KEY, accessToken);
-  else localStorage.removeItem(ACCESS_KEY);
-  if (refreshToken) localStorage.setItem(REFRESH_KEY, refreshToken);
-  else localStorage.removeItem(REFRESH_KEY);
-}
-
 async function afterAuthSuccess() {
   await Promise.all([
     syncLocalQuranProgressToServer(),
@@ -44,19 +39,19 @@ async function afterAuthSuccess() {
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  accessToken: localStorage.getItem(ACCESS_KEY),
-  refreshToken: localStorage.getItem(REFRESH_KEY),
+  accessToken: readAccessToken(),
+  refreshToken: readRefreshToken(),
   user: null,
   isHydrated: false,
   isLoading: false,
 
   setTokens: (accessToken, refreshToken) => {
-    persistTokens(accessToken, refreshToken);
+    persistAuthTokens(accessToken, refreshToken);
     set({ accessToken, refreshToken });
   },
 
   clear: () => {
-    persistTokens(null, null);
+    persistAuthTokens(null, null);
     set({ accessToken: null, refreshToken: null, user: null });
   },
 
@@ -75,7 +70,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (refreshToken) {
         try {
           const tokens = await refreshRequest(refreshToken);
-          persistTokens(tokens.accessToken, tokens.refreshToken);
+          persistAuthTokens(tokens.accessToken, tokens.refreshToken);
           set({
             accessToken: tokens.accessToken,
             refreshToken: tokens.refreshToken,
@@ -98,7 +93,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: true });
     try {
       const result = await registerRequest(input);
-      persistTokens(result.tokens.accessToken, result.tokens.refreshToken);
+      persistAuthTokens(result.tokens.accessToken, result.tokens.refreshToken);
       const user = await fetchMeRequest();
       set({
         accessToken: result.tokens.accessToken,
@@ -115,7 +110,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: true });
     try {
       const result = await loginRequest(input);
-      persistTokens(result.tokens.accessToken, result.tokens.refreshToken);
+      persistAuthTokens(result.tokens.accessToken, result.tokens.refreshToken);
       set({
         accessToken: result.tokens.accessToken,
         refreshToken: result.tokens.refreshToken,

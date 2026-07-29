@@ -1,5 +1,10 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { env } from '@/config/env';
+import {
+  persistAuthTokens,
+  readAccessToken,
+  readRefreshToken,
+} from '@/features/auth/lib/tokenStorage';
 import { endpoints } from '@/services/endpoints';
 
 type RetryConfig = InternalAxiosRequestConfig & { _retry?: boolean };
@@ -16,7 +21,7 @@ export const http = axios.create({
 let refreshPromise: Promise<string | null> | null = null;
 
 async function refreshAccessToken(): Promise<string | null> {
-  const refreshToken = localStorage.getItem('nur_refresh_token');
+  const refreshToken = readRefreshToken();
   if (!refreshToken) {
     return null;
   }
@@ -29,18 +34,16 @@ async function refreshAccessToken(): Promise<string | null> {
     );
 
     const tokens = data.data.tokens;
-    localStorage.setItem('nur_access_token', tokens.accessToken);
-    localStorage.setItem('nur_refresh_token', tokens.refreshToken);
+    persistAuthTokens(tokens.accessToken, tokens.refreshToken);
     return tokens.accessToken;
   } catch {
-    localStorage.removeItem('nur_access_token');
-    localStorage.removeItem('nur_refresh_token');
+    persistAuthTokens(null, null);
     return null;
   }
 }
 
 http.interceptors.request.use((config) => {
-  const accessToken = localStorage.getItem('nur_access_token');
+  const accessToken = readAccessToken();
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
